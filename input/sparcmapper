@@ -1,0 +1,529 @@
+---
+- :opcode: Opcode
+  :mnemonic: Mnemonic
+  :parameters:
+  - ArgumentList
+- :opcode: ADD
+  :mnemonic: add
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: ADDcc
+  :mnemonic: addcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: ADDX
+  :mnemonic: addx
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: ADDXcc
+  :mnemonic: addxcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: AND
+  :mnemonic: and
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: ANDcc
+  :mnemonic: andcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: ANDcc
+  :mnemonic: andn
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: ANDNcc
+  :mnemonic: andcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: BN
+  :mnemonic: bn{,a}
+  :parameters:
+  - label
+- :opcode: BNE
+  :mnemonic: bne{,a}
+  :parameters:
+  - label
+- :opcode: BEBGBLEBGEBIBGUBLEU
+  :mnemonic: be{,a}bg{,a}ble{,a}bge{,a}bl{,a}bgu{,a}bleu{,a}
+  :parameters:
+  - labellabellabellabellabellabellabel
+- :opcode: BCC
+  :mnemonic: bcc{,a}
+  :parameters:
+  - label
+- :opcode: BCSBPOSBNEGBVCBVS
+  :mnemonic: bcs{,a}bpos{,a}bneg{,a}bvc{,a}bvs{,a}
+  :parameters:
+  - labellabellabellabellabel
+- :opcode: BA
+  :mnemonic: ba{,a}
+  :parameters:
+  - label
+- :opcode: CALL
+  :mnemonic: call
+  :parameters:
+  - label
+- :opcode: CBccc
+  :mnemonic: cbn{,a}cb3{,a}cb2{,a}cb23{,a}cb1{,a}cb13{,eo}cb12{,a}cb123{,a}cb0{,a}cb03{,a}cb02{,a}cb023{,a}cb01{,a}cb013{,a}cb012{,a}cba{,a}
+  :parameters:
+  - labellabellabellabellabellabellabellabellabellabellabellabellabellabellabellabel
+- :opcode: FBNFBUFBGFBUGFBLFBULFBLG
+  :mnemonic: fbn{,a}fbu{,a}fbg{,a}fbug{,a}fbl{,a}fbul{,a}fblg{,a}
+  :parameters:
+  - labellabellabellabellabellabellabel
+- :opcode: FBNE
+  :mnemonic: fbne{,a}
+  :parameters:
+  - label
+- :opcode: FBE
+  :mnemonic: fbe{,a}
+  :parameters:
+  - label
+- :opcode: FBUEFBGEFBUGEFBLEFBULEFBOFBA
+  :mnemonic: fbue{,a}fbge{,a}fbuge{,a}fble{,a}fbule{,a}fbo{,a}fba{,a}
+  :parameters:
+  - labellabellabellabellabellabellabel
+- :opcode: FLUSH
+  :mnemonic: flush
+  :parameters:
+  - address
+- :opcode: JMPL
+  :mnemonic: jmpl
+  :parameters:
+  - address
+  - regrd
+- :opcode: LDSB
+  :mnemonic: ldsb
+  :parameters:
+  - "[address]"
+  - regrd
+- :opcode: LDSH
+  :mnemonic: ldsh
+  :parameters:
+  - "[address]"
+  - regrd
+- :opcode: LDSTUB
+  :mnemonic: ldstub
+  :parameters:
+  - "[address]"
+  - regrd
+- :opcode: LDUB
+  :mnemonic: ldub
+  :parameters:
+  - "[address]"
+  - regrd
+- :opcode: LDUH
+  :mnemonic: lduh
+  :parameters:
+  - "[address]"
+  - regrd
+- :opcode: LD
+  :mnemonic: ld
+  :parameters:
+  - "[address]"
+  - regrd
+- :opcode: LDD
+  :mnemonic: ldd
+  :parameters:
+  - "[address]"
+  - regrd
+- :opcode: LDF
+  :mnemonic: ld
+  :parameters:
+  - "[address]"
+  - fregrd
+- :opcode: LDFSR
+  :mnemonic: ld
+  :parameters:
+  - "[address]"
+  - "%fsr"
+- :opcode: LDDF
+  :mnemonic: ldd
+  :parameters:
+  - "[address]"
+  - fregrd
+- :opcode: LDC
+  :mnemonic: ld
+  :parameters:
+  - "[address]"
+  - cregrd
+- :opcode: LDCSR
+  :mnemonic: ld
+  :parameters:
+  - "[address]"
+  - "%csr"
+- :opcode: LDDC
+  :mnemonic: ldd
+  :parameters:
+  - "[address]"
+  - cregrd
+- :opcode: LDSBALDSHALDUBALDUHALDA
+  :mnemonic: ldsbaldshaldubalduhalda
+  :parameters:
+  - "[regaddr]asi"
+  - regrd[regaddr]asi
+  - regrd[regaddr]asi
+  - regrd[regaddr]asi
+  - regrd[regaddr]asi
+  - regrd
+- :opcode: LDDA
+  :mnemonic: ldda
+  :parameters:
+  - "[regaddr]asi"
+  - regrd
+- :opcode: LDSTUBA
+  :mnemonic: ldstuba
+  :parameters:
+  - "[regaddr]asi"
+  - regrd
+- :opcode: MULScc
+  :mnemonic: mulscc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: NOP
+  :mnemonic: nop
+  :parameters: []
+- :opcode: ORORccORNORNcc
+  :mnemonic: ororccornorncc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrdregrs1
+  - reg_or_imm
+  - regrdregrs1
+  - reg_or_imm
+  - regrdregrs1
+  - reg_or_imm
+  - regrd
+- :opcode: RDASR
+  :mnemonic: rd
+  :parameters:
+  - "%asrnrs1"
+  - regrd
+- :opcode: RDY
+  :mnemonic: rd
+  :parameters:
+  - "%y"
+  - regrd
+- :opcode: RDPSR
+  :mnemonic: rd
+  :parameters:
+  - "%psr"
+  - regrd
+- :opcode: RDWIM
+  :mnemonic: rd
+  :parameters:
+  - "%wim"
+  - regrd
+- :opcode: RDTBR
+  :mnemonic: rd
+  :parameters:
+  - "%tbr"
+  - regrd
+- :opcode: RESTORE
+  :mnemonic: restore
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: RETT
+  :mnemonic: rett
+  :parameters:
+  - address
+- :opcode: SAVE
+  :mnemonic: save
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SDIV
+  :mnemonic: sdiv
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SDIVcc
+  :mnemonic: sdivcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SMUL
+  :mnemonic: smul
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SMULcc
+  :mnemonic: smulcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SETHI
+  :mnemonic: sethi
+  :parameters:
+  - const22
+  - regrd
+- :opcode: ''
+  :mnemonic: sethi
+  :parameters:
+  - "%hi(value)"
+  - regrd
+- :opcode: SLL
+  :mnemonic: sll
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SRL
+  :mnemonic: srl
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SRA
+  :mnemonic: sra
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: STB
+  :mnemonic: stb
+  :parameters:
+  - regrd
+  - "[address]"
+- :opcode: STH
+  :mnemonic: sth
+  :parameters:
+  - regrd
+  - "[address]"
+- :opcode: ST
+  :mnemonic: st
+  :parameters:
+  - regrd
+  - "[address]"
+- :opcode: STD
+  :mnemonic: std
+  :parameters:
+  - regrd
+  - "[address]"
+- :opcode: STF
+  :mnemonic: st
+  :parameters:
+  - fregrd
+  - "[address]"
+- :opcode: STDF
+  :mnemonic: std
+  :parameters:
+  - fregrd
+  - "[address]"
+- :opcode: STFSR
+  :mnemonic: st
+  :parameters:
+  - "%fsr"
+  - "[address]"
+- :opcode: STDFQ
+  :mnemonic: std
+  :parameters:
+  - "%fq"
+  - "[address]"
+- :opcode: STC
+  :mnemonic: st
+  :parameters:
+  - cregrd
+  - "[address]"
+- :opcode: STDC
+  :mnemonic: std
+  :parameters:
+  - cregrd
+  - "[address]"
+- :opcode: STCSR
+  :mnemonic: st
+  :parameters:
+  - "%csr"
+  - "[address]"
+- :opcode: STDCQ
+  :mnemonic: std
+  :parameters:
+  - "%cq"
+  - "[address]"
+- :opcode: STBA
+  :mnemonic: stba
+  :parameters:
+  - regrd[regaddr]asi
+- :opcode: STHA
+  :mnemonic: stha
+  :parameters:
+  - regrd[regaddr]asi
+- :opcode: STA
+  :mnemonic: sta
+  :parameters:
+  - regrd
+  - "[regaddr]asi"
+- :opcode: STDA
+  :mnemonic: stda
+  :parameters:
+  - regrd
+  - "[regaddr]asi"
+- :opcode: SUB
+  :mnemonic: sub
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SUBcc
+  :mnemonic: subcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SUBX
+  :mnemonic: subx
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SUBXcc
+  :mnemonic: subxcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: SWAPSWAPA
+  :mnemonic: swapswapa
+  :parameters:
+  - "[address]"
+  - regrd[regaddr]asi
+  - regrd
+- :opcode: Ticc
+  :mnemonic: tn
+  :parameters:
+  - software_trap_number
+- :opcode: ''
+  :mnemonic: tne
+  :parameters:
+  - software_trap_number
+- :opcode: ''
+  :mnemonic: tetgtletgetltgu
+  :parameters:
+  - software_trap_numbersoftware_trap_numbersoftware_trap_numbersoftware_trap_numbersoftware_trap_numbersoftware_trap_number
+- :opcode: ''
+  :mnemonic: tleu
+  :parameters:
+  - software_trap_number
+- :opcode: ''
+  :mnemonic: tlutgeutpostneg
+  :parameters:
+  - software_trap_numbersoftware_trap_numbersoftware_trap_numbersoftware_trap_number
+- :opcode: ''
+  :mnemonic: tvctvsta
+  :parameters:
+  - software_trap_numbersoftware_trap_numbersoftware_trap_number
+- :opcode: TADDccTSUBcc
+  :mnemonic: taddcctsubcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrdregrs1
+  - reg_or_imm
+  - regrd
+- :opcode: TADDccTVTSUBccTV
+  :mnemonic: taddcctvtsubcctv
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrdregrs1
+  - reg_or_imm
+  - regrd
+- :opcode: UDIV
+  :mnemonic: udiv
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: UDIVcc
+  :mnemonic: udivcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: UMUL
+  :mnemonic: umul
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: UMULcc
+  :mnemonic: umulcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrd
+- :opcode: UNIMP
+  :mnemonic: unimp
+  :parameters:
+  - const22
+- :opcode: WRASR
+  :mnemonic: wr
+  :parameters:
+  - reg_or_imm
+  - "%asrnrs1"
+- :opcode: WRY
+  :mnemonic: wr
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - "%y"
+- :opcode: WRPSR
+  :mnemonic: wr
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - "%psr"
+- :opcode: WRWIM
+  :mnemonic: wr
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - "%wim"
+- :opcode: WRTBR
+  :mnemonic: wr
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - "%tbr"
+- :opcode: XNORXNORcc
+  :mnemonic: xnorxnorcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrdregrs1
+  - reg_or_imm
+  - regrd
+- :opcode: XORXORcc
+  :mnemonic: xorxorcc
+  :parameters:
+  - regrs1
+  - reg_or_imm
+  - regrdregrs1
+  - reg_or_imm
+  - regrd
