@@ -10,9 +10,10 @@
 #include "rtl.h"
 #include "BinaryFile.h"		// For SymbolByAddress()
 #include "boomerang.h"
-if(lines.at(0) == RETT){
-rett
-		/*
+
+DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
+	if(lines.at(0) == RETT){
+			/*
 		 * Just a ret (non leaf)
 		 */
 		result.rtl = new RTL(pc, stmts);
@@ -21,10 +22,9 @@ rett
 		SHOW_ASM("ret_")
 		DEBUG_STMTS
 
-}
-if(lines.at(0) == JMPL){
-jmpl
-		/*
+	}
+	if(lines.at(0) == JMPL){
+			/*
 		 * JMPL, with rd != %o7, i.e. register jump
 		 * Note: if rd==%o7, then would be handled with the call_ arm
 		 */
@@ -46,41 +46,36 @@ jmpl
 	//							//
 	//	//	//	//	//	//	//	//
 
-}
-if(lines.at(0) == SAVE){
-save
-		// Decided to treat SAVE as an ordinary instruction
+	}
+	if(lines.at(0) == SAVE){
+			// Decided to treat SAVE as an ordinary instruction
 		// That is, use the large list of effects from the SSL file, and
 		// hope that optimisation will vastly help the common cases
 		stmts = instantiate(pc, "SAVE", DIS_RS1, DIS_ROI, DIS_RD);
 
-}
-if(lines.at(0) == RESTORE){
-restore
-		// Decided to treat RESTORE as an ordinary instruction
+	}
+	if(lines.at(0) == RESTORE){
+			// Decided to treat RESTORE as an ordinary instruction
 		stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);
 
-}
-if(lines.at(0) == NOP){
-nop
-		result.type = NOP;
+	}
+	if(lines.at(0) == NOP){
+			result.type = NOP;
 		stmts = instantiate(pc,	 name);
 
-}
-if(lines.at(0) == SETHI){
-sethi
-		stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
+	}
+	if(lines.at(0) == SETHI){
+			stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
 
-}
-if(lines.at(0) == ){
-sethi
-		stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
+	}
+	if(lines.at(0) == ){
+			stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
 
-}
-if(lines.at(0) == UNIMP){
-unimp
-		unused(n);
+	}
+	if(lines.at(0) == UNIMP){
+			unused(n);
 		stmts = NULL;
 		result.valid = false;
 
+	}
 }

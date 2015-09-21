@@ -12,20 +12,20 @@ class DecoderParser
 				@content << line 
 			end
 		end
+		@content <<"\nDecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {\n"
 		instructions = parse_inst (file)
 		instructions.each do |inst|
 			@mapper.each do |m|
 				if m[:mnemonic].downcase =~ /#{inst[:name].downcase}/
 					opcode = m[:opcode]
-
-					@content << "if(lines.at(0) == #{opcode}){\n"
-					@content << m[:mnemonic ] << "\n"
-					@content << inst[:codes] << "}\n"
+					@content << "\tif(lines.at(0) == #{opcode}){\n"
+					@content << "\t"<< inst[:codes] << "\t}\n"
 
 				end
 			end
 			
 		end
+		@content << "}\n"
 	end
 
 	def read_instruction_file file
