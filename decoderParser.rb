@@ -19,7 +19,7 @@ class DecoderParser
 					opcode = m[:opcode]
 
 					@content << "if(lines.at(0) == #{opcode}){\n"
-					@content << m[:mnemonic] << "\n"
+					@content << m[:mnemonic ] << "\n"
 					@content << inst[:codes] << "}\n"
 
 				end
