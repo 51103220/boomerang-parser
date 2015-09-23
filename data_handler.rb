@@ -35,3 +35,20 @@ def transform_handler
 		file.puts sparc_transform.to_yaml
 	end	
 end
+def register_handle
+    sparc_register = []
+    reg_count = 0
+    File.open("./rawdata/sparcreg").each do |line|
+    	line.split(" ").each do |element|
+    		sparc_register<<Hash[:reg_name => "#{element[1..3]}".gsub(/\s+/, ""), :reg_no => "#{reg_count}".gsub(/\s+/, "")]
+    		reg_count = reg_count + 1
+    	end
+
+    end
+
+    File.open("./input/sparcreg", "w") do |file|
+   		file.puts sparc_register.to_yaml
+   	end
+
+end
+register_handle

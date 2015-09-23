@@ -34,7 +34,8 @@ class DecoderParser
 		rescue
 			raise "Can't load #{@machine}mapper"
 		end
-	end
+	end 
+
 
 	def parse file
 		if file =~ /\.\/input\/(?<machine>[a-zA-Z0-9_]+)decoder.m/
@@ -42,15 +43,35 @@ class DecoderParser
 		end
 		read_instruction_file "./input/#{@machine}mapper"
 		read_decoder_file(file)
+		read_register_transform "./input/#{@machine}reg"
 		output = "./output/#{@machine}AssembllyDecoder.cpp"
 		write_to_output(output)
 	end
+
+
+	def read_register_transform file
+		begin
+			transform = YAML.load(File.read(file))
+		rescue
+			raise "Can't load #{file}"
+		end
+		@content <<"\nExp* SparcDecoder::dis_Register(std::string str){\n"
+		#if(str=="%SP") return Location::regOf(14);
+		transform.each do |line|
+			@content << "\tif(str == #{line[:reg_name].upcase}) return Location::regOf(#{line[:reg_no]});\n"
+		end
+		@content << "\treturn NULL;\n"
+		@content << "}\n"
+
+	end
+
 
 	def write_to_output file
 		File.open(file, "w") do |f|
 			f.puts @content
 		end
 	end
+
 	private :read_decoder_file, :read_instruction_file, :write_to_output
 end
 

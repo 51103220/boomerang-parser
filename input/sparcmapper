@@ -111,72 +111,72 @@
 - :opcode: LDSB
   :mnemonic: ldsb
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - regrd
 - :opcode: LDSH
   :mnemonic: ldsh
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - regrd
 - :opcode: LDSTUB
   :mnemonic: ldstub
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - regrd
 - :opcode: LDUB
   :mnemonic: ldub
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - regrd
 - :opcode: LDUH
   :mnemonic: lduh
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - regrd
 - :opcode: LD
   :mnemonic: ld
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - regrd
 - :opcode: LDD
   :mnemonic: ldd
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - regrd
 - :opcode: LDF
   :mnemonic: ld
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - fregrd
 - :opcode: LDFSR
   :mnemonic: ld
   :parameters:
-  - "[address]"
-  - "%fsr"
+  - ! '[address]'
+  - ! '%fsr'
 - :opcode: LDDF
   :mnemonic: ldd
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - fregrd
 - :opcode: LDC
   :mnemonic: ld
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - cregrd
 - :opcode: LDCSR
   :mnemonic: ld
   :parameters:
-  - "[address]"
-  - "%csr"
+  - ! '[address]'
+  - ! '%csr'
 - :opcode: LDDC
   :mnemonic: ldd
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - cregrd
 - :opcode: LDSBALDSHALDUBALDUHALDA
   :mnemonic: ldsbaldshaldubalduhalda
   :parameters:
-  - "[regaddr]asi"
+  - ! '[regaddr]asi'
   - regrd[regaddr]asi
   - regrd[regaddr]asi
   - regrd[regaddr]asi
@@ -185,12 +185,12 @@
 - :opcode: LDDA
   :mnemonic: ldda
   :parameters:
-  - "[regaddr]asi"
+  - ! '[regaddr]asi'
   - regrd
 - :opcode: LDSTUBA
   :mnemonic: ldstuba
   :parameters:
-  - "[regaddr]asi"
+  - ! '[regaddr]asi'
   - regrd
 - :opcode: MULScc
   :mnemonic: mulscc
@@ -216,27 +216,27 @@
 - :opcode: RDASR
   :mnemonic: rd
   :parameters:
-  - "%asrnrs1"
+  - ! '%asrnrs1'
   - regrd
 - :opcode: RDY
   :mnemonic: rd
   :parameters:
-  - "%y"
+  - ! '%y'
   - regrd
 - :opcode: RDPSR
   :mnemonic: rd
   :parameters:
-  - "%psr"
+  - ! '%psr'
   - regrd
 - :opcode: RDWIM
   :mnemonic: rd
   :parameters:
-  - "%wim"
+  - ! '%wim'
   - regrd
 - :opcode: RDTBR
   :mnemonic: rd
   :parameters:
-  - "%tbr"
+  - ! '%tbr'
   - regrd
 - :opcode: RESTORE
   :mnemonic: restore
@@ -286,7 +286,7 @@
 - :opcode: ''
   :mnemonic: sethi
   :parameters:
-  - "%hi(value)"
+  - ! '%hi(value)'
   - regrd
 - :opcode: SLL
   :mnemonic: sll
@@ -310,62 +310,62 @@
   :mnemonic: stb
   :parameters:
   - regrd
-  - "[address]"
+  - ! '[address]'
 - :opcode: STH
   :mnemonic: sth
   :parameters:
   - regrd
-  - "[address]"
+  - ! '[address]'
 - :opcode: ST
   :mnemonic: st
   :parameters:
   - regrd
-  - "[address]"
+  - ! '[address]'
 - :opcode: STD
   :mnemonic: std
   :parameters:
   - regrd
-  - "[address]"
+  - ! '[address]'
 - :opcode: STF
   :mnemonic: st
   :parameters:
   - fregrd
-  - "[address]"
+  - ! '[address]'
 - :opcode: STDF
   :mnemonic: std
   :parameters:
   - fregrd
-  - "[address]"
+  - ! '[address]'
 - :opcode: STFSR
   :mnemonic: st
   :parameters:
-  - "%fsr"
-  - "[address]"
+  - ! '%fsr'
+  - ! '[address]'
 - :opcode: STDFQ
   :mnemonic: std
   :parameters:
-  - "%fq"
-  - "[address]"
+  - ! '%fq'
+  - ! '[address]'
 - :opcode: STC
   :mnemonic: st
   :parameters:
   - cregrd
-  - "[address]"
+  - ! '[address]'
 - :opcode: STDC
   :mnemonic: std
   :parameters:
   - cregrd
-  - "[address]"
+  - ! '[address]'
 - :opcode: STCSR
   :mnemonic: st
   :parameters:
-  - "%csr"
-  - "[address]"
+  - ! '%csr'
+  - ! '[address]'
 - :opcode: STDCQ
   :mnemonic: std
   :parameters:
-  - "%cq"
-  - "[address]"
+  - ! '%cq'
+  - ! '[address]'
 - :opcode: STBA
   :mnemonic: stba
   :parameters:
@@ -378,12 +378,12 @@
   :mnemonic: sta
   :parameters:
   - regrd
-  - "[regaddr]asi"
+  - ! '[regaddr]asi'
 - :opcode: STDA
   :mnemonic: stda
   :parameters:
   - regrd
-  - "[regaddr]asi"
+  - ! '[regaddr]asi'
 - :opcode: SUB
   :mnemonic: sub
   :parameters:
@@ -411,7 +411,7 @@
 - :opcode: SWAPSWAPA
   :mnemonic: swapswapa
   :parameters:
-  - "[address]"
+  - ! '[address]'
   - regrd[regaddr]asi
   - regrd
 - :opcode: Ticc
@@ -486,31 +486,31 @@
   :mnemonic: wr
   :parameters:
   - reg_or_imm
-  - "%asrnrs1"
+  - ! '%asrnrs1'
 - :opcode: WRY
   :mnemonic: wr
   :parameters:
   - regrs1
   - reg_or_imm
-  - "%y"
+  - ! '%y'
 - :opcode: WRPSR
   :mnemonic: wr
   :parameters:
   - regrs1
   - reg_or_imm
-  - "%psr"
+  - ! '%psr'
 - :opcode: WRWIM
   :mnemonic: wr
   :parameters:
   - regrs1
   - reg_or_imm
-  - "%wim"
+  - ! '%wim'
 - :opcode: WRTBR
   :mnemonic: wr
   :parameters:
   - regrs1
   - reg_or_imm
-  - "%tbr"
+  - ! '%tbr'
 - :opcode: XNORXNORcc
   :mnemonic: xnorxnorcc
   :parameters:
