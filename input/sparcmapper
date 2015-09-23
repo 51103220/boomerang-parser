@@ -316,8 +316,8 @@
   :parameters:
   - regrd
   - ! '[address]'
-- :opcode: ST
-  :mnemonic: st
+- :opcode: ST,STD
+  :mnemonic: sto_greg
   :parameters:
   - regrd
   - ! '[address]'
@@ -527,3 +527,6 @@
   - regrdregrs1
   - reg_or_imm
   - regrd
+- :opcode: JMPL
+  :mnemonic: call_
+  :parameters: []

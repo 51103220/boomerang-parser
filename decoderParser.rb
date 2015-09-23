@@ -8,7 +8,7 @@ class DecoderParser
 	end
 	def read_decoder_file file
 		File.open(file).each do |line|
-			if line =~ /#include./ 
+			if line =~ /#include./ or line =~ /#if./ or line =~ /#endif/ or line =~ /#define/#Get line begin with #include #if #define #endif
 				@content << line 
 			end
 		end
@@ -18,8 +18,15 @@ class DecoderParser
 			@mapper.each do |m|
 				if m[:mnemonic].downcase =~ /#{inst[:name].downcase}/
 					opcode = m[:opcode]
-					@content << "\tif(lines.at(0) == #{opcode}){\n"
-					@content << "\t"<< inst[:codes] << "\t}\n"
+					opcode.split(",").each_with_index do |element, index|
+					if index == 0 	
+						@content << "\tif(lines.at(0) == \"#{element}\""
+					else
+						@content <<"||lines.at(0) == \"#{element}\""
+					end
+					end
+					@content << "){\n\t"<< inst[:codes] << "\t}\n"
+					
 
 				end
 			end
@@ -49,7 +56,7 @@ class DecoderParser
 	end
 
 
-	def read_register_transform file
+	def read_register_transform file #for transform register 
 		begin
 			transform = YAML.load(File.read(file))
 		rescue

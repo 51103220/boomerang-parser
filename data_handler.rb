@@ -52,3 +52,4 @@ def register_handle
 
 end
 register_handle
+mapper_handler

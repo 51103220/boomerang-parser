@@ -1,7 +1,9 @@
 /*Sparc Assemblly Decoder automatically generated*/
 #include <assert.h>
 #include <cstring>
+#if defined(_MSC_VER) && _MSC_VER <= 1100
 #include "signature.h"
+#endif
 #include "decoder.h"
 #include "exp.h"
 #include "prog.h"
@@ -10,9 +12,45 @@
 #include "rtl.h"
 #include "BinaryFile.h"		// For SymbolByAddress()
 #include "boomerang.h"
+#define DIS_ROI		(dis_RegImm(roi))
+#define DIS_ADDR	(dis_Eaddr(addr))
+#define DIS_RD		(dis_RegLhs(rd))
+#define DIS_RDR		(dis_RegRhs(rd))
+#define DIS_RS1		(dis_RegRhs(rs1))
+#define DIS_FS1S	(dis_RegRhs(fs1s+32))
+#define DIS_FS2S	(dis_RegRhs(fs2s+32))
+#define DIS_FDS		(dis_RegLhs(fds+32))
+#define DIS_FS1D	(dis_RegRhs((fs1d>>1)+64))
+#define DIS_FS2D	(dis_RegRhs((fs2d>>1)+64))
+#define DIS_FDD		(dis_RegLhs((fdd>>1)+64))
+#define DIS_FDQ		(dis_RegLhs((fdq>>2)+80))
+#define DIS_FS1Q	(dis_RegRhs((fs1q>>2)+80))
+#define DIS_FS2Q	(dis_RegRhs((fs2q>>2)+80))
+#if 0		// Can't do this without patterns. It was a bit of a hack anyway
+#endif
 
 DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
-	if(lines.at(0) == RETT){
+	if(lines.at(0) == "JMPL"){
+			/*
+		 * A JMPL with rd == %o7, i.e. a register call
+		 */
+		CallStatement* newCall = new CallStatement;
+
+		// Record the fact that this is a computed call
+		newCall->setIsComputed();
+
+		// Set the destination expression
+		newCall->setDest(dis_Eaddr(addr));
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(newCall);
+		result.type = DD;
+
+		SHOW_ASM("call_ " << dis_Eaddr(addr))
+		DEBUG_STMTS
+
+
+	}
+	if(lines.at(0) == "RETT"){
 			/*
 		 * Just a ret (non leaf)
 		 */
@@ -23,7 +61,7 @@ DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
 		DEBUG_STMTS
 
 	}
-	if(lines.at(0) == JMPL){
+	if(lines.at(0) == "JMPL"){
 			/*
 		 * JMPL, with rd != %o7, i.e. register jump
 		 * Note: if rd==%o7, then would be handled with the call_ arm
@@ -47,32 +85,37 @@ DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
 	//	//	//	//	//	//	//	//
 
 	}
-	if(lines.at(0) == SAVE){
+	if(lines.at(0) == "SAVE"){
 			// Decided to treat SAVE as an ordinary instruction
 		// That is, use the large list of effects from the SSL file, and
 		// hope that optimisation will vastly help the common cases
 		stmts = instantiate(pc, "SAVE", DIS_RS1, DIS_ROI, DIS_RD);
 
 	}
-	if(lines.at(0) == RESTORE){
+	if(lines.at(0) == "RESTORE"){
 			// Decided to treat RESTORE as an ordinary instruction
 		stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);
 
 	}
-	if(lines.at(0) == NOP){
+	if(lines.at(0) == "NOP"){
 			result.type = NOP;
 		stmts = instantiate(pc,	 name);
 
 	}
-	if(lines.at(0) == SETHI){
+	if(lines.at(0) == "SETHI"){
 			stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
 
 	}
-	if(lines.at(0) == ){
+){
 			stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
 
 	}
-	if(lines.at(0) == UNIMP){
+	if(lines.at(0) == "ST"||lines.at(0) == "STD"){
+			// Note: RD is on the "right hand side" only for stores
+		stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);
+
+	}
+	if(lines.at(0) == "UNIMP"){
 			unused(n);
 		stmts = NULL;
 		result.valid = false;
