@@ -30,7 +30,8 @@
 #endif
 
 DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
-	if(lines.at(0) == "JMPL"){
+	
+	if(lines.at(0) == "JMPL"{
 			/*
 		 * A JMPL with rd == %o7, i.e. a register call
 		 */
@@ -50,7 +51,7 @@ DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
 
 
 	}
-	if(lines.at(0) == "RETT"){
+	if(lines.at(0) == "RETT"{
 			/*
 		 * Just a ret (non leaf)
 		 */
@@ -61,7 +62,7 @@ DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
 		DEBUG_STMTS
 
 	}
-	if(lines.at(0) == "JMPL"){
+	if(lines.at(0) == "JMPL"{
 			/*
 		 * JMPL, with rd != %o7, i.e. register jump
 		 * Note: if rd==%o7, then would be handled with the call_ arm
@@ -85,28 +86,28 @@ DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
 	//	//	//	//	//	//	//	//
 
 	}
-	if(lines.at(0) == "SAVE"){
+	if(lines.at(0) == "SAVE"{
 			// Decided to treat SAVE as an ordinary instruction
 		// That is, use the large list of effects from the SSL file, and
 		// hope that optimisation will vastly help the common cases
 		stmts = instantiate(pc, "SAVE", DIS_RS1, DIS_ROI, DIS_RD);
 
 	}
-	if(lines.at(0) == "RESTORE"){
+	if(lines.at(0) == "RESTORE"{
 			// Decided to treat RESTORE as an ordinary instruction
 		stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);
 
 	}
-	if(lines.at(0) == "NOP"){
+	if(lines.at(0) == "NOP"{
 			result.type = NOP;
 		stmts = instantiate(pc,	 name);
 
 	}
-	if(lines.at(0) == "SETHI"){
+	if(lines.at(0) == "SETHI"{
 			stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
 
 	}
-){
+{
 			stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
 
 	}
@@ -115,7 +116,7 @@ DecodeResult& SparcDecoder::decodeAssembly (ADDRESS pc, std::string line) {
 		stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);
 
 	}
-	if(lines.at(0) == "UNIMP"){
+	if(lines.at(0) == "UNIMP"{
 			unused(n);
 		stmts = NULL;
 		result.valid = false;

@@ -19,18 +19,16 @@ class DecoderParser
 				if m[:mnemonic].downcase =~ /#{inst[:name].downcase}/
 					opcode = m[:opcode]
 					opcode.split(",").each_with_index do |element, index|
-					if index == 0 	
-						@content << "\tif(lines.at(0) == \"#{element}\""
-					else
-						@content <<"||lines.at(0) == \"#{element}\""
+						if index == 0 	
+							@content << "\tif(lines.at(0) == \"#{element}\""
+						else
+							@content << "||lines.at(0) == \"#{element}\""
+							@content << ")"
+						end
 					end
-					end
-					@content << "){\n\t"<< inst[:codes] << "\t}\n"
-					
-
+					@content << "{\n\t"<< inst[:codes] << "\t}\n"
 				end
 			end
-			
 		end
 		@content << "}\n"
 	end
