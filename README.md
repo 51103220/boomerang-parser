@@ -1,12 +1,13 @@
 # boomerang-parser 
-Incomplete parser for Boomerang Framework <br>
-Install a gem before running tool: $ gem install roo <br>
-1. Run: sudo ruby decoderParser.rb <br>
-2. Output: output folder <br>
-3. Input: input folder (Change input in decoderParser.rb (line 58)) <br>
-4. -------------<br>
-5. data_handler.rb : Handle Machine assembly instructions into YAML format (stored in input folder, ex: sparcmapper) <br>
-6. mParser.rb: Parse functions and instructions in cpp file ( ex sparcdecoder.m) <br>
-7. sparc.ods : input of data_handler.rb - Sparc assembly instruction stylesheet (open by LibreOffice calc) <br>
-8. decoderParser.rb : main file 
-
+Detail: Toolkit for Boomerang Decompiler Framework <br>
+Feature: automatically generate decoder file from .spec files and .m files <br>
+# installation  
+1. Ruby: https://www.ruby-lang.org/en/documentation/installation <br>
+2. Parslet Gem (commandline): gem install parslet <br>
+# files and directories
+1. input : must have at least one .m file and at least one .spec file <br>
+2. output : decoder.cpp is the final result, m_result is the result of parsing .m files, spec_result is the result of .spec files <br>
+3. main.rb : main Program 
+4. specParser.rb : parser Class 
+# run
+run this toolkit by command: sudo ruby main.rb <br>
