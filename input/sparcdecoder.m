@@ -78,6 +78,7 @@ void SparcDecoder::unused(int x)
  *				   name - instruction name (e.g. "BNE,a", or "BPNE")
  * RETURNS:		   Pointer to newly created RTL, or NULL if invalid
  *============================================================================*/
+static DecodeResult result;
 RTL* SparcDecoder::createBranchRtl(ADDRESS pc, std::list<Statement*>* stmts, const char* name) {
 	RTL* res = new RTL(pc, stmts);
 	BranchStatement* br = new BranchStatement();
@@ -719,15 +720,11 @@ Exp* SparcDecoder::dis_Eaddr(ADDRESS pc, int ignore /* = 0 */)
 	| indirectA(rs1) =>
 		expr = Location::regOf(rs1);
 	| indexA(rs1, rs2) =>
-		expr = new Binary(opPlus,
-			Location::regOf(rs1),
-			Location::regOf(rs2));
+		expr = new Binary(opPlus,Location::regOf(rs1),Location::regOf(rs2));
 	| absoluteA(i) =>
 		expr = new Const((int)i);
 	| dispA(rs1,i) =>
-		expr = new Binary(opPlus,
-			Location::regOf(rs1),
-			new Const((int)i));
+		expr = new Binary(opPlus,Location::regOf(rs1), new Const((int)i));
 	endmatch
 
 	return expr;

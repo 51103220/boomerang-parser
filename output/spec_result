@@ -1,0 +1,1540 @@
+[{:tokens=>
+   {:token_name=>instruction,
+    :width=>32,
+    :field_specs=>
+     [{:field_name=>inst, :low_bit=>0, :high_bit=>31},
+      {:field_name=>op, :low_bit=>30, :high_bit=>31},
+      {:field_name=>disp30, :low_bit=>0, :high_bit=>29},
+      {:field_name=>rd, :low_bit=>25, :high_bit=>29},
+      {:field_name=>op2, :low_bit=>22, :high_bit=>24},
+      {:field_name=>imm22, :low_bit=>0, :high_bit=>21},
+      {:field_name=>a, :low_bit=>29, :high_bit=>29},
+      {:field_name=>cond, :low_bit=>25, :high_bit=>28},
+      {:field_name=>disp22, :low_bit=>0, :high_bit=>21},
+      {:field_name=>op3, :low_bit=>19, :high_bit=>24},
+      {:field_name=>rs1, :low_bit=>14, :high_bit=>18},
+      {:field_name=>i, :low_bit=>13, :high_bit=>13},
+      {:field_name=>asi, :low_bit=>5, :high_bit=>12},
+      {:field_name=>rs2, :low_bit=>0, :high_bit=>4},
+      {:field_name=>simm13, :low_bit=>0, :high_bit=>12},
+      {:field_name=>opf, :low_bit=>5, :high_bit=>13},
+      {:field_name=>cd, :low_bit=>25, :high_bit=>29},
+      {:field_name=>disp19, :low_bit=>0, :high_bit=>18},
+      {:field_name=>cc01, :low_bit=>20, :high_bit=>21},
+      {:field_name=>fds, :low_bit=>25, :high_bit=>29},
+      {:field_name=>fs1s, :low_bit=>14, :high_bit=>18},
+      {:field_name=>fs2s, :low_bit=>0, :high_bit=>4},
+      {:field_name=>fdd, :low_bit=>25, :high_bit=>29},
+      {:field_name=>fs1d, :low_bit=>14, :high_bit=>18},
+      {:field_name=>fs2d, :low_bit=>0, :high_bit=>4},
+      {:field_name=>fdq, :low_bit=>25, :high_bit=>29},
+      {:field_name=>fs1q, :low_bit=>14, :high_bit=>18},
+      {:field_name=>fs2q, :low_bit=>0, :high_bit=>4}]}},
+ {:fields=>
+   {:fieldinfo_spec=>
+     [{:field_specifier=>
+        [{:field_name=>rd}, {:field_name=>rs1}, {:field_name=>rs2}],
+       :field_item=>
+        [{:item=>"%g0"},
+         {:item=>"%g1"},
+         {:item=>"%g2"},
+         {:item=>"%g3"},
+         {:item=>"%g4"},
+         {:item=>"%g5"},
+         {:item=>"%g6"},
+         {:item=>"%g7"},
+         {:item=>"%o0"},
+         {:item=>"%o1"},
+         {:item=>"%o2"},
+         {:item=>"%o3"},
+         {:item=>"%o4"},
+         {:item=>"%o5"},
+         {:item=>"%sp"},
+         {:item=>"%o7"},
+         {:item=>"%l0"},
+         {:item=>"%l1"},
+         {:item=>"%l2"},
+         {:item=>"%l3"},
+         {:item=>"%l4"},
+         {:item=>"%l5"},
+         {:item=>"%l6"},
+         {:item=>"%l7"},
+         {:item=>"%i0"},
+         {:item=>"%i1"},
+         {:item=>"%i2"},
+         {:item=>"%i3"},
+         {:item=>"%i4"},
+         {:item=>"%i5"},
+         {:item=>"%fp"},
+         {:item=>"%i7"}]},
+      {:field_specifier=>
+        [{:field_name=>fds}, {:field_name=>fs1s}, {:field_name=>fs2s}],
+       :field_item=>
+        [{:item=>"%f0"},
+         {:item=>"%f1"},
+         {:item=>"%f2"},
+         {:item=>"%f3"},
+         {:item=>"%f4"},
+         {:item=>"%f5"},
+         {:item=>"%f6"},
+         {:item=>"%f7"},
+         {:item=>"%f8"},
+         {:item=>"%f9"},
+         {:item=>"%f10"},
+         {:item=>"%f11"},
+         {:item=>"%f12"},
+         {:item=>"%f13"},
+         {:item=>"%f14"},
+         {:item=>"%f15"},
+         {:item=>"%f16"},
+         {:item=>"%f17"},
+         {:item=>"%f18"},
+         {:item=>"%f19"},
+         {:item=>"%f20"},
+         {:item=>"%f21"},
+         {:item=>"%f22"},
+         {:item=>"%f23"},
+         {:item=>"%f24"},
+         {:item=>"%f25"},
+         {:item=>"%f26"},
+         {:item=>"%f27"},
+         {:item=>"%f28"},
+         {:item=>"%f29"},
+         {:item=>"%f30"},
+         {:item=>"%f31"}]},
+      {:field_specifier=>
+        [{:field_name=>fdd}, {:field_name=>fs1d}, {:field_name=>fs2d}],
+       :field_item=>
+        [{:item=>"%f0to1"},
+         {:item=>"a"},
+         {:item=>"%f2to3"},
+         {:item=>"b"},
+         {:item=>"%f4to5"},
+         {:item=>"c"},
+         {:item=>"%f6to7"},
+         {:item=>"d"},
+         {:item=>"%f8to9"},
+         {:item=>"e"},
+         {:item=>"%f10to11"},
+         {:item=>"f"},
+         {:item=>"%f12to13"},
+         {:item=>"g"},
+         {:item=>"%f14to15"},
+         {:item=>"h"},
+         {:item=>"%f16to17"},
+         {:item=>"i"},
+         {:item=>"%f18to19"},
+         {:item=>"j"},
+         {:item=>"%f20to21"},
+         {:item=>"k"},
+         {:item=>"%f22to23"},
+         {:item=>"l"},
+         {:item=>"%f24to25"},
+         {:item=>"m"},
+         {:item=>"%f26to27"},
+         {:item=>"n"},
+         {:item=>"%f28to29"},
+         {:item=>"o"},
+         {:item=>"%f30to31"},
+         {:item=>"p"}]},
+      {:field_specifier=>
+        [{:field_name=>fdq}, {:field_name=>fs1q}, {:field_name=>fs2q}],
+       :field_item=>
+        [{:item=>"%f0to3"},
+         {:item=>"q"},
+         {:item=>"r"},
+         {:item=>"s"},
+         {:item=>"%f4to7"},
+         {:item=>"t"},
+         {:item=>"u"},
+         {:item=>"v"},
+         {:item=>"%f8to11"},
+         {:item=>"w"},
+         {:item=>"x"},
+         {:item=>"y"},
+         {:item=>"%f12to15"},
+         {:item=>"z"},
+         {:item=>"A"},
+         {:item=>"B"},
+         {:item=>"%f16to19"},
+         {:item=>"C"},
+         {:item=>"D"},
+         {:item=>"E"},
+         {:item=>"%f20to23"},
+         {:item=>"F"},
+         {:item=>"G"},
+         {:item=>"H"},
+         {:item=>"%f24to27"},
+         {:item=>"I"},
+         {:item=>"J"},
+         {:item=>"K"},
+         {:item=>"%f28to31"},
+         {:item=>"L"},
+         {:item=>"M"},
+         {:item=>"N"}]},
+      {:field_specifier=>{:field_name=>cd},
+       :field_item=>
+        [{:item=>"%c0"},
+         {:item=>"%c1"},
+         {:item=>"%c2"},
+         {:item=>"%c3"},
+         {:item=>"%c4"},
+         {:item=>"%c5"},
+         {:item=>"%c6"},
+         {:item=>"%c7"},
+         {:item=>"%c8"},
+         {:item=>"%c9"},
+         {:item=>"%c10"},
+         {:item=>"%c11"},
+         {:item=>"%c12"},
+         {:item=>"%c13"},
+         {:item=>"%c14"},
+         {:item=>"%c15"},
+         {:item=>"%c16"},
+         {:item=>"%c17"},
+         {:item=>"%c18"},
+         {:item=>"%c19"},
+         {:item=>"%c20"},
+         {:item=>"%c21"},
+         {:item=>"%c22"},
+         {:item=>"%c23"},
+         {:item=>"%c24"},
+         {:item=>"%c25"},
+         {:item=>"%c26"},
+         {:item=>"%c27"},
+         {:item=>"%c28"},
+         {:item=>"%c29"},
+         {:item=>"%c30"},
+         {:item=>"%c31"}]}]}},
+ {:fields=>
+   {:fieldinfo_spec=>
+     [{:field_specifier=>{:field_name=>a},
+       :field_item=>[{:item=>""}, {:item=>",a"}]}]}},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>
+        [{:pattern_name=>TABLE_F2},
+         {:pattern_name=>CALL},
+         {:pattern_name=>TABLE_F3},
+         {:pattern_name=>TABLE_F4}],
+       :list_pattern=>
+        {:pattern=>
+          {:constraint=>
+            {:field_name=>op,
+             :operator=>=,
+             :generating_expression=>{:lo=>0, :high=>3}}}}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>
+        [{:pattern_name=>UNIMP},
+         {:pattern_name=>Bpcc},
+         {:pattern_name=>Bicc},
+         {:pattern_name=>SETHI},
+         {:pattern_name=>FBfcc},
+         {:pattern_name=>CBccc}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>TABLE_F2}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>op2,
+              :operator=>=,
+              :generating_expression=>
+               [{:hecxa=>0},
+                {:hecxa=>1},
+                {:hecxa=>2},
+                {:hecxa=>4},
+                {:hecxa=>6},
+                {:hecxa=>7}]}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>NOP},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>SETHI}},
+         {:pattern=>
+           {:constraint=>{:field_name=>rd, :operator=>=, :expr=>{:lhs=>0}}}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>imm22, :operator=>=, :expr=>{:lhs=>0}}}}]}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>
+        [{:pattern_name=>ADD},
+         {:pattern_name=>ADDcc},
+         {:pattern_name=>TADDcc},
+         {:pattern_name=>WRxxx},
+         {:pattern_name=>AND},
+         {:pattern_name=>ANDcc},
+         {:pattern_name=>TSUBcc},
+         {:pattern_name=>WRPSR},
+         {:pattern_name=>OR},
+         {:pattern_name=>ORcc},
+         {:pattern_name=>TADDccTV},
+         {:pattern_name=>WRWIM},
+         {:pattern_name=>XOR},
+         {:pattern_name=>XORcc},
+         {:pattern_name=>TSUBccTV},
+         {:pattern_name=>WRTBR},
+         {:pattern_name=>SUB},
+         {:pattern_name=>SUBcc},
+         {:pattern_name=>MULScc},
+         {:pattern_name=>FPop1},
+         {:pattern_name=>ANDN},
+         {:pattern_name=>ANDNcc},
+         {:pattern_name=>SLL},
+         {:pattern_name=>FPop2},
+         {:pattern_name=>ORN},
+         {:pattern_name=>ORNcc},
+         {:pattern_name=>SRL},
+         {:pattern_name=>CPop1},
+         {:pattern_name=>XNOR},
+         {:pattern_name=>XNORcc},
+         {:pattern_name=>SRA},
+         {:pattern_name=>CPop2},
+         {:pattern_name=>ADDX},
+         {:pattern_name=>ADDXcc},
+         {:pattern_name=>RDxxx},
+         {:pattern_name=>JMPL},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>RDPSR},
+         {:pattern_name=>RETURN},
+         {:pattern_name=>UMUL},
+         {:pattern_name=>UMULcc},
+         {:pattern_name=>RDWIM},
+         {:pattern_name=>Ticc},
+         {:pattern_name=>SMUL},
+         {:pattern_name=>SMULcc},
+         {:pattern_name=>RDTBR},
+         {:pattern_name=>FLUSH},
+         {:pattern_name=>SUBX},
+         {:pattern_name=>SUBXcc},
+         {:pattern_name=>MOVcc},
+         {:pattern_name=>SAVE},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>RESTORE},
+         {:pattern_name=>UDIV},
+         {:pattern_name=>UDIVcc},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>SDIV},
+         {:pattern_name=>SDIVcc},
+         {:pattern_name=>_},
+         {:pattern_name=>_}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>TABLE_F3}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>op3,
+              :operator=>=,
+              :generating_expression=>{:lo=>0, :high=>63, :columns=>4}}}}]}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>WRASR},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>WRxxx}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>rd, :operator=>!=, :expr=>{:lhs=>0}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>WRY},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>WRxxx}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>rd, :operator=>=, :expr=>{:lhs=>0}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>RDASR},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>RDxxx}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>rs1, :operator=>!=, :expr=>{:lhs=>0}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>RDY},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>RDxxx}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>rs1, :operator=>=, :expr=>{:lhs=>0}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>STBAR},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>RDxxx}},
+         {:pattern=>
+           {:constraint=>{:field_name=>rs1, :operator=>=, :integer=>15}}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>rd, :operator=>=, :expr=>{:lhs=>0}}}}]}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>
+        [{:pattern_name=>LD},
+         {:pattern_name=>LDA},
+         {:pattern_name=>LDF},
+         {:pattern_name=>LDC},
+         {:pattern_name=>LDUB},
+         {:pattern_name=>LDUBA},
+         {:pattern_name=>LDFSR},
+         {:pattern_name=>LDCSR},
+         {:pattern_name=>LDUH},
+         {:pattern_name=>LDUHA},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>LDD},
+         {:pattern_name=>LDDA},
+         {:pattern_name=>LDDF},
+         {:pattern_name=>LDDC},
+         {:pattern_name=>ST},
+         {:pattern_name=>STA},
+         {:pattern_name=>STF},
+         {:pattern_name=>STC},
+         {:pattern_name=>STB},
+         {:pattern_name=>STBA},
+         {:pattern_name=>STFSR},
+         {:pattern_name=>STCSR},
+         {:pattern_name=>STH},
+         {:pattern_name=>STHA},
+         {:pattern_name=>STDFQ},
+         {:pattern_name=>STDCQ},
+         {:pattern_name=>STD},
+         {:pattern_name=>STDA},
+         {:pattern_name=>STDF},
+         {:pattern_name=>STDC},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>LDSB},
+         {:pattern_name=>LDSBA},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>LDSH},
+         {:pattern_name=>LDSHA},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>LDSTUB},
+         {:pattern_name=>LDSTUBA},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>_},
+         {:pattern_name=>SWAP.},
+         {:pattern_name=>SWAPA},
+         {:pattern_name=>_},
+         {:pattern_name=>_}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>TABLE_F4}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>op3,
+              :operator=>=,
+              :generating_expression=>{:lo=>0, :high=>63, :columns=>4}}}}]}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>float2},
+       :list_pattern_name=>
+        [{:pattern_name=>FMOVs},
+         {:pattern_name=>FNEGs},
+         {:pattern_name=>FABSs},
+         {:pattern_name=>FSQRTs},
+         {:pattern_name=>FSQRTd},
+         {:pattern_name=>FSQRTq},
+         {:pattern_name=>FiTOs},
+         {:pattern_name=>FdTOs},
+         {:pattern_name=>FqTOs},
+         {:pattern_name=>FiTOd},
+         {:pattern_name=>FsTOd},
+         {:pattern_name=>FqTOd},
+         {:pattern_name=>FiTOq},
+         {:pattern_name=>FsTOq},
+         {:pattern_name=>FdTOq},
+         {:pattern_name=>FsTOi},
+         {:pattern_name=>FdTOi},
+         {:pattern_name=>FqTOi}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FPop1}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>opf,
+              :operator=>=,
+              :generating_expression=>
+               [{:hecxa=>0x1},
+                {:hecxa=>0x5},
+                {:hecxa=>0x9},
+                {:hecxa=>0x29},
+                {:hecxa=>0x2a},
+                {:hecxa=>0x2b},
+                {:hecxa=>0xc4},
+                {:hecxa=>0xc6},
+                {:hecxa=>0xc7},
+                {:hecxa=>0xc8},
+                {:hecxa=>0xc9},
+                {:hecxa=>0xcb},
+                {:hecxa=>0xcc},
+                {:hecxa=>0xcd},
+                {:hecxa=>0xce},
+                {:hecxa=>0xd1},
+                {:hecxa=>0xd2},
+                {:hecxa=>0xd3}]}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>float2s},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FMOVs}},
+         {:pattern=>{:field_name=>FNEGs}},
+         {:pattern=>{:field_name=>FABSs}},
+         {:pattern=>{:field_name=>FSQRTs}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>FTOs},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FiTOs}}, {:pattern=>{:field_name=>FsTOi}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>FTOd},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FiTOd}}, {:pattern=>{:field_name=>FsTOd}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>FTOq},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FiTOq}}, {:pattern=>{:field_name=>FsTOq}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>FdTO},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FdTOi}}, {:pattern=>{:field_name=>FdTOs}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>FqTO},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FqTOs}}, {:pattern=>{:field_name=>FqTOi}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>float3},
+       :list_pattern_name=>
+        [{:pattern_name=>FADDs},
+         {:pattern_name=>FADDd},
+         {:pattern_name=>FADDq},
+         {:pattern_name=>FSUBs},
+         {:pattern_name=>FSUBd},
+         {:pattern_name=>FSUBq},
+         {:pattern_name=>FMULs},
+         {:pattern_name=>FMULd},
+         {:pattern_name=>FMULq},
+         {:pattern_name=>FDIVs},
+         {:pattern_name=>FDIVd},
+         {:pattern_name=>FDIVq},
+         {:pattern_name=>FsMULd},
+         {:pattern_name=>FdMULq}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FPop1}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>opf,
+              :operator=>=,
+              :generating_expression=>
+               [{:hecxa=>0x41},
+                {:hecxa=>0x42},
+                {:hecxa=>0x43},
+                {:hecxa=>0x45},
+                {:hecxa=>0x46},
+                {:hecxa=>0x47},
+                {:hecxa=>0x49},
+                {:hecxa=>0x4a},
+                {:hecxa=>0x4b},
+                {:hecxa=>0x4d},
+                {:hecxa=>0x4e},
+                {:hecxa=>0x4f},
+                {:hecxa=>0x69},
+                {:hecxa=>0x6e}]}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>float3s},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FADDs}},
+         {:pattern=>{:field_name=>FSUBs}},
+         {:pattern=>{:field_name=>FMULs}},
+         {:pattern=>{:field_name=>FDIVs}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>float3d},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FADDd}},
+         {:pattern=>{:field_name=>FSUBd}},
+         {:pattern=>{:field_name=>FMULd}},
+         {:pattern=>{:field_name=>FDIVd}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>float3q},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FADDq}},
+         {:pattern=>{:field_name=>FSUBq}},
+         {:pattern=>{:field_name=>FMULq}},
+         {:pattern=>{:field_name=>FDIVq}}]}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>fcompares},
+       :list_pattern_name=>[{:pattern_name=>FCMPs}, {:pattern_name=>FCMPEs}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FPop2}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>opf,
+              :operator=>=,
+              :generating_expression=>[{:hecxa=>0x51}, {:hecxa=>0x55}]}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>fcompared},
+       :list_pattern_name=>[{:pattern_name=>FCMPd}, {:pattern_name=>FCMPEd}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FPop2}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>opf,
+              :operator=>=,
+              :generating_expression=>[{:hecxa=>0x52}, {:hecxa=>0x56}]}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>fcompareq},
+       :list_pattern_name=>[{:pattern_name=>FCMPq}, {:pattern_name=>FCMPEq}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FPop2}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>opf,
+              :operator=>=,
+              :generating_expression=>[{:hecxa=>0x53}, {:hecxa=>0x57}]}}}]}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>ibranch},
+       :list_pattern_name=>
+        [{:pattern_name=>BN},
+         {:pattern_name=>BE},
+         {:pattern_name=>BLE},
+         {:pattern_name=>BL},
+         {:pattern_name=>BLEU},
+         {:pattern_name=>BCS},
+         {:pattern_name=>BNEG},
+         {:pattern_name=>BVS},
+         {:pattern_name=>BA},
+         {:pattern_name=>BNE},
+         {:pattern_name=>BG},
+         {:pattern_name=>BGE},
+         {:pattern_name=>BGU},
+         {:pattern_name=>BCC},
+         {:pattern_name=>BPOS},
+         {:pattern_name=>BVC}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>Bicc}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>cond,
+              :operator=>=,
+              :generating_expression=>{:lo=>0, :high=>15}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>pbranch},
+       :list_pattern_name=>
+        [{:pattern_name=>BPN},
+         {:pattern_name=>BPE},
+         {:pattern_name=>BPLE},
+         {:pattern_name=>BPL},
+         {:pattern_name=>BPLEU},
+         {:pattern_name=>BPCS},
+         {:pattern_name=>BPNEG},
+         {:pattern_name=>BPVS},
+         {:pattern_name=>BPA},
+         {:pattern_name=>BPNE},
+         {:pattern_name=>BPG},
+         {:pattern_name=>BPGE},
+         {:pattern_name=>BPGU},
+         {:pattern_name=>BPCC},
+         {:pattern_name=>BPPOS},
+         {:pattern_name=>BPVC}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>Bpcc}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>cond,
+              :operator=>=,
+              :generating_expression=>{:lo=>0, :high=>15}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>fbranch},
+       :list_pattern_name=>
+        [{:pattern_name=>FBN},
+         {:pattern_name=>FBNE},
+         {:pattern_name=>FBLG},
+         {:pattern_name=>FBUL},
+         {:pattern_name=>FBL},
+         {:pattern_name=>FBUG},
+         {:pattern_name=>FBG},
+         {:pattern_name=>FBU},
+         {:pattern_name=>FBA},
+         {:pattern_name=>FBE},
+         {:pattern_name=>FBUE},
+         {:pattern_name=>FBGE},
+         {:pattern_name=>FBUGE},
+         {:pattern_name=>FBLE},
+         {:pattern_name=>FBULE},
+         {:pattern_name=>FBO}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>FBfcc}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>cond,
+              :operator=>=,
+              :generating_expression=>{:lo=>0, :high=>15}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>cbranch},
+       :list_pattern_name=>
+        [{:pattern_name=>CBN},
+         {:pattern_name=>CB123},
+         {:pattern_name=>CB12},
+         {:pattern_name=>CB13},
+         {:pattern_name=>CB1},
+         {:pattern_name=>CB23},
+         {:pattern_name=>CB2},
+         {:pattern_name=>CB3},
+         {:pattern_name=>CBA},
+         {:pattern_name=>CB0},
+         {:pattern_name=>CB03},
+         {:pattern_name=>CB02},
+         {:pattern_name=>CB023},
+         {:pattern_name=>CB01},
+         {:pattern_name=>CB013},
+         {:pattern_name=>CB012}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>CBccc}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>cond,
+              :operator=>=,
+              :generating_expression=>{:lo=>0, :high=>15}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>trap},
+       :list_pattern_name=>
+        [{:pattern_name=>TN},
+         {:pattern_name=>TE},
+         {:pattern_name=>TLE},
+         {:pattern_name=>TL},
+         {:pattern_name=>TLEU},
+         {:pattern_name=>TCS},
+         {:pattern_name=>TNEG},
+         {:pattern_name=>TVS},
+         {:pattern_name=>TA},
+         {:pattern_name=>TNE},
+         {:pattern_name=>TG},
+         {:pattern_name=>TGE},
+         {:pattern_name=>TGU},
+         {:pattern_name=>TCC},
+         {:pattern_name=>TPOS},
+         {:pattern_name=>TVC}],
+       :list_pattern=>
+        [{:pattern=>{:field_name=>Ticc}},
+         {:pattern=>
+           {:constraint=>
+             {:field_name=>cond,
+              :operator=>=,
+              :generating_expression=>{:lo=>0, :high=>15}}}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>branch},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>ibranch}},
+         {:pattern=>{:field_name=>fbranch}},
+         {:pattern=>{:field_name=>cbranch}}]}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>dispA,
+       :operands=>[{:op=>rs1}, {:binary_operator=>+, :op=>simm13!}],
+       :type_name=>address_,
+       :branches=>
+        {:list_pattern=>
+          [{:pattern=>
+             {:constraint=>{:field_name=>i, :operator=>=, :integer=>1}}},
+           {:pattern=>{:field_name=>rs1}},
+           {:pattern=>{:field_name=>simm13}}]}}},
+    {:constructor=>
+      {:opcode=>absoluteA,
+       :operands=>{:op=>simm13!},
+       :type_name=>address_,
+       :branches=>
+        {:list_pattern=>
+          [{:pattern=>
+             {:constraint=>{:field_name=>i, :operator=>=, :integer=>1}}},
+           {:pattern=>
+             {:constraint=>
+               {:field_name=>rs1, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>{:field_name=>simm13}}]}}},
+    {:constructor=>
+      {:opcode=>indexA,
+       :operands=>[{:op=>rs1}, {:binary_operator=>+, :op=>rs2}],
+       :type_name=>address_,
+       :branches=>
+        {:list_pattern=>
+          [{:pattern=>
+             {:constraint=>{:field_name=>i, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>{:field_name=>rs1}},
+           {:pattern=>{:field_name=>rs2}}]}}},
+    {:constructor=>
+      {:opcode=>indirectA,
+       :operands=>{:op=>rs1},
+       :type_name=>address_,
+       :branches=>
+        {:list_pattern=>
+          [{:pattern=>
+             {:constraint=>{:field_name=>i, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>
+             {:constraint=>
+               {:field_name=>rs2, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>{:field_name=>rs1}}]}}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>imode,
+       :operands=>{:op=>simm13!},
+       :type_name=>reg_or_imm,
+       :branches=>
+        {:list_pattern=>
+          [{:pattern=>
+             {:constraint=>{:field_name=>i, :operator=>=, :integer=>1}}},
+           {:pattern=>{:field_name=>simm13}}]}}},
+    {:constructor=>
+      {:opcode=>rmode,
+       :operands=>{:op=>rs2},
+       :type_name=>reg_or_imm,
+       :branches=>
+        {:list_pattern=>
+          [{:pattern=>
+             {:constraint=>{:field_name=>i, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>{:field_name=>rs2}}]}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>loadg},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>LDSB}},
+         {:pattern=>{:field_name=>LDSH}},
+         {:pattern=>{:field_name=>LDUB}},
+         {:pattern=>{:field_name=>LDUH}},
+         {:pattern=>{:field_name=>LD}},
+         {:pattern=>{:field_name=>LDSTUB}},
+         {:pattern=>{:field_name=>SWAP.}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>loada},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>LDSBA}},
+         {:pattern=>{:field_name=>LDSHA}},
+         {:pattern=>{:field_name=>LDUBA}},
+         {:pattern=>{:field_name=>LDUHA}},
+         {:pattern=>{:field_name=>LDA}},
+         {:pattern=>{:field_name=>LDSTUBA}},
+         {:pattern=>{:field_name=>SWAPA}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>storeg},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>STB}},
+         {:pattern=>{:field_name=>STH}},
+         {:pattern=>{:field_name=>ST}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>storea},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>STBA}},
+         {:pattern=>{:field_name=>STHA}},
+         {:pattern=>{:field_name=>STA}}]}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>loadg,
+       :operands=>[{:op=>[address_]}, {:op=>rd}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>LDD,
+       :operands=>[{:op=>[address_]}, {:op=>rd}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>LDF,
+       :operands=>[{:op=>[address_]}, {:op=>fds}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>LDDF,
+       :operands=>[{:op=>[address_]}, {:op=>fdd}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>LDC,
+       :operands=>[{:op=>[address_]}, {:op=>cd}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>LDDC,
+       :operands=>[{:op=>[address_]}, {:op=>cd}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>storeg,
+       :operands=>[{:op=>rd}, {:op=>[address_]}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STD,
+       :operands=>[{:op=>rd}, {:op=>[address_]}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STF,
+       :operands=>[{:op=>fds}, {:op=>[address_]}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STDF,
+       :operands=>[{:op=>fdd}, {:op=>[address_]}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STC,
+       :operands=>[{:op=>cd}, {:op=>[address_]}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STDC,
+       :operands=>[{:op=>cd}, {:op=>[address_]}],
+       :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>indexR,
+       :operands=>[{:op=>rs1}, {:binary_operator=>+, :op=>rs2}],
+       :type_name=>regaddr,
+       :branches=>
+        {:list_pattern=>
+          [{:pattern=>
+             {:constraint=>{:field_name=>i, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>{:field_name=>rs1}},
+           {:pattern=>{:field_name=>rs2}}]}}},
+    {:constructor=>
+      {:opcode=>indirectR,
+       :operands=>{:op=>rs1},
+       :type_name=>regaddr,
+       :branches=>
+        {:list_pattern=>
+          [{:pattern=>
+             {:constraint=>{:field_name=>i, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>
+             {:constraint=>
+               {:field_name=>rs2, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>{:field_name=>rs1}}]}}},
+    {:constructor=>
+      {:opcode=>loada, :operands=>{:op=>[regaddr]}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>asi, :operands=>[{:op=>""}, {:op=>rd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>LDDA, :operands=>{:op=>[regaddr]}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>asi, :operands=>[{:op=>""}, {:op=>rd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>storea,
+       :operands=>[{:op=>rd}, {:op=>[regaddr]}],
+       :branches=>""}},
+    {:constructor=>{:opcode=>asi, :operands=>{:op=>STDA}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>rd, :operands=>[{:op=>""}, {:op=>[regaddr]}], :branches=>""}},
+    {:constructor=>{:opcode=>asi, :operands=>{:op=>""}, :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>LDFSR,
+       :operands=>[{:op=>[address_]}, {:op=>"%fsr"}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>LDCSR,
+       :operands=>[{:op=>[address_]}, {:op=>"%csr"}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STFSR,
+       :operands=>[{:op=>"%fsr"}, {:op=>[address_]}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STCSR,
+       :operands=>[{:op=>"%csr"}, {:op=>[address_]}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STDFQ,
+       :operands=>[{:op=>"%fq"}, {:op=>[address_]}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>STDCQ,
+       :operands=>[{:op=>"%cq"}, {:op=>[address_]}],
+       :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>RDY, :operands=>[{:op=>"%y"}, {:op=>rd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>RDPSR, :operands=>[{:op=>"%psr"}, {:op=>rd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>RDWIM, :operands=>[{:op=>"%wim"}, {:op=>rd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>RDTBR, :operands=>[{:op=>"%tbr"}, {:op=>rd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>WRY,
+       :operands=>[{:op=>rs1}, {:op=>reg_or_imm}, {:op=>"%y"}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>WRPSR,
+       :operands=>[{:op=>rs1}, {:op=>reg_or_imm}, {:op=>"%psr"}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>WRWIM,
+       :operands=>[{:op=>rs1}, {:op=>reg_or_imm}, {:op=>"%wim"}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>WRTBR,
+       :operands=>[{:op=>rs1}, {:op=>reg_or_imm}, {:op=>"%tbr"}],
+       :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>RDASR,
+       :operands=>[{:op=>"%asr"rs1}, {:op=>rd}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>WRASR,
+       :operands=>[{:op=>rs1}, {:op=>reg_or_imm}, {:op=>"%asr"rd}],
+       :branches=>""}},
+    {:constructor=>{:opcode=>STBAR, :operands=>{:op=>""}, :branches=>""}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>logical},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>AND}},
+         {:pattern=>{:field_name=>ANDcc}},
+         {:pattern=>{:field_name=>ANDN}},
+         {:pattern=>{:field_name=>ANDNcc}},
+         {:pattern=>{:field_name=>OR}},
+         {:pattern=>{:field_name=>ORcc}},
+         {:pattern=>{:field_name=>ORN}},
+         {:pattern=>{:field_name=>ORNcc}},
+         {:pattern=>{:field_name=>XOR}},
+         {:pattern=>{:field_name=>XORcc}},
+         {:pattern=>{:field_name=>XNOR}},
+         {:pattern=>{:field_name=>XNORcc}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>shift},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>SLL}},
+         {:pattern=>{:field_name=>SRL}},
+         {:pattern=>{:field_name=>SRA}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>arith},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>ADD}},
+         {:pattern=>{:field_name=>ADDcc}},
+         {:pattern=>{:field_name=>ADDX}},
+         {:pattern=>{:field_name=>ADDXcc}},
+         {:pattern=>{:field_name=>TADDcc}},
+         {:pattern=>{:field_name=>TADDccTV}},
+         {:pattern=>{:field_name=>SUB}},
+         {:pattern=>{:field_name=>SUBcc}},
+         {:pattern=>{:field_name=>SUBX}},
+         {:pattern=>{:field_name=>SUBXcc}},
+         {:pattern=>{:field_name=>TSUBcc}},
+         {:pattern=>{:field_name=>TSUBccTV}},
+         {:pattern=>{:field_name=>MULScc}},
+         {:pattern=>{:field_name=>UMUL}},
+         {:pattern=>{:field_name=>SMUL}},
+         {:pattern=>{:field_name=>UMULcc}},
+         {:pattern=>{:field_name=>SMULcc}},
+         {:pattern=>{:field_name=>UDIV}},
+         {:pattern=>{:field_name=>SDIV}},
+         {:pattern=>{:field_name=>UDIVcc}},
+         {:pattern=>{:field_name=>SDIVcc}},
+         {:pattern=>{:field_name=>SAVE}},
+         {:pattern=>{:field_name=>RESTORE}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>alu},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>logical}},
+         {:pattern=>{:field_name=>shift}},
+         {:pattern=>{:field_name=>arith}}]}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>alu,
+       :operands=>[{:op=>rs1}, {:op=>reg_or_imm}, {:op=>rd}],
+       :branches=>""}}]},
+ {:placeholder=>
+   [{:token_name=>instruction},
+    {:pattern=>{:field_name=>UNIMP}},
+    {:pattern=>
+      {:constraint=>
+        {:field_name=>imm22, :operator=>=, :expr=>{:lhs=>0xbad}}}}]},
+ {:relocatable=>{:identifiers=>reloc}},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>branch^",a",
+       :operands=>{:op=>reloc},
+       :branches=>
+        {:equations=>
+          {:equation=>
+            {:left_expr=>{:lhs=>reloc},
+             :relational_operator=>=,
+             :right_expr=>
+              [{:lhs=>L},
+               {:operator=>+,
+                :rhs=>[{:lhs=>4}, {:operator=>*, :rhs=>{:lhs=>disp22!}}]}]}},
+         :list_pattern=>
+          [{:pattern=>{:label_name=>L, :field_name=>branch}},
+           {:pattern=>
+             {:constraint=>{:field_name=>a, :operator=>=, :integer=>1}}},
+           {:pattern=>{:field_name=>disp22}}]}}},
+    {:constructor=>
+      {:opcode=>branch,
+       :operands=>{:op=>reloc},
+       :branches=>
+        {:equations=>
+          {:equation=>
+            {:left_expr=>{:lhs=>reloc},
+             :relational_operator=>=,
+             :right_expr=>
+              [{:lhs=>L},
+               {:operator=>+,
+                :rhs=>[{:lhs=>4}, {:operator=>*, :rhs=>{:lhs=>disp22!}}]}]}},
+         :list_pattern=>
+          [{:pattern=>{:label_name=>L, :field_name=>branch}},
+           {:pattern=>
+             {:constraint=>{:field_name=>a, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>{:field_name=>disp22}}]}}},
+    {:constructor=>
+      {:opcode=>pbranch^",a",
+       :operands=>[{:op=>cc01}, {:op=>reloc}],
+       :branches=>
+        {:equations=>
+          {:equation=>
+            {:left_expr=>{:lhs=>reloc},
+             :relational_operator=>=,
+             :right_expr=>
+              [{:lhs=>L},
+               {:operator=>+,
+                :rhs=>[{:lhs=>4}, {:operator=>*, :rhs=>{:lhs=>disp19!}}]}]}},
+         :list_pattern=>
+          [{:pattern=>{:label_name=>L, :field_name=>pbranch}},
+           {:pattern=>
+             {:constraint=>{:field_name=>a, :operator=>=, :integer=>1}}},
+           {:pattern=>{:field_name=>cc01}},
+           {:pattern=>{:field_name=>disp19}}]}}},
+    {:constructor=>
+      {:opcode=>pbranch,
+       :operands=>[{:op=>cc01}, {:op=>reloc}],
+       :branches=>
+        {:equations=>
+          {:equation=>
+            {:left_expr=>{:lhs=>reloc},
+             :relational_operator=>=,
+             :right_expr=>
+              [{:lhs=>L},
+               {:operator=>+,
+                :rhs=>[{:lhs=>4}, {:operator=>*, :rhs=>{:lhs=>disp19!}}]}]}},
+         :list_pattern=>
+          [{:pattern=>{:label_name=>L, :field_name=>pbranch}},
+           {:pattern=>
+             {:constraint=>{:field_name=>a, :operator=>=, :expr=>{:lhs=>0}}}},
+           {:pattern=>{:field_name=>cc01}},
+           {:pattern=>{:field_name=>disp19}}]}}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>call__,
+       :operands=>{:op=>reloc},
+       :branches=>
+        {:equations=>
+          {:equation=>
+            {:left_expr=>{:lhs=>reloc},
+             :relational_operator=>=,
+             :right_expr=>
+              [{:lhs=>L},
+               {:operator=>+,
+                :rhs=>[{:lhs=>4}, {:operator=>*, :rhs=>{:lhs=>disp30!}}]}]}},
+         :list_pattern=>
+          [{:pattern=>{:label_name=>L, :field_name=>CALL}},
+           {:pattern=>{:field_name=>disp30}}]}}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>float2s, :operands=>[{:op=>fs2s}, {:op=>fds}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FSQRTd, :operands=>[{:op=>fs2d}, {:op=>fdd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FSQRTq, :operands=>[{:op=>fs2q}, {:op=>fdq}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FTOs, :operands=>[{:op=>fs2s}, {:op=>fds}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FTOd, :operands=>[{:op=>fs2s}, {:op=>fdd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FTOq, :operands=>[{:op=>fs2s}, {:op=>fdq}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FdTO, :operands=>[{:op=>fs2d}, {:op=>fds}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FqTO, :operands=>[{:op=>fs2q}, {:op=>fds}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FqTOd, :operands=>[{:op=>fs2q}, {:op=>fdd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>FdTOq, :operands=>[{:op=>fs2d}, {:op=>fdq}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>float3s,
+       :operands=>[{:op=>fs1s}, {:op=>fs2s}, {:op=>fds}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>float3d,
+       :operands=>[{:op=>fs1d}, {:op=>fs2d}, {:op=>fdd}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>float3q,
+       :operands=>[{:op=>fs1q}, {:op=>fs2q}, {:op=>fdq}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>FsMULd,
+       :operands=>[{:op=>fs1d}, {:op=>fs2d}, {:op=>fdd}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>FdMULq,
+       :operands=>[{:op=>fs1q}, {:op=>fs2q}, {:op=>fdq}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>fcompares,
+       :operands=>[{:op=>fs1s}, {:op=>fs2s}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>fcompared,
+       :operands=>[{:op=>fs1d}, {:op=>fs2d}],
+       :branches=>""}},
+    {:constructor=>
+      {:opcode=>fcompareq,
+       :operands=>[{:op=>fs1q}, {:op=>fs2q}],
+       :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>{:opcode=>NOP, :operands=>{:op=>FLUSH}, :branches=>""}},
+    {:constructor=>{:opcode=>address_, :operands=>{:op=>JMPL}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>address_, :operands=>[{:op=>""}, {:op=>rd}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>RETURN, :operands=>{:op=>address_}, :branches=>""}},
+    {:constructor=>{:opcode=>trap, :operands=>{:op=>address_}, :branches=>""}},
+    {:constructor=>{:opcode=>UNIMP, :operands=>{:op=>imm22}, :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>sethi,
+       :operands=>[{:op=>"%hi("val")"}, {:op=>rd}],
+       :branches=>
+        {:equations=>
+          {:equation=>
+            {:left_expr=>{:lhs=>val@[0:9]},
+             :relational_operator=>=,
+             :right_expr=>{:lhs=>0}}},
+         :list_pattern=>
+          [{:pattern=>{:field_name=>SETHI}},
+           {:pattern=>{:field_name=>rd}},
+           {:pattern=>
+             {:constraint=>
+               {:field_name=>imm22,
+                :operator=>=,
+                :expr=>{:lhs=>val@[10:31]}}}}]}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>B},
+       :list_pattern=>{:pattern=>{:field_name=>BA}}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>BGEU},
+       :list_pattern=>{:pattern=>{:field_name=>BCC}}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>BLU},
+       :list_pattern=>{:pattern=>{:field_name=>BCS}}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>BNZ},
+       :list_pattern=>{:pattern=>{:field_name=>BNE}}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>branch.synonyms},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>B}},
+         {:pattern=>{:field_name=>BGEU}},
+         {:pattern=>{:field_name=>BLU}},
+         {:pattern=>{:field_name=>BNZ}}]}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>cmp,
+       :operands=>[{:op=>rs1}, {:op=>reg_or_imm}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>SUBcc},
+             {:argument=>{:lhs=>rs1}},
+             {:argument=>{:lhs=>reg_or_imm}},
+             {:argument=>"%g0"}]}}}},
+    {:constructor=>
+      {:opcode=>jmp,
+       :operands=>{:op=>address_},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>JMPL},
+             {:argument=>{:lhs=>address_}},
+             {:argument=>"%g0"}]}}}},
+    {:constructor=>
+      {:opcode=>call_,
+       :operands=>{:op=>address_},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>JMPL},
+             {:argument=>{:lhs=>address_}},
+             {:argument=>"%o7"}]}}}},
+    {:constructor=>
+      {:opcode=>tst,
+       :operands=>{:op=>rs2},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>ORcc},
+             {:argument=>"%g0"},
+             {:argument=>{:opcode=>rmode, :argument=>{:lhs=>rs2}}},
+             {:argument=>"%g0"}]}}}},
+    {:constructor=>
+      {:opcode=>ret,
+       :operands=>{:op=>""},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>JMPL},
+             {:argument=>
+               [{:opcode=>dispA, :argument=>"%i7"}, {:argument=>{:lhs=>8}}]},
+             {:argument=>"%g0"}]}}}},
+    {:constructor=>
+      {:opcode=>retl,
+       :operands=>{:op=>""},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>JMPL},
+             {:argument=>
+               [{:opcode=>dispA, :argument=>"%o7"}, {:argument=>{:lhs=>8}}]},
+             {:argument=>"%g0"}]}}}},
+    {:constructor=>
+      {:opcode=>restore_,
+       :operands=>{:op=>""},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>RESTORE},
+             {:argument=>"%g0"},
+             {:argument=>{:opcode=>rmode, :argument=>"%g0"}},
+             {:argument=>"%g0"}]}}}},
+    {:constructor=>
+      {:opcode=>save_,
+       :operands=>{:op=>""},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>SAVE},
+             {:argument=>"%g0"},
+             {:argument=>{:opcode=>rmode, :argument=>"%g0"}},
+             {:argument=>"%g0"}]}}}},
+    {:constructor=>
+      {:opcode=>not,
+       :operands=>{:op=>rd},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>XNOR},
+             {:argument=>{:lhs=>rd}},
+             {:argument=>{:opcode=>rmode, :argument=>"%g0"}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>not2,
+       :operands=>[{:op=>rs1}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>XNOR},
+             {:argument=>{:lhs=>rs1}},
+             {:argument=>{:opcode=>rmode, :argument=>"%g0"}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>neg,
+       :operands=>{:op=>rd},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>SUB},
+             {:argument=>"%g0"},
+             {:argument=>{:opcode=>rmode, :argument=>{:lhs=>rd}}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>neg2,
+       :operands=>[{:op=>rs2}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>SUB},
+             {:argument=>"%g0"},
+             {:argument=>{:opcode=>rmode, :argument=>{:lhs=>rs2}}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>inc,
+       :operands=>[{:op=>simm13}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>ADD},
+             {:argument=>{:lhs=>rd}},
+             {:argument=>{:opcode=>imode, :argument=>{:lhs=>simm13}}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>inccc,
+       :operands=>[{:op=>simm13}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>ADDcc},
+             {:argument=>{:lhs=>rd}},
+             {:argument=>{:opcode=>imode, :argument=>{:lhs=>simm13}}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>dec,
+       :operands=>[{:op=>simm13}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>SUB},
+             {:argument=>{:lhs=>rd}},
+             {:argument=>{:opcode=>imode, :argument=>{:lhs=>simm13}}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>deccc,
+       :operands=>[{:op=>simm13}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>SUBcc},
+             {:argument=>{:lhs=>rd}},
+             {:argument=>{:opcode=>imode, :argument=>{:lhs=>simm13}}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>btst,
+       :operands=>[{:op=>reg_or_imm}, {:op=>rs1}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>ANDcc},
+             {:argument=>{:lhs=>rs1}},
+             {:argument=>{:lhs=>reg_or_imm}},
+             {:argument=>"%g0"}]}}}},
+    {:constructor=>
+      {:opcode=>bset,
+       :operands=>[{:op=>reg_or_imm}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>OR},
+             {:argument=>{:lhs=>rd}},
+             {:argument=>{:lhs=>reg_or_imm}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>bclr,
+       :operands=>[{:op=>reg_or_imm}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>ANDN},
+             {:argument=>{:lhs=>rd}},
+             {:argument=>{:lhs=>reg_or_imm}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>btog,
+       :operands=>[{:op=>reg_or_imm}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>XOR},
+             {:argument=>{:lhs=>rd}},
+             {:argument=>{:lhs=>reg_or_imm}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>clr,
+       :operands=>{:op=>rd},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>OR},
+             {:argument=>"%g0"},
+             {:argument=>{:opcode=>rmode, :argument=>"%g0"}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>clr_,
+       :operands=>{:op=>[address_]},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>ST},
+             {:argument=>"%g0"},
+             {:argument=>{:lhs=>address_}}]}}}},
+    {:constructor=>
+      {:opcode=>clrb,
+       :operands=>{:op=>[address_]},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>STB},
+             {:argument=>"%g0"},
+             {:argument=>{:lhs=>address_}}]}}}},
+    {:constructor=>
+      {:opcode=>clrh,
+       :operands=>{:op=>[address_]},
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>STH},
+             {:argument=>"%g0"},
+             {:argument=>{:lhs=>address_}}]}}}},
+    {:constructor=>
+      {:opcode=>mov,
+       :operands=>[{:op=>reg_or_imm}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>OR},
+             {:argument=>"%g0"},
+             {:argument=>{:lhs=>reg_or_imm}},
+             {:argument=>{:lhs=>rd}}]}}}},
+    {:constructor=>
+      {:opcode=>mov_,
+       :operands=>[{:op=>rs2}, {:op=>rd}],
+       :branches=>
+        {:list_pattern=>
+          {:pattern=>
+            [{:opcode=>OR},
+             {:argument=>"%g0"},
+             {:argument=>{:opcode=>rmode, :argument=>{:lhs=>rs2}}},
+             {:argument=>{:lhs=>rd}}]}}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>load_greg},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>loadg}}, {:pattern=>{:field_name=>LDD}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>load_freg},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>LDF}}, {:pattern=>{:field_name=>LDDF}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>load_creg},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>LDC}}, {:pattern=>{:field_name=>LDDC}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>load_asi},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>loada}}, {:pattern=>{:field_name=>LDDA}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>sto_greg},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>storeg}}, {:pattern=>{:field_name=>STD}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>sto_freg},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>STF}}, {:pattern=>{:field_name=>STDF}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>sto_creg},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>STC}}, {:pattern=>{:field_name=>STDC}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>sto_asi},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>storea}}, {:pattern=>{:field_name=>STDA}}]}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>float_cmp},
+       :list_pattern=>
+        [{:pattern=>{:field_name=>fcompares}},
+         {:pattern=>{:field_name=>fcompared}},
+         {:pattern=>{:field_name=>fcompareq}}]}}]},
+ {:templates=>{:template=>"DWord"}},
+ {:templates=>{:template=>"%a"}},
+ {:templates=>{:template=>"%a+%o"}},
+ {:templates=>{:width=>32, :template=>"getDword(%a)"}}]

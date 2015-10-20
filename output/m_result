@@ -1,0 +1,1098 @@
+[{:comments=>
+   /*
+ * Copyright (C) 1996-2001, The University of Queensland
+ *
+ * See the file "LICENSE.TERMS" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
+
+},
+ {:comments=>
+   /*==============================================================================
+ * FILE:	   decoder.m
+ * OVERVIEW:   Implementation of the SPARC specific parts of the
+ *			   SparcDecoder class.
+ *============================================================================*/
+
+},
+ {:comments=>
+   /* $Revision: 1.24 $	
+ *
+ * 26 Apr 02 - Mike: Mods for boomerang
+ * 19 May 02 - Mike: Added many (int) casts: variables from toolkit are unsgnd
+ * 21 May 02 - Mike: SAVE and RESTORE have full semantics now
+ * 30 Oct 02 - Mike: dis_Eaddr mode indirectA had extra memof
+ * 22 Nov 02 - Mike: Support 32 bit V9 branches
+ * 04 Dec 02 - Mike: r[0] -> 0 automatically (rhs only)
+ * 30 May 02 - Mike: Also fixed r[0] -> 0 for store instructions
+ * 03 Nov 04 - Mike: DIS_FDS was returning numbers for the double precision registers
+*/
+
+},
+ {:comments=>
+   /*==============================================================================
+ * Dependencies.
+ *============================================================================*/
+
+},
+ {:head=>#include <assert.h>
+},
+ {:head=>#include <cstring>
+},
+ {:head=>
+   #if defined(_MSC_VER) && _MSC_VER <= 1100
+#include "signature.h"
+#endif
+
+},
+ {:head=>#include "decoder.h"
+},
+ {:head=>#include "exp.h"
+},
+ {:head=>#include "prog.h"
+},
+ {:head=>#include "proc.h"
+},
+ {:head=>#include "sparcdecoder.h"
+},
+ {:head=>#include "rtl.h"
+},
+ {:head=>#include "BinaryFile.h"		
+},
+ {:head=>#include "boomerang.h"
+
+},
+ {:head=>#define DIS_ROI		(dis_RegImm(roi))
+},
+ {:head=>#define DIS_ADDR	(dis_Eaddr(addr))
+},
+ {:head=>#define DIS_RD		(dis_RegLhs(rd))
+},
+ {:head=>#define DIS_RDR		(dis_RegRhs(rd))
+},
+ {:head=>#define DIS_RS1		(dis_RegRhs(rs1))
+},
+ {:head=>#define DIS_FS1S	(dis_RegRhs(fs1s+32))
+},
+ {:head=>#define DIS_FS2S	(dis_RegRhs(fs2s+32))
+
+
+},
+ {:head=>#define DIS_FDS		(dis_RegLhs(fds+32))
+},
+ {:head=>#define DIS_FS1D	(dis_RegRhs((fs1d>>1)+64))
+},
+ {:head=>#define DIS_FS2D	(dis_RegRhs((fs2d>>1)+64))
+},
+ {:head=>#define DIS_FDD		(dis_RegLhs((fdd>>1)+64))
+},
+ {:head=>#define DIS_FDQ		(dis_RegLhs((fdq>>2)+80))
+},
+ {:head=>#define DIS_FS1Q	(dis_RegRhs((fs1q>>2)+80))
+},
+ {:head=>#define DIS_FS2Q	(dis_RegRhs((fs2q>>2)+80))
+
+},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	   unused
+ * OVERVIEW:	   A dummy function to suppress "unused local variable" messages
+ * PARAMETERS:	   x: integer variable to be "used"
+ * RETURNS:		   Nothing
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>void,
+    :function_name=>SparcDecoder::unused,
+    :parameters=>{:variables_decl=>int x},
+    :function_body=>{:block=>{}}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	   createBranchRtl
+ * OVERVIEW:	   Create an RTL for a Bx instruction
+ * PARAMETERS:	   pc - the location counter
+ *				   stmts - ptr to list of Statement pointers
+ *				   name - instruction name (e.g. "BNE,a", or "BPNE")
+ * RETURNS:		   Pointer to newly created RTL, or NULL if invalid
+ *============================================================================*/
+},
+ {:statements=>static DecodeResult result;},
+ {:functions=>
+   {:function_type=>RTL*,
+    :function_name=>SparcDecoder::createBranchRtl,
+    :parameters=>
+     [{:variables_decl=>ADDRESS pc},
+      {:variables_decl=>std::list<Statement*>* stmts},
+      {:variables_decl=>const char* name}],
+    :function_body=>
+     {:block=>
+       [{:statements=>RTL* res = new RTL(pc, stmts);},
+        {:statements=>BranchStatement* br = new BranchStatement();},
+        {:statements=>res->appendStmt(br);},
+        {:if_statements=>
+          {:expression=>(name[0] == 'F'),
+           :block=>
+            [{:if_statements=>{:expression=>(name[2] == 'U')}},
+             {:statements=>name++;},
+             {:switch_statements=>
+               {:expression=>(name[2]),
+                :block=>
+                 [{:case_statements=>case 'E':},
+                  {:statements=>br->setCondType(BRANCH_JE, true);},
+                  {:statements=>break;},
+                  {:case_statements=>case 'L':},
+                  {:if_statements=>{:expression=>(name[3] == 'G')}},
+                  {:statements=>br->setCondType(BRANCH_JNE, true);},
+                  {:else_statements=>else},
+                  {:if_statements=>{:expression=>(name[3] == 'E')}},
+                  {:statements=>br->setCondType(BRANCH_JSLE, true);},
+                  {:else_statements=>else},
+                  {:statements=>br->setCondType(BRANCH_JSL, true);},
+                  {:statements=>break;},
+                  {:case_statements=>case 'G':},
+                  {:if_statements=>{:expression=>(name[3] == 'E')}},
+                  {:statements=>br->setCondType(BRANCH_JSGE, true);},
+                  {:else_statements=>else},
+                  {:statements=>br->setCondType(BRANCH_JSG, true);},
+                  {:statements=>break;},
+                  {:case_statements=>case 'N':},
+                  {:if_statements=>{:expression=>(name[3] == 'E')}},
+                  {:statements=>br->setCondType(BRANCH_JNE, true);},
+                  {:statements=>break;},
+                  {:default_statements=>default:},
+                  {:statements=>
+                    std::cerr << "unknown float branch " << name << std::endl;},
+                  {:statements=>delete res;},
+                  {:statements=>res = NULL;}]}},
+             {:statements=>return res;}]}},
+        {:switch_statements=>
+          {:expression=>(name[1]),
+           :block=>
+            [{:case_statements=>case 'E':},
+             {:statements=>br->setCondType(BRANCH_JE);},
+             {:statements=>break;},
+             {:case_statements=>case 'L':},
+             {:if_statements=>
+               {:expression=>(name[2] == 'E'),
+                :block=>
+                 [{:if_statements=>{:expression=>(name[3] == 'U')}},
+                  {:statements=>br->setCondType(BRANCH_JULE);},
+                  {:else_statements=>else},
+                  {:statements=>br->setCondType(BRANCH_JSLE);}]}},
+             {:else_statements=>else},
+             {:statements=>br->setCondType(BRANCH_JSL);},
+             {:statements=>break;},
+             {:case_statements=>case 'N':},
+             {:if_statements=>{:expression=>(name[3] == 'G')}},
+             {:statements=>br->setCondType(BRANCH_JMI);},
+             {:else_statements=>else},
+             {:statements=>br->setCondType(BRANCH_JNE);},
+             {:statements=>break;},
+             {:case_statements=>case 'C':},
+             {:if_statements=>{:expression=>(name[2] == 'C')}},
+             {:statements=>br->setCondType(BRANCH_JUGE);},
+             {:else_statements=>else},
+             {:statements=>br->setCondType(BRANCH_JUL);},
+             {:statements=>break;},
+             {:case_statements=>case 'V':},
+             {:if_statements=>{:expression=>(name[2] == 'C')}},
+             {:statements=>std::cerr << "Decoded BVC instruction\n";},
+             {:else_statements=>else},
+             {:statements=>std::cerr << "Decoded BVS instruction\n";},
+             {:statements=>break;},
+             {:case_statements=>case 'G':},
+             {:if_statements=>{:expression=>(name[2] == 'E')}},
+             {:statements=>br->setCondType(BRANCH_JSGE);},
+             {:else_statements=>else},
+             {:if_statements=>{:expression=>(name[2] == 'U')}},
+             {:statements=>br->setCondType(BRANCH_JUG);},
+             {:else_statements=>else},
+             {:statements=>br->setCondType(BRANCH_JSG);},
+             {:statements=>break;},
+             {:case_statements=>case 'P':},
+             {:if_statements=>
+               {:expression=>(name[2] == 'O'),
+                :block=>
+                 [{:statements=>br->setCondType(BRANCH_JPOS);},
+                  {:statements=>break;}]}},
+             {:statements=>char temp[8];},
+             {:statements=>temp[0] = 'B';},
+             {:statements=>strcpy(temp+1, name+2);},
+             {:statements=>delete res;},
+             {:statements=>return createBranchRtl(pc, stmts, temp);},
+             {:default_statements=>default:},
+             {:statements=>
+               std::cerr << "unknown non-float branch " << name << std::endl;}]}},
+        {:statements=>return res;}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	   SparcDecoder::decodeInstruction
+ * OVERVIEW:	   Attempt to decode the high level instruction at a given address and return the corresponding HL type
+ *					(e.g. CallStatement, GotoStatement etc). If no high level instruction exists at the given address,
+ *					then simply return the RTL for the low level instruction at this address. There is an option to also
+ *				   include the low level statements for a HL instruction.
+ * PARAMETERS:	   pc - the native address of the pc
+ *				   delta - the difference between the above address and the host address of the pc (i.e. the address
+ *					that the pc is at in the loaded object file)
+ *				   proc - the enclosing procedure. This can be NULL for those of us who are using this method in an
+ *					interpreter
+ * RETURNS:		   a DecodeResult structure containing all the information gathered during decoding
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>DecodeResult&,
+    :function_name=>SparcDecoder::decodeInstruction,
+    :parameters=>[{:variables_decl=>ADDRESS pc}, {:variables_decl=>int delta}],
+    :function_body=>
+     {:block=>
+       [{:statements=>static DecodeResult result;},
+        {:statements=>ADDRESS hostPC = pc+delta;},
+        {:statements=>result.reset();},
+        {:statements=>std::list<Statement*>* stmts = NULL;},
+        {:statements=>ADDRESS nextPC = NO_ADDRESS;},
+        {:match_sentences=>
+          [{:var_name=>nextPC, :code=>hostPC},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>call__, :argument=>{:lhs=>addr}}},
+              :codes=>
+               [{:statements=>CallStatement* newCall = new CallStatement;},
+                {:statements=>ADDRESS nativeDest = addr - delta;},
+                {:statements=>newCall->setDest(nativeDest);},
+                {:statements=>Proc* destProc = prog->setNewProc(nativeDest);},
+                {:statements=>if (destProc == (Proc*)-1) destProc = NULL;},
+                {:statements=>newCall->setDestProc(destProc);},
+                {:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(newCall);},
+                {:statements=>result.type = SD;}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>call_, :argument=>{:lhs=>addr}}},
+              :codes=>
+               [{:statements=>CallStatement* newCall = new CallStatement;},
+                {:statements=>newCall->setIsComputed();},
+                {:statements=>newCall->setDest(dis_Eaddr(addr));},
+                {:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(newCall);},
+                {:statements=>result.type = DD;}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>ret}},
+              :codes=>
+               [{:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(new ReturnStatement);},
+                {:statements=>result.type = DD;}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>retl}},
+              :codes=>
+               [{:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(new ReturnStatement);},
+                {:statements=>result.type = DD;}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>{:opcode=>branch^",a", :argument=>{:lhs=>tgt}}},
+              :codes=>
+               [{:if_statements=>
+                  {:expression=>(name[0] == 'C'),
+                   :block=>
+                    [{:statements=>result.valid = false;},
+                     {:statements=>result.rtl = new RTL;},
+                     {:statements=>result.numBytes = 4;},
+                     {:statements=>return result;}]}},
+                {:statements=>GotoStatement* jump = 0;},
+                {:statements=>RTL* rtl = NULL;},
+                {:if_statements=>
+                  {:expression=>
+                    (strcmp(name,"BA,a") == 0 || strcmp(name,"BN,a") == 0),
+                   :block=>
+                    [{:statements=>jump = new GotoStatement;},
+                     {:statements=>rtl = new RTL(pc, stmts);},
+                     {:statements=>rtl->appendStmt(jump);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>
+                    (strcmp(name,"BVS,a") == 0 || strcmp(name,"BVC,a") == 0),
+                   :block=>
+                    [{:statements=>jump = new GotoStatement;},
+                     {:statements=>rtl = new RTL(pc, stmts);},
+                     {:statements=>rtl->appendStmt(jump);}]}},
+                {:else_statements=>
+                  {:block=>
+                    [{:statements=>rtl = createBranchRtl(pc, stmts, name);},
+                     {:statements=>
+                       jump = (GotoStatement*) rtl->getList().back();}]}},
+                {:statements=>result.type = SCDAN;},
+                {:if_statements=>
+                  {:expression=>
+                    ((strcmp(name,"BA,a") == 0) || (strcmp(name, "BVC,a") == 0)),
+                   :block=>[{:statements=>result.type = SU;}]}},
+                {:else_statements=>
+                  {:block=>[{:statements=>result.type = SKIP;}]}},
+                {:statements=>result.rtl = rtl;},
+                {:statements=>jump->setDest(tgt - delta);}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>pbranch^",a"},
+                  {:argument=>{:lhs=>cc01}},
+                  {:argument=>{:lhs=>tgt}}]},
+              :codes=>
+               [{:if_statements=>
+                  {:expression=>(cc01 != 0),
+                   :block=>
+                    [{:statements=>result.valid = false;},
+                     {:statements=>result.rtl = new RTL;},
+                     {:statements=>result.numBytes = 4;},
+                     {:statements=>return result;}]}},
+                {:statements=>GotoStatement* jump = 0;},
+                {:statements=>RTL* rtl = NULL;},
+                {:if_statements=>
+                  {:expression=>
+                    (strcmp(name,"BPA,a") == 0 || strcmp(name,"BPN,a") == 0),
+                   :block=>
+                    [{:statements=>jump = new GotoStatement;},
+                     {:statements=>rtl = new RTL(pc, stmts);},
+                     {:statements=>rtl->appendStmt(jump);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>
+                    (strcmp(name,"BPVS,a") == 0 || strcmp(name,"BPVC,a") == 0),
+                   :block=>
+                    [{:statements=>jump = new GotoStatement;},
+                     {:statements=>rtl = new RTL(pc, stmts);},
+                     {:statements=>rtl->appendStmt(jump);}]}},
+                {:else_statements=>
+                  {:block=>
+                    [{:statements=>rtl = createBranchRtl(pc, stmts, name);},
+                     {:statements=>
+                       jump = (GotoStatement*) rtl->getList().back();}]}},
+                {:statements=>result.type = SCDAN;},
+                {:if_statements=>
+                  {:expression=>
+                    ((strcmp(name,"BPA,a") == 0) || (strcmp(name, "BPVC,a") == 0)),
+                   :block=>[{:statements=>result.type = SU;}]}},
+                {:else_statements=>
+                  {:block=>[{:statements=>result.type = SKIP;}]}},
+                {:statements=>result.rtl = rtl;},
+                {:statements=>jump->setDest(tgt - delta);}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>branch, :argument=>{:lhs=>tgt}}},
+              :codes=>
+               [{:if_statements=>
+                  {:expression=>(name[0] == 'C'),
+                   :block=>
+                    [{:statements=>result.valid = false;},
+                     {:statements=>result.rtl = new RTL;},
+                     {:statements=>result.numBytes = 4;},
+                     {:statements=>return result;}]}},
+                {:statements=>GotoStatement* jump = 0;},
+                {:statements=>RTL* rtl = NULL;},
+                {:if_statements=>
+                  {:expression=>
+                    (strcmp(name,"BA") == 0 || strcmp(name,"BN") == 0),
+                   :block=>
+                    [{:statements=>jump = new GotoStatement;},
+                     {:statements=>rtl = new RTL(pc, stmts);},
+                     {:statements=>rtl->appendStmt(jump);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>
+                    (strcmp(name,"BVS") == 0 || strcmp(name,"BVC") == 0),
+                   :block=>
+                    [{:statements=>jump = new GotoStatement;},
+                     {:statements=>rtl = new RTL(pc, stmts);},
+                     {:statements=>rtl->appendStmt(jump);}]}},
+                {:else_statements=>
+                  {:block=>
+                    [{:statements=>rtl = createBranchRtl(pc, stmts, name);},
+                     {:statements=>
+                       jump = (BranchStatement*) rtl->getList().back();}]}},
+                {:statements=>result.type = SCD;},
+                {:if_statements=>
+                  {:expression=>
+                    ((strcmp(name,"BA") == 0) || (strcmp(name, "BVC") == 0))}},
+                {:statements=>result.type = SD;},
+                {:if_statements=>
+                  {:expression=>
+                    ((strcmp(name,"BN") == 0) || (strcmp(name, "BVS") == 0))}},
+                {:statements=>result.type = NCT;},
+                {:statements=>result.rtl = rtl;},
+                {:statements=>jump->setDest(tgt - delta);}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>BPA},
+                  {:argument=>{:lhs=>cc01}},
+                  {:argument=>{:lhs=>tgt}}]},
+              :codes=>
+               [{:statements=>unused(cc01);},
+                {:statements=>GotoStatement* jump = new GotoStatement;},
+                {:statements=>result.type = SD;},
+                {:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(jump);},
+                {:statements=>jump->setDest(tgt - delta);}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>pbranch},
+                  {:argument=>{:lhs=>cc01}},
+                  {:argument=>{:lhs=>tgt}}]},
+              :codes=>
+               [{:if_statements=>
+                  {:expression=>(cc01 != 0),
+                   :block=>
+                    [{:statements=>result.valid = false;},
+                     {:statements=>result.rtl = new RTL;},
+                     {:statements=>result.numBytes = 4;},
+                     {:statements=>return result;}]}},
+                {:statements=>GotoStatement* jump = 0;},
+                {:statements=>RTL* rtl = NULL;},
+                {:if_statements=>
+                  {:expression=>(strcmp(name,"BPN") == 0),
+                   :block=>
+                    [{:statements=>jump = new GotoStatement;},
+                     {:statements=>rtl = new RTL(pc, stmts);},
+                     {:statements=>rtl->appendStmt(jump);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>
+                    (strcmp(name,"BPVS") == 0 || strcmp(name,"BPVC") == 0),
+                   :block=>
+                    [{:statements=>jump = new GotoStatement;},
+                     {:statements=>rtl = new RTL(pc, stmts);},
+                     {:statements=>rtl->appendStmt(jump);}]}},
+                {:else_statements=>
+                  {:block=>
+                    [{:statements=>rtl = createBranchRtl(pc, stmts, name);},
+                     {:statements=>
+                       jump = (GotoStatement*)rtl->getList().back();}]}},
+                {:statements=>result.type = SCD;},
+                {:if_statements=>{:expression=>(strcmp(name, "BPVC") == 0)}},
+                {:statements=>result.type = SD;},
+                {:if_statements=>
+                  {:expression=>
+                    ((strcmp(name,"BPN") == 0) || (strcmp(name, "BPVS") == 0))}},
+                {:statements=>result.type = NCT;},
+                {:statements=>result.rtl = rtl;},
+                {:statements=>jump->setDest(tgt - delta);}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>JMPL},
+                  {:argument=>{:lhs=>addr}},
+                  {:argument=>{:lhs=>rd}}]},
+              :codes=>
+               [{:statements=>CaseStatement* jump = new CaseStatement;},
+                {:statements=>jump->setIsComputed();},
+                {:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(jump);},
+                {:statements=>result.type = DD;},
+                {:statements=>jump->setDest(dis_Eaddr(addr));},
+                {:statements=>unused(rd);}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>SAVE},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>roi}},
+                  {:argument=>{:lhs=>rd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, "SAVE", DIS_RS1, DIS_ROI, DIS_RD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>RESTORE},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>roi}},
+                  {:argument=>{:lhs=>rd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:field_name=>NOP}},
+              :codes=>
+               [{:statements=>result.type = NOP;},
+                {:statements=>stmts = instantiate(pc,	 name);}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>sethi},
+                  {:argument=>{:lhs=>imm22}},
+                  {:argument=>{:lhs=>rd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>load_greg},
+                  {:argument=>{:lhs=>addr}},
+                  {:argument=>{:lhs=>rd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_ADDR, DIS_RD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>LDF},
+                  {:argument=>{:lhs=>addr}},
+                  {:argument=>{:lhs=>fds}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDS);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>LDDF},
+                  {:argument=>{:lhs=>addr}},
+                  {:argument=>{:lhs=>fdd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>load_asi},
+                  {:argument=>{:lhs=>addr}},
+                  {:argument=>{:lhs=>asi}},
+                  {:argument=>{:lhs=>rd}}]},
+              :codes=>
+               [{:statements=>unused(asi);},
+                {:statements=>
+                  stmts = instantiate(pc,	 name, DIS_RD, DIS_ADDR);}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>sto_greg},
+                  {:argument=>{:lhs=>rd}},
+                  {:argument=>{:lhs=>addr}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>STF},
+                  {:argument=>{:lhs=>fds}},
+                  {:argument=>{:lhs=>addr}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FDS, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>STDF},
+                  {:argument=>{:lhs=>fdd}},
+                  {:argument=>{:lhs=>addr}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FDD, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>sto_asi},
+                  {:argument=>{:lhs=>rd}},
+                  {:argument=>{:lhs=>addr}},
+                  {:argument=>{:lhs=>asi}}]},
+              :codes=>
+               [{:statements=>unused(asi);},
+                {:statements=>
+                  stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>LDFSR, :argument=>{:lhs=>addr}}},
+              :codes=>
+               {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>LDCSR, :argument=>{:lhs=>addr}}},
+              :codes=>
+               {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>STFSR, :argument=>{:lhs=>addr}}},
+              :codes=>
+               {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>STCSR, :argument=>{:lhs=>addr}}},
+              :codes=>
+               {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>STDFQ, :argument=>{:lhs=>addr}}},
+              :codes=>
+               {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>STDCQ, :argument=>{:lhs=>addr}}},
+              :codes=>
+               {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>RDY, :argument=>{:lhs=>rd}}},
+              :codes=>{:statements=>stmts = instantiate(pc,	 name, DIS_RD);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>RDPSR, :argument=>{:lhs=>rd}}},
+              :codes=>{:statements=>stmts = instantiate(pc,	 name, DIS_RD);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>RDWIM, :argument=>{:lhs=>rd}}},
+              :codes=>{:statements=>stmts = instantiate(pc,	 name, DIS_RD);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>RDTBR, :argument=>{:lhs=>rd}}},
+              :codes=>{:statements=>stmts = instantiate(pc,	 name, DIS_RD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>WRY},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>roi}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>WRPSR},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>roi}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>WRWIM},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>roi}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>WRTBR},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>roi}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>alu},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>roi}},
+                  {:argument=>{:lhs=>rd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI, DIS_RD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>float2s},
+                  {:argument=>{:lhs=>fs2s}},
+                  {:argument=>{:lhs=>fds}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FS2S, DIS_FDS);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>float3s},
+                  {:argument=>{:lhs=>fs1s}},
+                  {:argument=>{:lhs=>fs2s}},
+                  {:argument=>{:lhs=>fds}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FS1S, DIS_FS2S, DIS_FDS);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>float3d},
+                  {:argument=>{:lhs=>fs1d}},
+                  {:argument=>{:lhs=>fs2d}},
+                  {:argument=>{:lhs=>fdd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FS1D, DIS_FS2D, DIS_FDD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>float3q},
+                  {:argument=>{:lhs=>fs1q}},
+                  {:argument=>{:lhs=>fs2q}},
+                  {:argument=>{:lhs=>fdq}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FS1Q, DIS_FS2Q, DIS_FDQ);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>fcompares},
+                  {:argument=>{:lhs=>fs1s}},
+                  {:argument=>{:lhs=>fs2s}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FS1S, DIS_FS2S);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>fcompared},
+                  {:argument=>{:lhs=>fs1d}},
+                  {:argument=>{:lhs=>fs2d}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FS1D, DIS_FS2D);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>fcompareq},
+                  {:argument=>{:lhs=>fs1q}},
+                  {:argument=>{:lhs=>fs2q}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc,	 name, DIS_FS1Q, DIS_FS2Q);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FTOs},
+                  {:argument=>{:lhs=>fs2s}},
+                  {:argument=>{:lhs=>fds}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2S, DIS_FDS);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FiTOd},
+                  {:argument=>{:lhs=>fs2s}},
+                  {:argument=>{:lhs=>fdd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FdTOi},
+                  {:argument=>{:lhs=>fs2d}},
+                  {:argument=>{:lhs=>fds}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FiTOq},
+                  {:argument=>{:lhs=>fs2s}},
+                  {:argument=>{:lhs=>fdq}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FqTOi},
+                  {:argument=>{:lhs=>fs2q}},
+                  {:argument=>{:lhs=>fds}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FsTOd},
+                  {:argument=>{:lhs=>fs2s}},
+                  {:argument=>{:lhs=>fdd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FdTOs},
+                  {:argument=>{:lhs=>fs2d}},
+                  {:argument=>{:lhs=>fds}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FsTOq},
+                  {:argument=>{:lhs=>fs2s}},
+                  {:argument=>{:lhs=>fdq}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FqTOs},
+                  {:argument=>{:lhs=>fs2q}},
+                  {:argument=>{:lhs=>fds}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FdTOq},
+                  {:argument=>{:lhs=>fs2d}},
+                  {:argument=>{:lhs=>fdq}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2D, DIS_FDQ);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FqTOd},
+                  {:argument=>{:lhs=>fs2q}},
+                  {:argument=>{:lhs=>fdd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FSQRTd},
+                  {:argument=>{:lhs=>fs2d}},
+                  {:argument=>{:lhs=>fdd}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2D, DIS_FDD);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>FSQRTq},
+                  {:argument=>{:lhs=>fs2q}},
+                  {:argument=>{:lhs=>fdq}}]},
+              :codes=>
+               {:statements=>
+                 stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDQ);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>RETURN, :argument=>{:lhs=>addr}}},
+              :codes=>
+               [{:statements=>stmts = instantiate(pc, name, DIS_ADDR);},
+                {:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(new ReturnStatement);},
+                {:statements=>result.type = DD;}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>trap, :argument=>{:lhs=>addr}}},
+              :codes=>
+               {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>UNIMP, :argument=>{:lhs=>n}}},
+              :codes=>
+               [{:statements=>unused(n);},
+                {:statements=>stmts = NULL;},
+                {:statements=>result.valid = false;}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 {:constraint=>
+                   {:field_name=>inst, :operator=>=, :expr=>{:lhs=>n}}}},
+              :codes=>
+               [{:statements=>unused(n);},
+                {:statements=>result.valid = false;},
+                {:statements=>stmts = NULL;},
+                {:else_statements=>else},
+                {:statements=>stmts = NULL;},
+                {:statements=>result.valid = false;},
+                {:statements=>result.numBytes = 4;}]}}]},
+        {:statements=>result.numBytes = nextPC - hostPC;},
+        {:if_statements=>{:expression=>(result.valid && result.rtl == 0)}},
+        {:statements=>result.rtl = new RTL(pc, stmts);},
+        {:statements=>return result;}]}}},
+ {:comments=>
+   /***********************************************************************
+ * These are functions used to decode instruction operands into
+ * expressions (Exp*s).
+ **********************************************************************/
+
+},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		SparcDecoder::dis_RegLhs
+ * OVERVIEW:		Decode the register on the LHS
+ * PARAMETERS:		r - register (0-31)
+ * RETURNS:			the expression representing the register
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>Exp*,
+    :function_name=>SparcDecoder::dis_RegLhs,
+    :parameters=>{:variables_decl=>unsigned r},
+    :function_body=>{:block=>[{:statements=>return Location::regOf(r);}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		SparcDecoder::dis_RegRhs
+ * OVERVIEW:		Decode the register on the RHS
+ * NOTE:			Replaces r[0] with const 0
+ * NOTE:			Not used by DIS_RD since don't want 0 on LHS
+ * PARAMETERS:		r - register (0-31)
+ * RETURNS:			the expression representing the register
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>Exp*,
+    :function_name=>SparcDecoder::dis_RegRhs,
+    :parameters=>{:variables_decl=>unsigned r},
+    :function_body=>
+     {:block=>
+       [{:if_statements=>{:expression=>(r == 0)}},
+        {:statements=>return new Const(0);},
+        {:statements=>return Location::regOf(r);}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		SparcDecoder::dis_RegImm
+ * OVERVIEW:		Decode the register or immediate at the given address.
+ * NOTE:			Used via macro DIS_ROI
+ * PARAMETERS:		pc - an address in the instruction stream
+ * RETURNS:			the register or immediate at the given address
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>Exp*,
+    :function_name=>SparcDecoder::dis_RegImm,
+    :parameters=>{:variables_decl=>unsigned pc},
+    :function_body=>
+     {:block=>
+       [{:match_sentences=>
+          [{:code=>pc},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>imode, :argument=>{:lhs=>i}}},
+              :codes=>
+               [{:statements=>Exp* expr = new Const(i);},
+                {:statements=>return expr;}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>rmode, :argument=>{:lhs=>rs2}}},
+              :codes=>{:statements=>return dis_RegRhs(rs2);}}}]}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		SparcDecoder::dis_Eaddr
+ * OVERVIEW:		Converts a dynamic address to a Exp* expression.
+ *					E.g. %o7 --> r[ 15 ]
+ * PARAMETERS:		pc - the instruction stream address of the dynamic address
+ *					ignore - redundant parameter on SPARC
+ * RETURNS:			the Exp* representation of the given address
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>Exp*,
+    :function_name=>SparcDecoder::dis_Eaddr,
+    :parameters=>
+     [{:variables_decl=>ADDRESS pc}, {:variables_decl=>int ignore}],
+    :function_body=>
+     {:block=>
+       [{:statements=>Exp* expr;},
+        {:match_sentences=>
+          [{:code=>pc},
+           {:arm=>
+             {:header=>
+               {:pattern=>{:opcode=>indirectA, :argument=>{:lhs=>rs1}}},
+              :codes=>{:statements=>expr = Location::regOf(rs1);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>indexA},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>rs2}}]},
+              :codes=>
+               {:statements=>
+                 expr = new Binary(opPlus,Location::regOf(rs1),Location::regOf(rs2));}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>absoluteA, :argument=>{:lhs=>i}}},
+              :codes=>{:statements=>expr = new Const((int)i);}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>dispA},
+                  {:argument=>{:lhs=>rs1}},
+                  {:argument=>{:lhs=>i}}]},
+              :codes=>
+               {:statements=>
+                 expr = new Binary(opPlus,Location::regOf(rs1), new Const((int)i));}}}]},
+        {:statements=>return expr;}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	  isFuncPrologue()
+ * OVERVIEW:	  Check to see if the instructions at the given offset match any callee prologue, i.e. does it look
+ *					like this offset is a pointer to a function?
+ * PARAMETERS:	  hostPC - pointer to the code in question (host address)
+ * RETURNS:		  True if a match found
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>bool,
+    :function_name=>SparcDecoder::isFuncPrologue,
+    :parameters=>{:variables_decl=>ADDRESS hostPC},
+    :function_body=>{:block=>[{:statements=>return false;}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	  isRestore()
+ * OVERVIEW:	  Check to see if the instruction at the given offset is a restore instruction
+ * PARAMETERS:	  hostPC - pointer to the code in question (host address)
+ * RETURNS:		  True if a match found
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>bool,
+    :function_name=>SparcDecoder::isRestore,
+    :parameters=>{:variables_decl=>ADDRESS hostPC},
+    :function_body=>
+     {:block=>
+       [{:match_sentences=>
+          {:code=>hostPC,
+           :arm=>
+            {:header=>
+              {:pattern=>
+                [{:opcode=>RESTORE},
+                 {:argument=>{:lhs=>a}},
+                 {:argument=>{:lhs=>b}},
+                 {:argument=>{:lhs=>c}}]},
+             :codes=>
+              [{:statements=>unused(a);},
+               {:statements=>unused(b);},
+               {:statements=>unused(c);},
+               {:statements=>return true;},
+               {:else_statements=>else},
+               {:statements=>return false;}]}}}]}}},
+ {:comments=>
+   /**********************************
+ * These are the fetch routines.
+ **********************************/
+
+},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		getDword
+ * OVERVIEW:		Returns the double starting at the given address.
+ * PARAMETERS:		lc - address at which to decode the double
+ * RETURNS:			the decoded double
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>DWord,
+    :function_name=>SparcDecoder::getDword,
+    :parameters=>{:variables_decl=>ADDRESS lc},
+    :function_body=>
+     {:block=>
+       [{:statements=>Byte* p = (Byte*)lc;},
+        {:statements=>
+          return (p[0] << 24) + (p[1] << 16) + (p[2] << 8) + p[3];}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	   SparcDecoder::SparcDecoder
+ * OVERVIEW:	   
+ * PARAMETERS:	   None
+ * RETURNS:		   N/A
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_name=>SparcDecoder::SparcDecoder,
+    :parameters=>{:variables_decl=>Prog* prog},
+    :variables_decl=>prog,
+    :function_body=>
+     {:block=>
+       [{:statements=>
+          std::string file = Boomerang::get()->getProgPath() + "frontend/machine/sparc/sparc.ssl";},
+        {:statements=>RTLDict.readSSLFile(file.c_str());}]}}},
+ {:functions=>
+   {:function_type=>int,
+    :function_name=>SparcDecoder::decodeAssemblyInstruction,
+    :parameters=>[{:variables_decl=>unsigned}, {:variables_decl=>int}],
+    :function_body=>{:block=>[{:statements=>return 0;}]}}}]

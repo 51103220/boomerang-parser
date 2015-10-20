@@ -1,9 +1,0 @@
----
-- - :name: rs1
-    :function: dis_Register(*)
-- - :name: rd
-    :function: dis_Register(*)
-- - :name: roi
-    :function: dis_Number(*)
-- - :name: imm22
-    :function: dis_Number(*)
