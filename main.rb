@@ -59,6 +59,7 @@ class DecoderParser
 	end
 
 	def handle_arm (arm,index)
+		is_matching = false
 		arm.each_pair do |key,value|
 			case key 
 			when :header
@@ -67,6 +68,7 @@ class DecoderParser
 						when :pattern
 							if v.is_a?(Hash)
 								if v.key?(:opcode)
+									is_matching = true
 									@output_content += "\t"*index + "if (lines(0) == #{v[:opcode]} ) {\n"
 								end
 								if v.key?(:argument)
@@ -76,7 +78,8 @@ class DecoderParser
 								v.each do |element|
 									element.each_pair do |kk,vv|
 										case kk
-										when :opcode 
+										when :opcode
+											is_matching = true 
 											@output_content += "\t"*index + "if (lines(0) == #{vv} ) {\n"
 										when :argument
 											@output_content +=  "\t"*(index+1) + "#{vv[:lhs]} = magic_process(#{vv[:lhs]});\n"
@@ -87,8 +90,10 @@ class DecoderParser
 						end	
 					end
 			when :codes
-			end
-			@output_content += "\t"*index + "}\n"			
+				if is_matching
+					@output_content += "\t"*index + "}\n"
+				end
+			end			
 		end 
 	end
 

@@ -193,288 +193,225 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 	if (lines(0) == call__ ) {
 		addr = magic_process(addr);
 	}
-	}
 	if (lines(0) == call_ ) {
 		addr = magic_process(addr);
 	}
-	}
 	if (lines(0) == ret ) {
-	}
 	}
 	if (lines(0) == retl ) {
 	}
-	}
 	if (lines(0) == branch^",a" ) {
 		tgt = magic_process(tgt);
-	}
 	}
 	if (lines(0) == pbranch^",a" ) {
 		cc01 = magic_process(cc01);
 		tgt = magic_process(tgt);
 	}
-	}
 	if (lines(0) == branch ) {
 		tgt = magic_process(tgt);
-	}
 	}
 	if (lines(0) == BPA ) {
 		cc01 = magic_process(cc01);
 		tgt = magic_process(tgt);
 	}
-	}
 	if (lines(0) == pbranch ) {
 		cc01 = magic_process(cc01);
 		tgt = magic_process(tgt);
 	}
-	}
 	if (lines(0) == JMPL ) {
 		addr = magic_process(addr);
 		rd = magic_process(rd);
-	}
 	}
 	if (lines(0) == SAVE ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
 		rd = magic_process(rd);
 	}
-	}
 	if (lines(0) == RESTORE ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
 		rd = magic_process(rd);
 	}
-	}
-	}
-	}
 	if (lines(0) == sethi ) {
 		imm22 = magic_process(imm22);
 		rd = magic_process(rd);
-	}
 	}
 	if (lines(0) == load_greg ) {
 		addr = magic_process(addr);
 		rd = magic_process(rd);
 	}
-	}
 	if (lines(0) == LDF ) {
 		addr = magic_process(addr);
 		fds = magic_process(fds);
 	}
-	}
 	if (lines(0) == LDDF ) {
 		addr = magic_process(addr);
 		fdd = magic_process(fdd);
-	}
 	}
 	if (lines(0) == load_asi ) {
 		addr = magic_process(addr);
 		asi = magic_process(asi);
 		rd = magic_process(rd);
 	}
-	}
 	if (lines(0) == sto_greg ) {
 		rd = magic_process(rd);
 		addr = magic_process(addr);
-	}
 	}
 	if (lines(0) == STF ) {
 		fds = magic_process(fds);
 		addr = magic_process(addr);
 	}
-	}
 	if (lines(0) == STDF ) {
 		fdd = magic_process(fdd);
 		addr = magic_process(addr);
-	}
 	}
 	if (lines(0) == sto_asi ) {
 		rd = magic_process(rd);
 		addr = magic_process(addr);
 		asi = magic_process(asi);
 	}
-	}
 	if (lines(0) == LDFSR ) {
 		addr = magic_process(addr);
-	}
 	}
 	if (lines(0) == LDCSR ) {
 		addr = magic_process(addr);
 	}
-	}
 	if (lines(0) == STFSR ) {
 		addr = magic_process(addr);
-	}
 	}
 	if (lines(0) == STCSR ) {
 		addr = magic_process(addr);
 	}
-	}
 	if (lines(0) == STDFQ ) {
 		addr = magic_process(addr);
-	}
 	}
 	if (lines(0) == STDCQ ) {
 		addr = magic_process(addr);
 	}
-	}
 	if (lines(0) == RDY ) {
 		rd = magic_process(rd);
-	}
 	}
 	if (lines(0) == RDPSR ) {
 		rd = magic_process(rd);
 	}
-	}
 	if (lines(0) == RDWIM ) {
 		rd = magic_process(rd);
 	}
-	}
 	if (lines(0) == RDTBR ) {
 		rd = magic_process(rd);
-	}
 	}
 	if (lines(0) == WRY ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
 	}
-	}
 	if (lines(0) == WRPSR ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
-	}
 	}
 	if (lines(0) == WRWIM ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
 	}
-	}
 	if (lines(0) == WRTBR ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
-	}
 	}
 	if (lines(0) == alu ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
 		rd = magic_process(rd);
 	}
-	}
 	if (lines(0) == float2s ) {
 		fs2s = magic_process(fs2s);
 		fds = magic_process(fds);
-	}
 	}
 	if (lines(0) == float3s ) {
 		fs1s = magic_process(fs1s);
 		fs2s = magic_process(fs2s);
 		fds = magic_process(fds);
 	}
-	}
 	if (lines(0) == float3d ) {
 		fs1d = magic_process(fs1d);
 		fs2d = magic_process(fs2d);
 		fdd = magic_process(fdd);
-	}
 	}
 	if (lines(0) == float3q ) {
 		fs1q = magic_process(fs1q);
 		fs2q = magic_process(fs2q);
 		fdq = magic_process(fdq);
 	}
-	}
 	if (lines(0) == fcompares ) {
 		fs1s = magic_process(fs1s);
 		fs2s = magic_process(fs2s);
-	}
 	}
 	if (lines(0) == fcompared ) {
 		fs1d = magic_process(fs1d);
 		fs2d = magic_process(fs2d);
 	}
-	}
 	if (lines(0) == fcompareq ) {
 		fs1q = magic_process(fs1q);
 		fs2q = magic_process(fs2q);
-	}
 	}
 	if (lines(0) == FTOs ) {
 		fs2s = magic_process(fs2s);
 		fds = magic_process(fds);
 	}
-	}
 	if (lines(0) == FiTOd ) {
 		fs2s = magic_process(fs2s);
 		fdd = magic_process(fdd);
-	}
 	}
 	if (lines(0) == FdTOi ) {
 		fs2d = magic_process(fs2d);
 		fds = magic_process(fds);
 	}
-	}
 	if (lines(0) == FiTOq ) {
 		fs2s = magic_process(fs2s);
 		fdq = magic_process(fdq);
-	}
 	}
 	if (lines(0) == FqTOi ) {
 		fs2q = magic_process(fs2q);
 		fds = magic_process(fds);
 	}
-	}
 	if (lines(0) == FsTOd ) {
 		fs2s = magic_process(fs2s);
 		fdd = magic_process(fdd);
-	}
 	}
 	if (lines(0) == FdTOs ) {
 		fs2d = magic_process(fs2d);
 		fds = magic_process(fds);
 	}
-	}
 	if (lines(0) == FsTOq ) {
 		fs2s = magic_process(fs2s);
 		fdq = magic_process(fdq);
-	}
 	}
 	if (lines(0) == FqTOs ) {
 		fs2q = magic_process(fs2q);
 		fds = magic_process(fds);
 	}
-	}
 	if (lines(0) == FdTOq ) {
 		fs2d = magic_process(fs2d);
 		fdq = magic_process(fdq);
-	}
 	}
 	if (lines(0) == FqTOd ) {
 		fs2q = magic_process(fs2q);
 		fdd = magic_process(fdd);
 	}
-	}
 	if (lines(0) == FSQRTd ) {
 		fs2d = magic_process(fs2d);
 		fdd = magic_process(fdd);
-	}
 	}
 	if (lines(0) == FSQRTq ) {
 		fs2q = magic_process(fs2q);
 		fdq = magic_process(fdq);
 	}
-	}
 	if (lines(0) == RETURN ) {
 		addr = magic_process(addr);
-	}
 	}
 	if (lines(0) == trap ) {
 		addr = magic_process(addr);
 	}
-	}
 	if (lines(0) == UNIMP ) {
 		n = magic_process(n);
-	}
-	}
-	}
 	}
 	result.numBytes = nextPC - hostPC;
 	if(result.valid && result.rtl == 0)
@@ -523,10 +460,8 @@ Exp* SparcDecoder::dis_RegImm(unsigned pc)
 	if (lines(0) == imode ) {
 		i = magic_process(i);
 	}
-	}
 	if (lines(0) == rmode ) {
 		rs2 = magic_process(rs2);
-	}
 	}
 }
 /*==============================================================================
@@ -544,20 +479,16 @@ Exp* SparcDecoder::dis_Eaddr(ADDRESS pc,int ignore)
 	if (lines(0) == indirectA ) {
 		rs1 = magic_process(rs1);
 	}
-	}
 	if (lines(0) == indexA ) {
 		rs1 = magic_process(rs1);
 		rs2 = magic_process(rs2);
 	}
-	}
 	if (lines(0) == absoluteA ) {
 		i = magic_process(i);
-	}
 	}
 	if (lines(0) == dispA ) {
 		rs1 = magic_process(rs1);
 		i = magic_process(i);
-	}
 	}
 	return expr;
 }
@@ -585,7 +516,6 @@ bool SparcDecoder::isRestore(ADDRESS hostPC)
 		a = magic_process(a);
 		b = magic_process(b);
 		c = magic_process(c);
-	}
 	}
 }
 /**********************************
