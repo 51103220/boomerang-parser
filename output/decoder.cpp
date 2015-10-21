@@ -96,13 +96,16 @@ RTL* SparcDecoder::createBranchRtl(ADDRESS pc,std::list<Statement*>* stmts,const
 			case 'L':
 			if(name[3] == 'G')
 			br->setCondType(BRANCH_JNE, true);
+			else
 			if(name[3] == 'E')
 			br->setCondType(BRANCH_JSLE, true);
+			else
 			br->setCondType(BRANCH_JSL, true);
 			break;
 			case 'G':
 			if(name[3] == 'E')
 			br->setCondType(BRANCH_JSGE, true);
+			else
 			br->setCondType(BRANCH_JSG, true);
 			break;
 			case 'N':
@@ -126,30 +129,37 @@ RTL* SparcDecoder::createBranchRtl(ADDRESS pc,std::list<Statement*>* stmts,const
 		{
 			if(name[3] == 'U')
 			br->setCondType(BRANCH_JULE);
+			else
 			br->setCondType(BRANCH_JSLE);
 		}
+		else
 		br->setCondType(BRANCH_JSL);
 		break;
 		case 'N':
 		if(name[3] == 'G')
 		br->setCondType(BRANCH_JMI);
+		else
 		br->setCondType(BRANCH_JNE);
 		break;
 		case 'C':
 		if(name[2] == 'C')
 		br->setCondType(BRANCH_JUGE);
+		else
 		br->setCondType(BRANCH_JUL);
 		break;
 		case 'V':
 		if(name[2] == 'C')
 		std::cerr << "Decoded BVC instruction\n";
+		else
 		std::cerr << "Decoded BVS instruction\n";
 		break;
 		case 'G':
 		if(name[2] == 'E')
 		br->setCondType(BRANCH_JSGE);
+		else
 		if(name[2] == 'U')
 		br->setCondType(BRANCH_JUG);
+		else
 		br->setCondType(BRANCH_JSG);
 		break;
 		case 'P':
@@ -192,226 +202,460 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 	dword MATCH_p = hostPC;
 	if (lines(0) == call__ ) {
 		addr = magic_process(addr);
+		CallStatement* newCall = new CallStatement;
+		ADDRESS nativeDest = addr - delta;
+		newCall->setDest(nativeDest);
+		Proc* destProc = prog->setNewProc(nativeDest);
+		if (destProc == (Proc*)-1) destProc = NULL;
+		newCall->setDestProc(destProc);
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(newCall);
+		result.type = SD;
 	}
 	if (lines(0) == call_ ) {
 		addr = magic_process(addr);
+		CallStatement* newCall = new CallStatement;
+		newCall->setIsComputed();
+		newCall->setDest(dis_Eaddr(addr));
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(newCall);
+		result.type = DD;
 	}
 	if (lines(0) == ret ) {
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(new ReturnStatement);
+		result.type = DD;
 	}
 	if (lines(0) == retl ) {
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(new ReturnStatement);
+		result.type = DD;
 	}
 	if (lines(0) == branch^",a" ) {
 		tgt = magic_process(tgt);
+		if(name[0] == 'C')
+		{
+			result.valid = false;
+			result.rtl = new RTL;
+			result.numBytes = 4;
+			return result;
+		}
+		GotoStatement* jump = 0;
+		RTL* rtl = NULL;
+		if(strcmp(name,"BA,a") == 0 || strcmp(name,"BN,a") == 0)
+		{
+			jump = new GotoStatement;
+			rtl = new RTL(pc, stmts);
+			rtl->appendStmt(jump);
+		}
+		else
+		if(strcmp(name,"BVS,a") == 0 || strcmp(name,"BVC,a") == 0)
+		{
+			jump = new GotoStatement;
+			rtl = new RTL(pc, stmts);
+			rtl->appendStmt(jump);
+		}
+		else
+		{
+			rtl = createBranchRtl(pc, stmts, name);
+			jump = (GotoStatement*) rtl->getList().back();
+		}
+		result.type = SCDAN;
+		if((strcmp(name,"BA,a") == 0) || (strcmp(name, "BVC,a") == 0))
+		{
+			result.type = SU;
+		}
+		else
+		{
+			result.type = SKIP;
+		}
+		result.rtl = rtl;
+		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == pbranch^",a" ) {
 		cc01 = magic_process(cc01);
 		tgt = magic_process(tgt);
+		if(cc01 != 0)
+		{
+			result.valid = false;
+			result.rtl = new RTL;
+			result.numBytes = 4;
+			return result;
+		}
+		GotoStatement* jump = 0;
+		RTL* rtl = NULL;
+		if(strcmp(name,"BPA,a") == 0 || strcmp(name,"BPN,a") == 0)
+		{
+			jump = new GotoStatement;
+			rtl = new RTL(pc, stmts);
+			rtl->appendStmt(jump);
+		}
+		else
+		if(strcmp(name,"BPVS,a") == 0 || strcmp(name,"BPVC,a") == 0)
+		{
+			jump = new GotoStatement;
+			rtl = new RTL(pc, stmts);
+			rtl->appendStmt(jump);
+		}
+		else
+		{
+			rtl = createBranchRtl(pc, stmts, name);
+			jump = (GotoStatement*) rtl->getList().back();
+		}
+		result.type = SCDAN;
+		if((strcmp(name,"BPA,a") == 0) || (strcmp(name, "BPVC,a") == 0))
+		{
+			result.type = SU;
+		}
+		else
+		{
+			result.type = SKIP;
+		}
+		result.rtl = rtl;
+		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == branch ) {
 		tgt = magic_process(tgt);
+		if(name[0] == 'C')
+		{
+			result.valid = false;
+			result.rtl = new RTL;
+			result.numBytes = 4;
+			return result;
+		}
+		GotoStatement* jump = 0;
+		RTL* rtl = NULL;
+		if(strcmp(name,"BA") == 0 || strcmp(name,"BN") == 0)
+		{
+			jump = new GotoStatement;
+			rtl = new RTL(pc, stmts);
+			rtl->appendStmt(jump);
+		}
+		else
+		if(strcmp(name,"BVS") == 0 || strcmp(name,"BVC") == 0)
+		{
+			jump = new GotoStatement;
+			rtl = new RTL(pc, stmts);
+			rtl->appendStmt(jump);
+		}
+		else
+		{
+			rtl = createBranchRtl(pc, stmts, name);
+			jump = (BranchStatement*) rtl->getList().back();
+		}
+		result.type = SCD;
+		if((strcmp(name,"BA") == 0) || (strcmp(name, "BVC") == 0))
+		result.type = SD;
+		if((strcmp(name,"BN") == 0) || (strcmp(name, "BVS") == 0))
+		result.type = NCT;
+		result.rtl = rtl;
+		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == BPA ) {
 		cc01 = magic_process(cc01);
 		tgt = magic_process(tgt);
+		unused(cc01);
+		GotoStatement* jump = new GotoStatement;
+		result.type = SD;
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(jump);
+		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == pbranch ) {
 		cc01 = magic_process(cc01);
 		tgt = magic_process(tgt);
+		if(cc01 != 0)
+		{
+			result.valid = false;
+			result.rtl = new RTL;
+			result.numBytes = 4;
+			return result;
+		}
+		GotoStatement* jump = 0;
+		RTL* rtl = NULL;
+		if(strcmp(name,"BPN") == 0)
+		{
+			jump = new GotoStatement;
+			rtl = new RTL(pc, stmts);
+			rtl->appendStmt(jump);
+		}
+		else
+		if(strcmp(name,"BPVS") == 0 || strcmp(name,"BPVC") == 0)
+		{
+			jump = new GotoStatement;
+			rtl = new RTL(pc, stmts);
+			rtl->appendStmt(jump);
+		}
+		else
+		{
+			rtl = createBranchRtl(pc, stmts, name);
+			jump = (GotoStatement*)rtl->getList().back();
+		}
+		result.type = SCD;
+		if(strcmp(name, "BPVC") == 0)
+		result.type = SD;
+		if((strcmp(name,"BPN") == 0) || (strcmp(name, "BPVS") == 0))
+		result.type = NCT;
+		result.rtl = rtl;
+		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == JMPL ) {
 		addr = magic_process(addr);
 		rd = magic_process(rd);
+		CaseStatement* jump = new CaseStatement;
+		jump->setIsComputed();
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(jump);
+		result.type = DD;
+		jump->setDest(dis_Eaddr(addr));
+		unused(rd);
 	}
 	if (lines(0) == SAVE ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
 		rd = magic_process(rd);
+		stmts = instantiate(pc, "SAVE", DIS_RS1, DIS_ROI, DIS_RD);
 	}
 	if (lines(0) == RESTORE ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
 		rd = magic_process(rd);
+		stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);
 	}
 	if (lines(0) == sethi ) {
 		imm22 = magic_process(imm22);
 		rd = magic_process(rd);
+		stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
 	}
 	if (lines(0) == load_greg ) {
 		addr = magic_process(addr);
 		rd = magic_process(rd);
+		stmts = instantiate(pc,	 name, DIS_ADDR, DIS_RD);
 	}
 	if (lines(0) == LDF ) {
 		addr = magic_process(addr);
 		fds = magic_process(fds);
+		stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDS);
 	}
 	if (lines(0) == LDDF ) {
 		addr = magic_process(addr);
 		fdd = magic_process(fdd);
+		stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDD);
 	}
 	if (lines(0) == load_asi ) {
 		addr = magic_process(addr);
 		asi = magic_process(asi);
 		rd = magic_process(rd);
+		unused(asi);
+		stmts = instantiate(pc,	 name, DIS_RD, DIS_ADDR);
 	}
 	if (lines(0) == sto_greg ) {
 		rd = magic_process(rd);
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);
 	}
 	if (lines(0) == STF ) {
 		fds = magic_process(fds);
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_FDS, DIS_ADDR);
 	}
 	if (lines(0) == STDF ) {
 		fdd = magic_process(fdd);
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_FDD, DIS_ADDR);
 	}
 	if (lines(0) == sto_asi ) {
 		rd = magic_process(rd);
 		addr = magic_process(addr);
 		asi = magic_process(asi);
+		unused(asi);
+		stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);
 	}
 	if (lines(0) == LDFSR ) {
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == LDCSR ) {
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == STFSR ) {
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == STCSR ) {
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == STDFQ ) {
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == STDCQ ) {
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == RDY ) {
 		rd = magic_process(rd);
+		stmts = instantiate(pc,	 name, DIS_RD);
 	}
 	if (lines(0) == RDPSR ) {
 		rd = magic_process(rd);
+		stmts = instantiate(pc,	 name, DIS_RD);
 	}
 	if (lines(0) == RDWIM ) {
 		rd = magic_process(rd);
+		stmts = instantiate(pc,	 name, DIS_RD);
 	}
 	if (lines(0) == RDTBR ) {
 		rd = magic_process(rd);
+		stmts = instantiate(pc,	 name, DIS_RD);
 	}
 	if (lines(0) == WRY ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
+		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);
 	}
 	if (lines(0) == WRPSR ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
+		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);
 	}
 	if (lines(0) == WRWIM ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
+		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);
 	}
 	if (lines(0) == WRTBR ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
+		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);
 	}
 	if (lines(0) == alu ) {
 		rs1 = magic_process(rs1);
 		roi = magic_process(roi);
 		rd = magic_process(rd);
+		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI, DIS_RD);
 	}
 	if (lines(0) == float2s ) {
 		fs2s = magic_process(fs2s);
 		fds = magic_process(fds);
+		stmts = instantiate(pc,	 name, DIS_FS2S, DIS_FDS);
 	}
 	if (lines(0) == float3s ) {
 		fs1s = magic_process(fs1s);
 		fs2s = magic_process(fs2s);
 		fds = magic_process(fds);
+		stmts = instantiate(pc,	 name, DIS_FS1S, DIS_FS2S, DIS_FDS);
 	}
 	if (lines(0) == float3d ) {
 		fs1d = magic_process(fs1d);
 		fs2d = magic_process(fs2d);
 		fdd = magic_process(fdd);
+		stmts = instantiate(pc,	 name, DIS_FS1D, DIS_FS2D, DIS_FDD);
 	}
 	if (lines(0) == float3q ) {
 		fs1q = magic_process(fs1q);
 		fs2q = magic_process(fs2q);
 		fdq = magic_process(fdq);
+		stmts = instantiate(pc,	 name, DIS_FS1Q, DIS_FS2Q, DIS_FDQ);
 	}
 	if (lines(0) == fcompares ) {
 		fs1s = magic_process(fs1s);
 		fs2s = magic_process(fs2s);
+		stmts = instantiate(pc,	 name, DIS_FS1S, DIS_FS2S);
 	}
 	if (lines(0) == fcompared ) {
 		fs1d = magic_process(fs1d);
 		fs2d = magic_process(fs2d);
+		stmts = instantiate(pc,	 name, DIS_FS1D, DIS_FS2D);
 	}
 	if (lines(0) == fcompareq ) {
 		fs1q = magic_process(fs1q);
 		fs2q = magic_process(fs2q);
+		stmts = instantiate(pc,	 name, DIS_FS1Q, DIS_FS2Q);
 	}
 	if (lines(0) == FTOs ) {
 		fs2s = magic_process(fs2s);
 		fds = magic_process(fds);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDS);
 	}
 	if (lines(0) == FiTOd ) {
 		fs2s = magic_process(fs2s);
 		fdd = magic_process(fdd);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);
 	}
 	if (lines(0) == FdTOi ) {
 		fs2d = magic_process(fs2d);
 		fds = magic_process(fds);
+		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);
 	}
 	if (lines(0) == FiTOq ) {
 		fs2s = magic_process(fs2s);
 		fdq = magic_process(fdq);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);
 	}
 	if (lines(0) == FqTOi ) {
 		fs2q = magic_process(fs2q);
 		fds = magic_process(fds);
+		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);
 	}
 	if (lines(0) == FsTOd ) {
 		fs2s = magic_process(fs2s);
 		fdd = magic_process(fdd);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);
 	}
 	if (lines(0) == FdTOs ) {
 		fs2d = magic_process(fs2d);
 		fds = magic_process(fds);
+		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);
 	}
 	if (lines(0) == FsTOq ) {
 		fs2s = magic_process(fs2s);
 		fdq = magic_process(fdq);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);
 	}
 	if (lines(0) == FqTOs ) {
 		fs2q = magic_process(fs2q);
 		fds = magic_process(fds);
+		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);
 	}
 	if (lines(0) == FdTOq ) {
 		fs2d = magic_process(fs2d);
 		fdq = magic_process(fdq);
+		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDQ);
 	}
 	if (lines(0) == FqTOd ) {
 		fs2q = magic_process(fs2q);
 		fdd = magic_process(fdd);
+		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDD);
 	}
 	if (lines(0) == FSQRTd ) {
 		fs2d = magic_process(fs2d);
 		fdd = magic_process(fdd);
+		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDD);
 	}
 	if (lines(0) == FSQRTq ) {
 		fs2q = magic_process(fs2q);
 		fdq = magic_process(fdq);
+		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDQ);
 	}
 	if (lines(0) == RETURN ) {
 		addr = magic_process(addr);
+		stmts = instantiate(pc, name, DIS_ADDR);
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(new ReturnStatement);
+		result.type = DD;
 	}
 	if (lines(0) == trap ) {
 		addr = magic_process(addr);
+		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == UNIMP ) {
 		n = magic_process(n);
+		unused(n);
+		stmts = NULL;
+		result.valid = false;
 	}
 	result.numBytes = nextPC - hostPC;
 	if(result.valid && result.rtl == 0)
@@ -459,9 +703,12 @@ Exp* SparcDecoder::dis_RegImm(unsigned pc)
 	dword MATCH_p = pc;
 	if (lines(0) == imode ) {
 		i = magic_process(i);
+		Exp* expr = new Const(i);
+		return expr;
 	}
 	if (lines(0) == rmode ) {
 		rs2 = magic_process(rs2);
+		return dis_RegRhs(rs2);
 	}
 }
 /*==============================================================================
@@ -478,17 +725,21 @@ Exp* SparcDecoder::dis_Eaddr(ADDRESS pc,int ignore)
 	dword MATCH_p = pc;
 	if (lines(0) == indirectA ) {
 		rs1 = magic_process(rs1);
+		expr = Location::regOf(rs1);
 	}
 	if (lines(0) == indexA ) {
 		rs1 = magic_process(rs1);
 		rs2 = magic_process(rs2);
+		expr = new Binary(opPlus,Location::regOf(rs1),Location::regOf(rs2));
 	}
 	if (lines(0) == absoluteA ) {
 		i = magic_process(i);
+		expr = new Const((int)i);
 	}
 	if (lines(0) == dispA ) {
 		rs1 = magic_process(rs1);
 		i = magic_process(i);
+		expr = new Binary(opPlus,Location::regOf(rs1), new Const((int)i));
 	}
 	return expr;
 }
@@ -516,6 +767,12 @@ bool SparcDecoder::isRestore(ADDRESS hostPC)
 		a = magic_process(a);
 		b = magic_process(b);
 		c = magic_process(c);
+		unused(a);
+		unused(b);
+		unused(c);
+		return true;
+		else
+		return false;
 	}
 }
 /**********************************

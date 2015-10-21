@@ -91,6 +91,13 @@ class DecoderParser
 					end
 			when :codes
 				if is_matching
+					if value.is_a?(Array)
+						value.each do |element|
+							magic(element,index+1)
+						end
+					else
+						magic(value,index+1)
+					end
 					@output_content += "\t"*index + "}\n"
 				end
 			end			
@@ -151,6 +158,11 @@ class DecoderParser
 				@output_content += "\t"*index + value +"\n"
 			when :default_statements
 				@output_content += "\t"*index + value +"\n"
+			when :else_statements
+				@output_content += "\t"*index +"else" +"\n"
+				if value.is_a?(Hash)
+					magic(value,index)
+				end
 			when :match_sentences
 				handle_matching(value,index) 					
 			end	
