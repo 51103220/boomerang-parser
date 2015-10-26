@@ -78,9 +78,9 @@ class SpecParser < Parslet::Parser
 		(str("[") >> space? >> id.as(:pattern_name) >> (space? >> id.as(:pattern_name)).repeat.maybe >> space? >> str("]"))
 	end
 	rule(:patterns) do
-		pattern.as(:pattern) >> (space? >> str("&") >> space? >> pattern.as(:pattern)).repeat.maybe >> 
-		(space? >> str(";") >> space? >> pattern.as(:pattern)).repeat.maybe >>
-		(space? >> str("|") >> space? >> pattern.as(:pattern)).repeat.maybe  
+		pattern.as(:pattern) >> (space? >> str("&") >> space? >> pattern.as(:pattern)).repeat.as(:conjunction).maybe >> 
+		(space? >> str(";") >> space? >> pattern.as(:pattern)).repeat.as(:sequence).maybe >>
+		(space? >> str("|") >> space? >> pattern.as(:pattern)).repeat.as(:disjunction).maybe  
 	end
 	rule(:pattern) do 
 		opcode.as(:opcode) >> space? >> str("(") >> space? >> (arguments.as(:argument) >> (str(",") >> space? >> arguments.as(:argument)).repeat.maybe).maybe >> space? >> str(")") |

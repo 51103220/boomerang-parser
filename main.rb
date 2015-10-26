@@ -54,8 +54,103 @@ class DecoderParser
 		end
 	end 
 
-	def mapping_handler
+	def handle_opcode (opcode,index)
 
+	end
+
+	def handle_list_pattern (hs,opcode)
+		if hs[:disjunction].empty?
+			@possible_names << opcode
+		else
+			iterate_patterns hs[:pattern][:field_name]
+			hs[:disjunction].each do |element|
+				iterate_patterns element[:pattern][:field_name]
+			end
+		end
+	end
+
+	def handle_pattern_binding (hs,opcode)
+		hs.each_pair do |key,value|
+			case key
+			when :pattern_specifier
+				if value.is_a?(Array)
+					value = value.map(&:values).flatten
+					if value.include? opcode
+						@possible_names << opcode
+					end
+				else
+					if value[:pattern_name] == opcode
+						if !hs.has_key?(:list_pattern_name)
+							handle_list_pattern(hs[:list_pattern],opcode)
+						else
+							names = hs[:list_pattern_name].map(&:values).flatten
+							names.each do |n|
+								@possible_names << n
+							end 
+						end
+						
+					end
+				end
+			when :list_pattern_name
+				value = value.map(&:values).flatten
+				if value.include? opcode
+					@possible_names << opcode
+				end
+			end
+		end
+	end
+
+	def iterate_patterns opcode
+		@spec_result.each do |element|
+			element.each_pair do |key,value|
+				case key
+				when :patterns
+					value.each do |e|
+						e.each_pair do |k,v|
+							case k
+							when :pattern_binding
+								handle_pattern_binding(v,opcode)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+	def handle_constructor hs
+		constructor = {}
+		@possible_names = []
+		hs.each_pair do |key,value|
+			case key
+			when :opcode
+				constructor[:opcode] = value
+				iterate_patterns(value)
+				constructor[:possible_names] = @possible_names
+			end 
+		end
+		@constructors << constructor
+	end
+
+	def handle_constructors
+		@constructors = []
+		@spec_result.each do |element|
+			element.each_pair do |key,value|
+				case key
+				when :constructors
+					value.each do |e|
+						e.each_pair do |k,v|
+							case k
+							when :constructor
+								handle_constructor v
+							end
+						end
+					end
+				end
+			end
+		end
+		File.open("#{@output}/possible_names", 'w') { |file| PP.pp(@constructors,file) }
+		p "Done! Check Possible Assembly Names in ouput/possible_names"
 	end
 
 	def handle_arm (arm,index)
@@ -130,7 +225,6 @@ class DecoderParser
 				end
 			end
 		end 
-
 	end
 
 	def magic (arr,index)
@@ -220,6 +314,8 @@ class DecoderParser
 		parse_spec_files
 		p "----write_to_cpp----------"
 		write_to_cpp
+		p "----Handle constructors---"
+		handle_constructors
 	end
 
 	private :parse_m_file, :parse_spec_files, :write_to_cpp
