@@ -120,20 +120,40 @@ class DecoderParser
 
 	def handle_constructor hs
 		constructor = {}
+		synthetic = {}
 		@possible_names = []
 		hs.each_pair do |key,value|
 			case key
 			when :opcode
 				constructor[:opcode] = value
-				iterate_patterns(value)
+				if hs[:branches] != ""
+					hs[:branches].each_pair do |k,v|
+						case k
+						when :list_pattern
+							if v[:pattern].is_a?(Array) #Synthetic
+								synthetic[:opcode] = constructor[:opcode]
+								synthetic[:name] = v[:pattern][0][:opcode] 
+							else
+								iterate_patterns(v[:pattern][:field_name])
+							end
+						end
+					end
+				else 
+					iterate_patterns(value)	
+				end
+
 				constructor[:possible_names] = @possible_names
 			end 
 		end
 		@constructors << constructor
+		if !synthetic.empty?
+			@synthetic << synthetic
+		end
 	end
 
 	def handle_constructors
 		@constructors = []
+		@synthetic = []
 		@spec_result.each do |element|
 			element.each_pair do |key,value|
 				case key
@@ -146,6 +166,13 @@ class DecoderParser
 							end
 						end
 					end
+				end
+			end
+		end
+		@synthetic.each do |syn|
+			@constructors.each do |cons|
+				if cons[:possible_names].include?(syn[:name])
+					cons[:possible_names] << syn[:opcode]
 				end
 			end
 		end

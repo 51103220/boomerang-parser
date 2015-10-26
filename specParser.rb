@@ -112,17 +112,14 @@ class SpecParser < Parslet::Parser
 	rule(:constructor) do 
 		space? >>
 		(opcode.as(:opcode) >>
-			space? >>
-			operands.as(:operands) >>
-			space? >>
-			(str(":") >> space? >> id.as(:type_name)).maybe  >> 
-			space? >>
+			(str(" ").repeat >> operands.as(:operands) >> space?).maybe >>
+			(str(":") >> str(" ").repeat >> id.as(:type_name) >> space?).maybe  >> 
 			(branches).maybe
 			) >>
 		space?
 	end
 	rule(:operands) {
-		operand_comma|
+		operand_comma |
 		operand_space |
 		operand.as(:op)
 	}
@@ -130,7 +127,7 @@ class SpecParser < Parslet::Parser
 		operand.as(:op) >> (str(",") >> space? >>  operand.as(:op)).repeat(1)
 	}
 	rule(:operand_space) {
-		operand.as(:op) >> (space? >> binary_operator.as(:binary_operator)>> space? >> operand.as(:op)).repeat(1)
+		operand.as(:op) >> (space? >> binary_operator.as(:binary_operator) >> space? >> operand.as(:op)).repeat(1)
 	}
 	rule(:operand) do 
 		id >> str("!").maybe >> (literal.repeat >> id >> literal.repeat).maybe |

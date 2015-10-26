@@ -1043,9 +1043,11 @@
       {:opcode=>storea,
        :operands=>[{:op=>rd}, {:op=>[regaddr]}],
        :branches=>""}},
-    {:constructor=>{:opcode=>asi, :operands=>{:op=>STDA}, :branches=>""}},
+    {:constructor=>{:opcode=>asi, :operands=>{:op=>""}, :branches=>""}},
     {:constructor=>
-      {:opcode=>rd, :operands=>[{:op=>""}, {:op=>[regaddr]}], :branches=>""}},
+      {:opcode=>STDA,
+       :operands=>[{:op=>rd}, {:op=>[regaddr]}],
+       :branches=>""}},
     {:constructor=>{:opcode=>asi, :operands=>{:op=>""}, :branches=>""}}]},
  {:constructors=>
    [{:constructor=>
@@ -1344,10 +1346,11 @@
        :operands=>[{:op=>fs1q}, {:op=>fs2q}],
        :branches=>""}}]},
  {:constructors=>
-   [{:constructor=>{:opcode=>NOP, :operands=>{:op=>FLUSH}, :branches=>""}},
-    {:constructor=>{:opcode=>address_, :operands=>{:op=>JMPL}, :branches=>""}},
+   [{:constructor=>{:opcode=>NOP, :operands=>{:op=>""}, :branches=>""}},
     {:constructor=>
-      {:opcode=>address_, :operands=>[{:op=>""}, {:op=>rd}], :branches=>""}},
+      {:opcode=>FLUSH, :operands=>{:op=>address_}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>JMPL, :operands=>[{:op=>address_}, {:op=>rd}], :branches=>""}},
     {:constructor=>
       {:opcode=>RETURN, :operands=>{:op=>address_}, :branches=>""}},
     {:constructor=>{:opcode=>trap, :operands=>{:op=>address_}, :branches=>""}},
