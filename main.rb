@@ -8,6 +8,7 @@ class DecoderParser
 		@spec_filter = /#.*/
 		@m_filter = /(SHOW_ASM.*)|(DEBUG_STMTS)|(\/\*.*\*\/)|(\/\/.*)/
 		@output_content = ""
+		@constructors = []
 	end
 
 	def parse_m_file 
@@ -53,10 +54,6 @@ class DecoderParser
 			p "Done! Check out result in ouput/spec_result"
 		end
 	end 
-
-	def handle_opcode (opcode,index)
-
-	end
 
 	def handle_list_pattern (hs,opcode)
 		if hs[:disjunction].empty?
@@ -152,7 +149,6 @@ class DecoderParser
 	end
 
 	def handle_constructors
-		@constructors = []
 		@synthetic = []
 		@spec_result.each do |element|
 			element.each_pair do |key,value|
@@ -169,15 +165,38 @@ class DecoderParser
 				end
 			end
 		end
-		@synthetic.each do |syn|
-			@constructors.each do |cons|
-				if cons[:possible_names].include?(syn[:name])
-					cons[:possible_names] << syn[:opcode]
+		File.open("#{@output}/possible_names", 'w') { |file| PP.pp(@constructors,file) }
+		p "Done! Check Possible Assembly Names in ouput/possible_names"
+	end
+
+	def handle_opcode (opcode,index)
+		@constructors.each do |element|
+			if opcode == element[:opcode]
+				if element[:possible_names].length != 0
+					name_pattern = /[a-zA-Z0-9_]+\^\"(?<opname>.*)\"/
+					opname = ""
+					if name_pattern  =~ opcode
+						opname = name_pattern.match(opcode)[:opname]
+					end
+					names = element[:possible_names]
+					if names.length > 1
+						@output_content += "\t"*index + "if ("
+						names.each do |name|
+							if name == names.first
+								@output_content += "lines(0) == \'#{name}#{opname}\'"
+							else
+								@output_content += " || lines(0) == \'#{name}#{opname}\'"
+							end
+						end
+						@output_content += ") {\n"
+					else
+						@output_content += "\t"*index + "if (lines(0) == \'#{names[0]}#{opname}\' ) {\n"
+					end
+				else 
+					@output_content += "\t"*index + "if (lines(0) == \'#{opcode}\' ) {\n"
 				end
 			end
 		end
-		File.open("#{@output}/possible_names", 'w') { |file| PP.pp(@constructors,file) }
-		p "Done! Check Possible Assembly Names in ouput/possible_names"
 	end
 
 	def handle_arm (arm,index)
@@ -191,7 +210,7 @@ class DecoderParser
 							if v.is_a?(Hash)
 								if v.key?(:opcode)
 									is_matching = true
-									@output_content += "\t"*index + "if (lines(0) == #{v[:opcode]} ) {\n"
+									handle_opcode(v[:opcode],index)
 								end
 								if v.key?(:argument)
 									@output_content +=  "\t"*(index+1) + "#{v[:argument][:lhs]} = magic_process(#{v[:argument][:lhs]});\n"
@@ -201,14 +220,16 @@ class DecoderParser
 									element.each_pair do |kk,vv|
 										case kk
 										when :opcode
-											is_matching = true 
-											@output_content += "\t"*index + "if (lines(0) == #{vv} ) {\n"
+											is_matching = true
+											handle_opcode(vv,index) 
 										when :argument
 											@output_content +=  "\t"*(index+1) + "#{vv[:lhs]} = magic_process(#{vv[:lhs]});\n"
 										end
 									end
 								end
-							end  
+							end
+						when :name 
+							@output_content +=  "\t"*(index+1) + "#{v} = lines(0);\n"
 						end	
 					end
 			when :codes
@@ -339,10 +360,11 @@ class DecoderParser
 		parse_m_file
 		p "----Parsing .spec files---"
 		parse_spec_files
-		p "----write_to_cpp----------"
-		write_to_cpp
 		p "----Handle constructors---"
 		handle_constructors
+		p "----write_to_cpp----------"
+		write_to_cpp
+		
 	end
 
 	private :parse_m_file, :parse_spec_files, :write_to_cpp

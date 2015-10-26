@@ -289,7 +289,8 @@
                 {:statements=>result.type = DD;}]}},
            {:arm=>
              {:header=>
-               {:pattern=>{:opcode=>branch^",a", :argument=>{:lhs=>tgt}}},
+               {:pattern=>{:opcode=>branch^",a", :argument=>{:lhs=>tgt}},
+                :name=>name},
               :codes=>
                [{:if_statements=>
                   {:expression=>(name[0] == 'C'),
@@ -334,7 +335,8 @@
                {:pattern=>
                  [{:opcode=>pbranch^",a"},
                   {:argument=>{:lhs=>cc01}},
-                  {:argument=>{:lhs=>tgt}}]},
+                  {:argument=>{:lhs=>tgt}}],
+                :name=>name},
               :codes=>
                [{:if_statements=>
                   {:expression=>(cc01 != 0),
@@ -375,7 +377,9 @@
                 {:statements=>result.rtl = rtl;},
                 {:statements=>jump->setDest(tgt - delta);}]}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>branch, :argument=>{:lhs=>tgt}}},
+             {:header=>
+               {:pattern=>{:opcode=>branch, :argument=>{:lhs=>tgt}},
+                :name=>name},
               :codes=>
                [{:if_statements=>
                   {:expression=>(name[0] == 'C'),
@@ -435,7 +439,8 @@
                {:pattern=>
                  [{:opcode=>pbranch},
                   {:argument=>{:lhs=>cc01}},
-                  {:argument=>{:lhs=>tgt}}]},
+                  {:argument=>{:lhs=>tgt}}],
+                :name=>name},
               :codes=>
                [{:if_statements=>
                   {:expression=>(cc01 != 0),
@@ -509,7 +514,7 @@
                {:statements=>
                  stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);}}},
            {:arm=>
-             {:header=>{:pattern=>{:field_name=>NOP}},
+             {:header=>{:pattern=>{:field_name=>NOP}, :name=>name},
               :codes=>
                [{:statements=>result.type = NOP;},
                 {:statements=>stmts = instantiate(pc,	 name);}]}},
@@ -527,7 +532,8 @@
                {:pattern=>
                  [{:opcode=>load_greg},
                   {:argument=>{:lhs=>addr}},
-                  {:argument=>{:lhs=>rd}}]},
+                  {:argument=>{:lhs=>rd}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_ADDR, DIS_RD);}}},
@@ -536,7 +542,8 @@
                {:pattern=>
                  [{:opcode=>LDF},
                   {:argument=>{:lhs=>addr}},
-                  {:argument=>{:lhs=>fds}}]},
+                  {:argument=>{:lhs=>fds}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDS);}}},
@@ -545,7 +552,8 @@
                {:pattern=>
                  [{:opcode=>LDDF},
                   {:argument=>{:lhs=>addr}},
-                  {:argument=>{:lhs=>fdd}}]},
+                  {:argument=>{:lhs=>fdd}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDD);}}},
@@ -555,7 +563,8 @@
                  [{:opcode=>load_asi},
                   {:argument=>{:lhs=>addr}},
                   {:argument=>{:lhs=>asi}},
-                  {:argument=>{:lhs=>rd}}]},
+                  {:argument=>{:lhs=>rd}}],
+                :name=>name},
               :codes=>
                [{:statements=>unused(asi);},
                 {:statements=>
@@ -565,7 +574,8 @@
                {:pattern=>
                  [{:opcode=>sto_greg},
                   {:argument=>{:lhs=>rd}},
-                  {:argument=>{:lhs=>addr}}]},
+                  {:argument=>{:lhs=>addr}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);}}},
@@ -574,7 +584,8 @@
                {:pattern=>
                  [{:opcode=>STF},
                   {:argument=>{:lhs=>fds}},
-                  {:argument=>{:lhs=>addr}}]},
+                  {:argument=>{:lhs=>addr}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FDS, DIS_ADDR);}}},
@@ -583,7 +594,8 @@
                {:pattern=>
                  [{:opcode=>STDF},
                   {:argument=>{:lhs=>fdd}},
-                  {:argument=>{:lhs=>addr}}]},
+                  {:argument=>{:lhs=>addr}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FDD, DIS_ADDR);}}},
@@ -593,53 +605,74 @@
                  [{:opcode=>sto_asi},
                   {:argument=>{:lhs=>rd}},
                   {:argument=>{:lhs=>addr}},
-                  {:argument=>{:lhs=>asi}}]},
+                  {:argument=>{:lhs=>asi}}],
+                :name=>name},
               :codes=>
                [{:statements=>unused(asi);},
                 {:statements=>
                   stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);}]}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>LDFSR, :argument=>{:lhs=>addr}}},
+             {:header=>
+               {:pattern=>{:opcode=>LDFSR, :argument=>{:lhs=>addr}},
+                :name=>name},
               :codes=>
                {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>LDCSR, :argument=>{:lhs=>addr}}},
+             {:header=>
+               {:pattern=>{:opcode=>LDCSR, :argument=>{:lhs=>addr}},
+                :name=>name},
               :codes=>
                {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>STFSR, :argument=>{:lhs=>addr}}},
+             {:header=>
+               {:pattern=>{:opcode=>STFSR, :argument=>{:lhs=>addr}},
+                :name=>name},
               :codes=>
                {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>STCSR, :argument=>{:lhs=>addr}}},
+             {:header=>
+               {:pattern=>{:opcode=>STCSR, :argument=>{:lhs=>addr}},
+                :name=>name},
               :codes=>
                {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>STDFQ, :argument=>{:lhs=>addr}}},
+             {:header=>
+               {:pattern=>{:opcode=>STDFQ, :argument=>{:lhs=>addr}},
+                :name=>name},
               :codes=>
                {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>STDCQ, :argument=>{:lhs=>addr}}},
+             {:header=>
+               {:pattern=>{:opcode=>STDCQ, :argument=>{:lhs=>addr}},
+                :name=>name},
               :codes=>
                {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>RDY, :argument=>{:lhs=>rd}}},
+             {:header=>
+               {:pattern=>{:opcode=>RDY, :argument=>{:lhs=>rd}}, :name=>name},
               :codes=>{:statements=>stmts = instantiate(pc,	 name, DIS_RD);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>RDPSR, :argument=>{:lhs=>rd}}},
+             {:header=>
+               {:pattern=>{:opcode=>RDPSR, :argument=>{:lhs=>rd}},
+                :name=>name},
               :codes=>{:statements=>stmts = instantiate(pc,	 name, DIS_RD);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>RDWIM, :argument=>{:lhs=>rd}}},
+             {:header=>
+               {:pattern=>{:opcode=>RDWIM, :argument=>{:lhs=>rd}},
+                :name=>name},
               :codes=>{:statements=>stmts = instantiate(pc,	 name, DIS_RD);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>RDTBR, :argument=>{:lhs=>rd}}},
+             {:header=>
+               {:pattern=>{:opcode=>RDTBR, :argument=>{:lhs=>rd}},
+                :name=>name},
               :codes=>{:statements=>stmts = instantiate(pc,	 name, DIS_RD);}}},
            {:arm=>
              {:header=>
                {:pattern=>
                  [{:opcode=>WRY},
                   {:argument=>{:lhs=>rs1}},
-                  {:argument=>{:lhs=>roi}}]},
+                  {:argument=>{:lhs=>roi}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);}}},
@@ -648,7 +681,8 @@
                {:pattern=>
                  [{:opcode=>WRPSR},
                   {:argument=>{:lhs=>rs1}},
-                  {:argument=>{:lhs=>roi}}]},
+                  {:argument=>{:lhs=>roi}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);}}},
@@ -657,7 +691,8 @@
                {:pattern=>
                  [{:opcode=>WRWIM},
                   {:argument=>{:lhs=>rs1}},
-                  {:argument=>{:lhs=>roi}}]},
+                  {:argument=>{:lhs=>roi}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);}}},
@@ -666,7 +701,8 @@
                {:pattern=>
                  [{:opcode=>WRTBR},
                   {:argument=>{:lhs=>rs1}},
-                  {:argument=>{:lhs=>roi}}]},
+                  {:argument=>{:lhs=>roi}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);}}},
@@ -676,7 +712,8 @@
                  [{:opcode=>alu},
                   {:argument=>{:lhs=>rs1}},
                   {:argument=>{:lhs=>roi}},
-                  {:argument=>{:lhs=>rd}}]},
+                  {:argument=>{:lhs=>rd}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI, DIS_RD);}}},
@@ -685,7 +722,8 @@
                {:pattern=>
                  [{:opcode=>float2s},
                   {:argument=>{:lhs=>fs2s}},
-                  {:argument=>{:lhs=>fds}}]},
+                  {:argument=>{:lhs=>fds}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FS2S, DIS_FDS);}}},
@@ -695,7 +733,8 @@
                  [{:opcode=>float3s},
                   {:argument=>{:lhs=>fs1s}},
                   {:argument=>{:lhs=>fs2s}},
-                  {:argument=>{:lhs=>fds}}]},
+                  {:argument=>{:lhs=>fds}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FS1S, DIS_FS2S, DIS_FDS);}}},
@@ -705,7 +744,8 @@
                  [{:opcode=>float3d},
                   {:argument=>{:lhs=>fs1d}},
                   {:argument=>{:lhs=>fs2d}},
-                  {:argument=>{:lhs=>fdd}}]},
+                  {:argument=>{:lhs=>fdd}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FS1D, DIS_FS2D, DIS_FDD);}}},
@@ -715,7 +755,8 @@
                  [{:opcode=>float3q},
                   {:argument=>{:lhs=>fs1q}},
                   {:argument=>{:lhs=>fs2q}},
-                  {:argument=>{:lhs=>fdq}}]},
+                  {:argument=>{:lhs=>fdq}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FS1Q, DIS_FS2Q, DIS_FDQ);}}},
@@ -724,7 +765,8 @@
                {:pattern=>
                  [{:opcode=>fcompares},
                   {:argument=>{:lhs=>fs1s}},
-                  {:argument=>{:lhs=>fs2s}}]},
+                  {:argument=>{:lhs=>fs2s}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FS1S, DIS_FS2S);}}},
@@ -733,7 +775,8 @@
                {:pattern=>
                  [{:opcode=>fcompared},
                   {:argument=>{:lhs=>fs1d}},
-                  {:argument=>{:lhs=>fs2d}}]},
+                  {:argument=>{:lhs=>fs2d}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FS1D, DIS_FS2D);}}},
@@ -742,7 +785,8 @@
                {:pattern=>
                  [{:opcode=>fcompareq},
                   {:argument=>{:lhs=>fs1q}},
-                  {:argument=>{:lhs=>fs2q}}]},
+                  {:argument=>{:lhs=>fs2q}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc,	 name, DIS_FS1Q, DIS_FS2Q);}}},
@@ -751,7 +795,8 @@
                {:pattern=>
                  [{:opcode=>FTOs},
                   {:argument=>{:lhs=>fs2s}},
-                  {:argument=>{:lhs=>fds}}]},
+                  {:argument=>{:lhs=>fds}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2S, DIS_FDS);}}},
@@ -760,7 +805,8 @@
                {:pattern=>
                  [{:opcode=>FiTOd},
                   {:argument=>{:lhs=>fs2s}},
-                  {:argument=>{:lhs=>fdd}}]},
+                  {:argument=>{:lhs=>fdd}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);}}},
@@ -769,7 +815,8 @@
                {:pattern=>
                  [{:opcode=>FdTOi},
                   {:argument=>{:lhs=>fs2d}},
-                  {:argument=>{:lhs=>fds}}]},
+                  {:argument=>{:lhs=>fds}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);}}},
@@ -778,7 +825,8 @@
                {:pattern=>
                  [{:opcode=>FiTOq},
                   {:argument=>{:lhs=>fs2s}},
-                  {:argument=>{:lhs=>fdq}}]},
+                  {:argument=>{:lhs=>fdq}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);}}},
@@ -787,7 +835,8 @@
                {:pattern=>
                  [{:opcode=>FqTOi},
                   {:argument=>{:lhs=>fs2q}},
-                  {:argument=>{:lhs=>fds}}]},
+                  {:argument=>{:lhs=>fds}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);}}},
@@ -796,7 +845,8 @@
                {:pattern=>
                  [{:opcode=>FsTOd},
                   {:argument=>{:lhs=>fs2s}},
-                  {:argument=>{:lhs=>fdd}}]},
+                  {:argument=>{:lhs=>fdd}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);}}},
@@ -805,7 +855,8 @@
                {:pattern=>
                  [{:opcode=>FdTOs},
                   {:argument=>{:lhs=>fs2d}},
-                  {:argument=>{:lhs=>fds}}]},
+                  {:argument=>{:lhs=>fds}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);}}},
@@ -814,7 +865,8 @@
                {:pattern=>
                  [{:opcode=>FsTOq},
                   {:argument=>{:lhs=>fs2s}},
-                  {:argument=>{:lhs=>fdq}}]},
+                  {:argument=>{:lhs=>fdq}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);}}},
@@ -823,7 +875,8 @@
                {:pattern=>
                  [{:opcode=>FqTOs},
                   {:argument=>{:lhs=>fs2q}},
-                  {:argument=>{:lhs=>fds}}]},
+                  {:argument=>{:lhs=>fds}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);}}},
@@ -832,7 +885,8 @@
                {:pattern=>
                  [{:opcode=>FdTOq},
                   {:argument=>{:lhs=>fs2d}},
-                  {:argument=>{:lhs=>fdq}}]},
+                  {:argument=>{:lhs=>fdq}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2D, DIS_FDQ);}}},
@@ -841,7 +895,8 @@
                {:pattern=>
                  [{:opcode=>FqTOd},
                   {:argument=>{:lhs=>fs2q}},
-                  {:argument=>{:lhs=>fdd}}]},
+                  {:argument=>{:lhs=>fdd}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDD);}}},
@@ -850,7 +905,8 @@
                {:pattern=>
                  [{:opcode=>FSQRTd},
                   {:argument=>{:lhs=>fs2d}},
-                  {:argument=>{:lhs=>fdd}}]},
+                  {:argument=>{:lhs=>fdd}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2D, DIS_FDD);}}},
@@ -859,19 +915,24 @@
                {:pattern=>
                  [{:opcode=>FSQRTq},
                   {:argument=>{:lhs=>fs2q}},
-                  {:argument=>{:lhs=>fdq}}]},
+                  {:argument=>{:lhs=>fdq}}],
+                :name=>name},
               :codes=>
                {:statements=>
                  stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDQ);}}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>RETURN, :argument=>{:lhs=>addr}}},
+             {:header=>
+               {:pattern=>{:opcode=>RETURN, :argument=>{:lhs=>addr}},
+                :name=>name},
               :codes=>
                [{:statements=>stmts = instantiate(pc, name, DIS_ADDR);},
                 {:statements=>result.rtl = new RTL(pc, stmts);},
                 {:statements=>result.rtl->appendStmt(new ReturnStatement);},
                 {:statements=>result.type = DD;}]}},
            {:arm=>
-             {:header=>{:pattern=>{:opcode=>trap, :argument=>{:lhs=>addr}}},
+             {:header=>
+               {:pattern=>{:opcode=>trap, :argument=>{:lhs=>addr}},
+                :name=>name},
               :codes=>
                {:statements=>stmts = instantiate(pc,	 name, DIS_ADDR);}}},
            {:arm=>

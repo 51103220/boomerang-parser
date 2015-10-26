@@ -344,7 +344,7 @@ class MParser < Parslet::Parser
 	end
 	rule(:match_header) do
 		str("|") >> space? >> spec.pattern.as(:pattern) >> space? >> 
-			(str("{") >> space? >> spec.equation >> space? >> str("}") >> space?).maybe >> (str("[") >> space? >> id >> space? >> str("]") >> space?).maybe >> str("=>") >> space
+			(str("{") >> space? >> spec.equation >> space? >> str("}") >> space?).maybe >> (str("[") >> space? >> id.as(:name) >> space? >> str("]") >> space?).maybe >> str("=>") >> space
 	end
 	rule(:code) {
 		(statements | comment  | if_end_if | if_statements | block | switch_statements | else_statements |case_statements | default_statements | while_statements)
