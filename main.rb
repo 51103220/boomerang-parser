@@ -192,11 +192,14 @@ class DecoderParser
 					else
 						@output_content += "\t"*index + "if (lines(0) == \'#{names[0]}#{opname}\' ) {\n"
 					end
+					return true
 				else 
-					@output_content += "\t"*index + "if (lines(0) == \'#{opcode}\' ) {\n"
+					#@output_content += "\t"*index + "if (lines(0) == \'#{opcode}\' ) {\n"
+					return false
 				end
 			end
 		end
+		return false
 	end
 
 	def handle_arm (arm,index)
@@ -209,17 +212,15 @@ class DecoderParser
 						when :pattern
 							if v.is_a?(Hash)
 								if v.key?(:opcode)
-									is_matching = true
-									handle_opcode(v[:opcode],index)
+									is_matching = handle_opcode(v[:opcode],index)
 								end
 								if v.key?(:field_name)
-									is_matching = true
-									handle_opcode(v[:field_name],index)
+									is_matching = handle_opcode(v[:field_name],index)
+									if v.key?(:name) and is_matching 
+										@output_content +=  "\t"*(index+1) + "#{v[:name]} = lines(0);\n"
+									end
 								end
-								if v.key?(:name)
-									@output_content +=  "\t"*(index+1) + "#{v[:name]} = lines(0);\n"
-								end
-								if v.key?(:argument)
+								if v.key?(:argument) and is_matching 
 									@output_content +=  "\t"*(index+1) + "#{v[:argument][:lhs]} = magic_process(#{v[:argument][:lhs]});\n"
 								end
 							else
@@ -227,16 +228,20 @@ class DecoderParser
 									element.each_pair do |kk,vv|
 										case kk
 										when :opcode
-											is_matching = true
-											handle_opcode(vv,index) 
+											is_matching = handle_opcode(vv,index) 
+											
 										when :argument
-											@output_content +=  "\t"*(index+1) + "#{vv[:lhs]} = magic_process(#{vv[:lhs]});\n"
+											if is_matching
+												@output_content +=  "\t"*(index+1) + "#{vv[:lhs]} = magic_process(#{vv[:lhs]});\n"
+											end
 										end
 									end
 								end
 							end
 						when :name 
-							@output_content +=  "\t"*(index+1) + "#{v} = lines(0);\n"
+							if is_matching
+								@output_content +=  "\t"*(index+1) + "#{v} = lines(0);\n"
+							end
 						end	
 					end
 			when :codes
