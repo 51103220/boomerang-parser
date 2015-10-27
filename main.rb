@@ -170,6 +170,16 @@ class DecoderParser
 	end
 
 	def handle_opcode (opcode,index)
+		opcode_arr = @constructors.map {|cons| cons[:opcode]}
+		if !opcode_arr.include?(opcode)
+			constructor = {}
+			@possible_names = []
+			p opcode
+			constructor[:opcode] = opcode
+			iterate_patterns(opcode)
+			constructor[:possible_names] = @possible_names
+			@constructors << constructor
+		end
 		@constructors.each do |element|
 			if opcode == element[:opcode]
 				if element[:possible_names].length != 0

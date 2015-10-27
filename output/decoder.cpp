@@ -335,6 +335,16 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		result.rtl = rtl;
 		jump->setDest(tgt - delta);
 	}
+	if (lines(0) == 'BPA' ) {
+		cc01 = magic_process(cc01);
+		tgt = magic_process(tgt);
+		unused(cc01);
+		GotoStatement* jump = new GotoStatement;
+		result.type = SD;
+		result.rtl = new RTL(pc, stmts);
+		result.rtl->appendStmt(jump);
+		jump->setDest(tgt - delta);
+	}
 	if (lines(0) == 'BPN' || lines(0) == 'BPE' || lines(0) == 'BPLE' || lines(0) == 'BPL' || lines(0) == 'BPLEU' || lines(0) == 'BPCS' || lines(0) == 'BPNEG' || lines(0) == 'BPVS' || lines(0) == 'BPA' || lines(0) == 'BPNE' || lines(0) == 'BPG' || lines(0) == 'BPGE' || lines(0) == 'BPGU' || lines(0) == 'BPCC' || lines(0) == 'BPPOS' || lines(0) == 'BPVC') {
 		cc01 = magic_process(cc01);
 		tgt = magic_process(tgt);
@@ -385,6 +395,18 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		jump->setDest(dis_Eaddr(addr));
 		unused(rd);
 	}
+	if (lines(0) == 'SAVE' ) {
+		rs1 = magic_process(rs1);
+		roi = magic_process(roi);
+		rd = magic_process(rd);
+		stmts = instantiate(pc, "SAVE", DIS_RS1, DIS_ROI, DIS_RD);
+	}
+	if (lines(0) == 'RESTORE' ) {
+		rs1 = magic_process(rs1);
+		roi = magic_process(roi);
+		rd = magic_process(rd);
+		stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);
+	}
 	if (lines(0) == 'NOP' ) {
 		name = lines(0);
 		result.type = NOP;
@@ -394,6 +416,12 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		imm22 = magic_process(imm22);
 		rd = magic_process(rd);
 		stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
+	}
+	if (lines(0) == 'LDSB' || lines(0) == 'LDSH' || lines(0) == 'LDUB' || lines(0) == 'LDUH' || lines(0) == 'LD' || lines(0) == 'LDSTUB' || lines(0) == 'SWAP.' || lines(0) == 'LDD') {
+		addr = magic_process(addr);
+		rd = magic_process(rd);
+		name = lines(0);
+		stmts = instantiate(pc,	 name, DIS_ADDR, DIS_RD);
 	}
 	if (lines(0) == 'LDF' ) {
 		addr = magic_process(addr);
@@ -407,6 +435,20 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDD);
 	}
+	if (lines(0) == 'LDSBA' || lines(0) == 'LDSHA' || lines(0) == 'LDUBA' || lines(0) == 'LDUHA' || lines(0) == 'LDA' || lines(0) == 'LDSTUBA' || lines(0) == 'SWAPA' || lines(0) == 'LDDA') {
+		addr = magic_process(addr);
+		asi = magic_process(asi);
+		rd = magic_process(rd);
+		name = lines(0);
+		unused(asi);
+		stmts = instantiate(pc,	 name, DIS_RD, DIS_ADDR);
+	}
+	if (lines(0) == 'STB' || lines(0) == 'STH' || lines(0) == 'ST' || lines(0) == 'STD') {
+		rd = magic_process(rd);
+		addr = magic_process(addr);
+		name = lines(0);
+		stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);
+	}
 	if (lines(0) == 'STF' ) {
 		fds = magic_process(fds);
 		addr = magic_process(addr);
@@ -418,6 +460,14 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		addr = magic_process(addr);
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FDD, DIS_ADDR);
+	}
+	if (lines(0) == 'STBA' || lines(0) == 'STHA' || lines(0) == 'STA' || lines(0) == 'STDA') {
+		rd = magic_process(rd);
+		addr = magic_process(addr);
+		asi = magic_process(asi);
+		name = lines(0);
+		unused(asi);
+		stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);
 	}
 	if (lines(0) == 'LDFSR' ) {
 		addr = magic_process(addr);
@@ -551,6 +601,54 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDS);
 	}
+	if (lines(0) == 'FiTOd' ) {
+		fs2s = magic_process(fs2s);
+		fdd = magic_process(fdd);
+		name = lines(0);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);
+	}
+	if (lines(0) == 'FdTOi' ) {
+		fs2d = magic_process(fs2d);
+		fds = magic_process(fds);
+		name = lines(0);
+		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);
+	}
+	if (lines(0) == 'FiTOq' ) {
+		fs2s = magic_process(fs2s);
+		fdq = magic_process(fdq);
+		name = lines(0);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);
+	}
+	if (lines(0) == 'FqTOi' ) {
+		fs2q = magic_process(fs2q);
+		fds = magic_process(fds);
+		name = lines(0);
+		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);
+	}
+	if (lines(0) == 'FsTOd' ) {
+		fs2s = magic_process(fs2s);
+		fdd = magic_process(fdd);
+		name = lines(0);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);
+	}
+	if (lines(0) == 'FdTOs' ) {
+		fs2d = magic_process(fs2d);
+		fds = magic_process(fds);
+		name = lines(0);
+		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);
+	}
+	if (lines(0) == 'FsTOq' ) {
+		fs2s = magic_process(fs2s);
+		fdq = magic_process(fdq);
+		name = lines(0);
+		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);
+	}
+	if (lines(0) == 'FqTOs' ) {
+		fs2q = magic_process(fs2q);
+		fds = magic_process(fds);
+		name = lines(0);
+		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);
+	}
 	if (lines(0) == 'FdTOq' ) {
 		fs2d = magic_process(fs2d);
 		fdq = magic_process(fdq);
@@ -673,6 +771,17 @@ bool SparcDecoder::isFuncPrologue(ADDRESS hostPC)
 bool SparcDecoder::isRestore(ADDRESS hostPC)
 {
 	dword MATCH_p = hostPC;
+	if (lines(0) == 'RESTORE' ) {
+		a = magic_process(a);
+		b = magic_process(b);
+		c = magic_process(c);
+		unused(a);
+		unused(b);
+		unused(c);
+		return true;
+		else
+		return false;
+	}
 }
 /**********************************
  * These are the fetch routines.
