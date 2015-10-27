@@ -212,6 +212,13 @@ class DecoderParser
 									is_matching = true
 									handle_opcode(v[:opcode],index)
 								end
+								if v.key?(:field_name)
+									is_matching = true
+									handle_opcode(v[:field_name],index)
+								end
+								if v.key?(:name)
+									@output_content +=  "\t"*(index+1) + "#{v[:name]} = lines(0);\n"
+								end
 								if v.key?(:argument)
 									@output_content +=  "\t"*(index+1) + "#{v[:argument][:lhs]} = magic_process(#{v[:argument][:lhs]});\n"
 								end

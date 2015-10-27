@@ -423,7 +423,11 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		rd = magic_process(rd);
 		stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);
 	}
+	if (lines(0) == 'NOP' ) {
 		name = lines(0);
+		result.type = NOP;
+		stmts = instantiate(pc,	 name);
+	}
 	if (lines(0) == 'SETHI' ) {
 		imm22 = magic_process(imm22);
 		rd = magic_process(rd);
