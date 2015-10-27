@@ -171,10 +171,10 @@ class DecoderParser
 
 	def handle_opcode (opcode,index)
 		opcode_arr = @constructors.map {|cons| cons[:opcode]}
-		if !opcode_arr.include?(opcode)
+		if !opcode_arr.include?(opcode) # In case opcodes in .m file do not exist in @constructors 
 			constructor = {}
 			@possible_names = []
-			p opcode
+
 			constructor[:opcode] = opcode
 			iterate_patterns(opcode)
 			constructor[:possible_names] = @possible_names
@@ -231,21 +231,24 @@ class DecoderParser
 									end
 								end
 								if v.key?(:argument) and is_matching 
-									@output_content +=  "\t"*(index+1) + "#{v[:argument][:lhs]} = magic_process(#{v[:argument][:lhs]});\n"
+									@output_content +=  "\t"*(index+1) + "#{v[:argument][:lhs]} = magic_process(lines(1));\n"
 								end
 							else
-								v.each do |element|
+								count = 0
+								v.each do |element| 
 									element.each_pair do |kk,vv|
 										case kk
 										when :opcode
 											is_matching = handle_opcode(vv,index) 
 											
 										when :argument
+											count = count + 1
 											if is_matching
-												@output_content +=  "\t"*(index+1) + "#{vv[:lhs]} = magic_process(#{vv[:lhs]});\n"
+												@output_content +=  "\t"*(index+1) + "#{vv[:lhs]} = magic_process(lines(#{count}));\n"
 											end
 										end
 									end
+
 								end
 							end
 						when :name 

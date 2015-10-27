@@ -201,7 +201,7 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 	//ADDRESS nextPC = NO_ADDRESS;
 	dword MATCH_p = hostPC;
 	if (lines(0) == 'CALL' ) {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		CallStatement* newCall = new CallStatement;
 		ADDRESS nativeDest = addr - delta;
 		newCall->setDest(nativeDest);
@@ -213,7 +213,7 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		result.type = SD;
 	}
 	if (lines(0) == 'BN,a' || lines(0) == 'BE,a' || lines(0) == 'BLE,a' || lines(0) == 'BL,a' || lines(0) == 'BLEU,a' || lines(0) == 'BCS,a' || lines(0) == 'BNEG,a' || lines(0) == 'BVS,a' || lines(0) == 'BA,a' || lines(0) == 'BNE,a' || lines(0) == 'BG,a' || lines(0) == 'BGE,a' || lines(0) == 'BGU,a' || lines(0) == 'BCC,a' || lines(0) == 'BPOS,a' || lines(0) == 'BVC,a' || lines(0) == 'FBN,a' || lines(0) == 'FBNE,a' || lines(0) == 'FBLG,a' || lines(0) == 'FBUL,a' || lines(0) == 'FBL,a' || lines(0) == 'FBUG,a' || lines(0) == 'FBG,a' || lines(0) == 'FBU,a' || lines(0) == 'FBA,a' || lines(0) == 'FBE,a' || lines(0) == 'FBUE,a' || lines(0) == 'FBGE,a' || lines(0) == 'FBUGE,a' || lines(0) == 'FBLE,a' || lines(0) == 'FBULE,a' || lines(0) == 'FBO,a' || lines(0) == 'CBN,a' || lines(0) == 'CB123,a' || lines(0) == 'CB12,a' || lines(0) == 'CB13,a' || lines(0) == 'CB1,a' || lines(0) == 'CB23,a' || lines(0) == 'CB2,a' || lines(0) == 'CB3,a' || lines(0) == 'CBA,a' || lines(0) == 'CB0,a' || lines(0) == 'CB03,a' || lines(0) == 'CB02,a' || lines(0) == 'CB023,a' || lines(0) == 'CB01,a' || lines(0) == 'CB013,a' || lines(0) == 'CB012,a') {
-		tgt = magic_process(tgt);
+		tgt = magic_process(lines(1));
 		name = lines(0);
 		if(name[0] == 'C')
 		{
@@ -255,8 +255,8 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == 'BPN,a' || lines(0) == 'BPE,a' || lines(0) == 'BPLE,a' || lines(0) == 'BPL,a' || lines(0) == 'BPLEU,a' || lines(0) == 'BPCS,a' || lines(0) == 'BPNEG,a' || lines(0) == 'BPVS,a' || lines(0) == 'BPA,a' || lines(0) == 'BPNE,a' || lines(0) == 'BPG,a' || lines(0) == 'BPGE,a' || lines(0) == 'BPGU,a' || lines(0) == 'BPCC,a' || lines(0) == 'BPPOS,a' || lines(0) == 'BPVC,a') {
-		cc01 = magic_process(cc01);
-		tgt = magic_process(tgt);
+		cc01 = magic_process(lines(1));
+		tgt = magic_process(lines(2));
 		name = lines(0);
 		if(cc01 != 0)
 		{
@@ -298,7 +298,7 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == 'BN' || lines(0) == 'BE' || lines(0) == 'BLE' || lines(0) == 'BL' || lines(0) == 'BLEU' || lines(0) == 'BCS' || lines(0) == 'BNEG' || lines(0) == 'BVS' || lines(0) == 'BA' || lines(0) == 'BNE' || lines(0) == 'BG' || lines(0) == 'BGE' || lines(0) == 'BGU' || lines(0) == 'BCC' || lines(0) == 'BPOS' || lines(0) == 'BVC' || lines(0) == 'FBN' || lines(0) == 'FBNE' || lines(0) == 'FBLG' || lines(0) == 'FBUL' || lines(0) == 'FBL' || lines(0) == 'FBUG' || lines(0) == 'FBG' || lines(0) == 'FBU' || lines(0) == 'FBA' || lines(0) == 'FBE' || lines(0) == 'FBUE' || lines(0) == 'FBGE' || lines(0) == 'FBUGE' || lines(0) == 'FBLE' || lines(0) == 'FBULE' || lines(0) == 'FBO' || lines(0) == 'CBN' || lines(0) == 'CB123' || lines(0) == 'CB12' || lines(0) == 'CB13' || lines(0) == 'CB1' || lines(0) == 'CB23' || lines(0) == 'CB2' || lines(0) == 'CB3' || lines(0) == 'CBA' || lines(0) == 'CB0' || lines(0) == 'CB03' || lines(0) == 'CB02' || lines(0) == 'CB023' || lines(0) == 'CB01' || lines(0) == 'CB013' || lines(0) == 'CB012') {
-		tgt = magic_process(tgt);
+		tgt = magic_process(lines(1));
 		name = lines(0);
 		if(name[0] == 'C')
 		{
@@ -336,8 +336,8 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == 'BPA' ) {
-		cc01 = magic_process(cc01);
-		tgt = magic_process(tgt);
+		cc01 = magic_process(lines(1));
+		tgt = magic_process(lines(2));
 		unused(cc01);
 		GotoStatement* jump = new GotoStatement;
 		result.type = SD;
@@ -346,8 +346,8 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == 'BPN' || lines(0) == 'BPE' || lines(0) == 'BPLE' || lines(0) == 'BPL' || lines(0) == 'BPLEU' || lines(0) == 'BPCS' || lines(0) == 'BPNEG' || lines(0) == 'BPVS' || lines(0) == 'BPA' || lines(0) == 'BPNE' || lines(0) == 'BPG' || lines(0) == 'BPGE' || lines(0) == 'BPGU' || lines(0) == 'BPCC' || lines(0) == 'BPPOS' || lines(0) == 'BPVC') {
-		cc01 = magic_process(cc01);
-		tgt = magic_process(tgt);
+		cc01 = magic_process(lines(1));
+		tgt = magic_process(lines(2));
 		name = lines(0);
 		if(cc01 != 0)
 		{
@@ -385,8 +385,8 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		jump->setDest(tgt - delta);
 	}
 	if (lines(0) == 'JMPL' ) {
-		addr = magic_process(addr);
-		rd = magic_process(rd);
+		addr = magic_process(lines(1));
+		rd = magic_process(lines(2));
 		CaseStatement* jump = new CaseStatement;
 		jump->setIsComputed();
 		result.rtl = new RTL(pc, stmts);
@@ -396,15 +396,15 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		unused(rd);
 	}
 	if (lines(0) == 'SAVE' ) {
-		rs1 = magic_process(rs1);
-		roi = magic_process(roi);
-		rd = magic_process(rd);
+		rs1 = magic_process(lines(1));
+		roi = magic_process(lines(2));
+		rd = magic_process(lines(3));
 		stmts = instantiate(pc, "SAVE", DIS_RS1, DIS_ROI, DIS_RD);
 	}
 	if (lines(0) == 'RESTORE' ) {
-		rs1 = magic_process(rs1);
-		roi = magic_process(roi);
-		rd = magic_process(rd);
+		rs1 = magic_process(lines(1));
+		roi = magic_process(lines(2));
+		rd = magic_process(lines(3));
 		stmts = instantiate(pc, "RESTORE", DIS_RS1, DIS_ROI, DIS_RD);
 	}
 	if (lines(0) == 'NOP' ) {
@@ -413,268 +413,268 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		stmts = instantiate(pc,	 name);
 	}
 	if (lines(0) == 'SETHI' ) {
-		imm22 = magic_process(imm22);
-		rd = magic_process(rd);
+		imm22 = magic_process(lines(1));
+		rd = magic_process(lines(2));
 		stmts = instantiate(pc,	 "sethi", dis_Num(imm22), DIS_RD);
 	}
 	if (lines(0) == 'LDSB' || lines(0) == 'LDSH' || lines(0) == 'LDUB' || lines(0) == 'LDUH' || lines(0) == 'LD' || lines(0) == 'LDSTUB' || lines(0) == 'SWAP.' || lines(0) == 'LDD') {
-		addr = magic_process(addr);
-		rd = magic_process(rd);
+		addr = magic_process(lines(1));
+		rd = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR, DIS_RD);
 	}
 	if (lines(0) == 'LDF' ) {
-		addr = magic_process(addr);
-		fds = magic_process(fds);
+		addr = magic_process(lines(1));
+		fds = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDS);
 	}
 	if (lines(0) == 'LDDF' ) {
-		addr = magic_process(addr);
-		fdd = magic_process(fdd);
+		addr = magic_process(lines(1));
+		fdd = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR, DIS_FDD);
 	}
 	if (lines(0) == 'LDSBA' || lines(0) == 'LDSHA' || lines(0) == 'LDUBA' || lines(0) == 'LDUHA' || lines(0) == 'LDA' || lines(0) == 'LDSTUBA' || lines(0) == 'SWAPA' || lines(0) == 'LDDA') {
-		addr = magic_process(addr);
-		asi = magic_process(asi);
-		rd = magic_process(rd);
+		addr = magic_process(lines(1));
+		asi = magic_process(lines(2));
+		rd = magic_process(lines(3));
 		name = lines(0);
 		unused(asi);
 		stmts = instantiate(pc,	 name, DIS_RD, DIS_ADDR);
 	}
 	if (lines(0) == 'STB' || lines(0) == 'STH' || lines(0) == 'ST' || lines(0) == 'STD') {
-		rd = magic_process(rd);
-		addr = magic_process(addr);
+		rd = magic_process(lines(1));
+		addr = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);
 	}
 	if (lines(0) == 'STF' ) {
-		fds = magic_process(fds);
-		addr = magic_process(addr);
+		fds = magic_process(lines(1));
+		addr = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FDS, DIS_ADDR);
 	}
 	if (lines(0) == 'STDF' ) {
-		fdd = magic_process(fdd);
-		addr = magic_process(addr);
+		fdd = magic_process(lines(1));
+		addr = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FDD, DIS_ADDR);
 	}
 	if (lines(0) == 'STBA' || lines(0) == 'STHA' || lines(0) == 'STA' || lines(0) == 'STDA') {
-		rd = magic_process(rd);
-		addr = magic_process(addr);
-		asi = magic_process(asi);
+		rd = magic_process(lines(1));
+		addr = magic_process(lines(2));
+		asi = magic_process(lines(3));
 		name = lines(0);
 		unused(asi);
 		stmts = instantiate(pc,	 name, DIS_RDR, DIS_ADDR);
 	}
 	if (lines(0) == 'LDFSR' ) {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == 'LDCSR' ) {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == 'STFSR' ) {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == 'STCSR' ) {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == 'STDFQ' ) {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == 'STDCQ' ) {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == 'RDY' ) {
-		rd = magic_process(rd);
+		rd = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RD);
 	}
 	if (lines(0) == 'RDPSR' ) {
-		rd = magic_process(rd);
+		rd = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RD);
 	}
 	if (lines(0) == 'RDWIM' ) {
-		rd = magic_process(rd);
+		rd = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RD);
 	}
 	if (lines(0) == 'RDTBR' ) {
-		rd = magic_process(rd);
+		rd = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RD);
 	}
 	if (lines(0) == 'WRY' ) {
-		rs1 = magic_process(rs1);
-		roi = magic_process(roi);
+		rs1 = magic_process(lines(1));
+		roi = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);
 	}
 	if (lines(0) == 'WRPSR' ) {
-		rs1 = magic_process(rs1);
-		roi = magic_process(roi);
+		rs1 = magic_process(lines(1));
+		roi = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);
 	}
 	if (lines(0) == 'WRWIM' ) {
-		rs1 = magic_process(rs1);
-		roi = magic_process(roi);
+		rs1 = magic_process(lines(1));
+		roi = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);
 	}
 	if (lines(0) == 'WRTBR' ) {
-		rs1 = magic_process(rs1);
-		roi = magic_process(roi);
+		rs1 = magic_process(lines(1));
+		roi = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI);
 	}
 	if (lines(0) == 'AND' || lines(0) == 'ANDcc' || lines(0) == 'ANDN' || lines(0) == 'ANDNcc' || lines(0) == 'OR' || lines(0) == 'ORcc' || lines(0) == 'ORN' || lines(0) == 'ORNcc' || lines(0) == 'XOR' || lines(0) == 'XORcc' || lines(0) == 'XNOR' || lines(0) == 'XNORcc' || lines(0) == 'SLL' || lines(0) == 'SRL' || lines(0) == 'SRA' || lines(0) == 'ADD' || lines(0) == 'ADDcc' || lines(0) == 'ADDX' || lines(0) == 'ADDXcc' || lines(0) == 'TADDcc' || lines(0) == 'TADDccTV' || lines(0) == 'SUB' || lines(0) == 'SUBcc' || lines(0) == 'SUBX' || lines(0) == 'SUBXcc' || lines(0) == 'TSUBcc' || lines(0) == 'TSUBccTV' || lines(0) == 'MULScc' || lines(0) == 'UMUL' || lines(0) == 'SMUL' || lines(0) == 'UMULcc' || lines(0) == 'SMULcc' || lines(0) == 'UDIV' || lines(0) == 'SDIV' || lines(0) == 'UDIVcc' || lines(0) == 'SDIVcc' || lines(0) == 'SAVE' || lines(0) == 'RESTORE') {
-		rs1 = magic_process(rs1);
-		roi = magic_process(roi);
-		rd = magic_process(rd);
+		rs1 = magic_process(lines(1));
+		roi = magic_process(lines(2));
+		rd = magic_process(lines(3));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_RS1, DIS_ROI, DIS_RD);
 	}
 	if (lines(0) == 'FMOVs' || lines(0) == 'FNEGs' || lines(0) == 'FABSs' || lines(0) == 'FSQRTs') {
-		fs2s = magic_process(fs2s);
-		fds = magic_process(fds);
+		fs2s = magic_process(lines(1));
+		fds = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FS2S, DIS_FDS);
 	}
 	if (lines(0) == 'FADDs' || lines(0) == 'FSUBs' || lines(0) == 'FMULs' || lines(0) == 'FDIVs') {
-		fs1s = magic_process(fs1s);
-		fs2s = magic_process(fs2s);
-		fds = magic_process(fds);
+		fs1s = magic_process(lines(1));
+		fs2s = magic_process(lines(2));
+		fds = magic_process(lines(3));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FS1S, DIS_FS2S, DIS_FDS);
 	}
 	if (lines(0) == 'FADDd' || lines(0) == 'FSUBd' || lines(0) == 'FMULd' || lines(0) == 'FDIVd') {
-		fs1d = magic_process(fs1d);
-		fs2d = magic_process(fs2d);
-		fdd = magic_process(fdd);
+		fs1d = magic_process(lines(1));
+		fs2d = magic_process(lines(2));
+		fdd = magic_process(lines(3));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FS1D, DIS_FS2D, DIS_FDD);
 	}
 	if (lines(0) == 'FADDq' || lines(0) == 'FSUBq' || lines(0) == 'FMULq' || lines(0) == 'FDIVq') {
-		fs1q = magic_process(fs1q);
-		fs2q = magic_process(fs2q);
-		fdq = magic_process(fdq);
+		fs1q = magic_process(lines(1));
+		fs2q = magic_process(lines(2));
+		fdq = magic_process(lines(3));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FS1Q, DIS_FS2Q, DIS_FDQ);
 	}
 	if (lines(0) == 'FCMPs' || lines(0) == 'FCMPEs') {
-		fs1s = magic_process(fs1s);
-		fs2s = magic_process(fs2s);
+		fs1s = magic_process(lines(1));
+		fs2s = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FS1S, DIS_FS2S);
 	}
 	if (lines(0) == 'FCMPd' || lines(0) == 'FCMPEd') {
-		fs1d = magic_process(fs1d);
-		fs2d = magic_process(fs2d);
+		fs1d = magic_process(lines(1));
+		fs2d = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FS1D, DIS_FS2D);
 	}
 	if (lines(0) == 'FCMPq' || lines(0) == 'FCMPEq') {
-		fs1q = magic_process(fs1q);
-		fs2q = magic_process(fs2q);
+		fs1q = magic_process(lines(1));
+		fs2q = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_FS1Q, DIS_FS2Q);
 	}
 	if (lines(0) == 'FiTOs' || lines(0) == 'FsTOi') {
-		fs2s = magic_process(fs2s);
-		fds = magic_process(fds);
+		fs2s = magic_process(lines(1));
+		fds = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDS);
 	}
 	if (lines(0) == 'FiTOd' ) {
-		fs2s = magic_process(fs2s);
-		fdd = magic_process(fdd);
+		fs2s = magic_process(lines(1));
+		fdd = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);
 	}
 	if (lines(0) == 'FdTOi' ) {
-		fs2d = magic_process(fs2d);
-		fds = magic_process(fds);
+		fs2d = magic_process(lines(1));
+		fds = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);
 	}
 	if (lines(0) == 'FiTOq' ) {
-		fs2s = magic_process(fs2s);
-		fdq = magic_process(fdq);
+		fs2s = magic_process(lines(1));
+		fdq = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);
 	}
 	if (lines(0) == 'FqTOi' ) {
-		fs2q = magic_process(fs2q);
-		fds = magic_process(fds);
+		fs2q = magic_process(lines(1));
+		fds = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);
 	}
 	if (lines(0) == 'FsTOd' ) {
-		fs2s = magic_process(fs2s);
-		fdd = magic_process(fdd);
+		fs2s = magic_process(lines(1));
+		fdd = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDD);
 	}
 	if (lines(0) == 'FdTOs' ) {
-		fs2d = magic_process(fs2d);
-		fds = magic_process(fds);
+		fs2d = magic_process(lines(1));
+		fds = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDS);
 	}
 	if (lines(0) == 'FsTOq' ) {
-		fs2s = magic_process(fs2s);
-		fdq = magic_process(fdq);
+		fs2s = magic_process(lines(1));
+		fdq = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2S, DIS_FDQ);
 	}
 	if (lines(0) == 'FqTOs' ) {
-		fs2q = magic_process(fs2q);
-		fds = magic_process(fds);
+		fs2q = magic_process(lines(1));
+		fds = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDS);
 	}
 	if (lines(0) == 'FdTOq' ) {
-		fs2d = magic_process(fs2d);
-		fdq = magic_process(fdq);
+		fs2d = magic_process(lines(1));
+		fdq = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDQ);
 	}
 	if (lines(0) == 'FqTOd' ) {
-		fs2q = magic_process(fs2q);
-		fdd = magic_process(fdd);
+		fs2q = magic_process(lines(1));
+		fdd = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDD);
 	}
 	if (lines(0) == 'FSQRTd' ) {
-		fs2d = magic_process(fs2d);
-		fdd = magic_process(fdd);
+		fs2d = magic_process(lines(1));
+		fdd = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2D, DIS_FDD);
 	}
 	if (lines(0) == 'FSQRTq' ) {
-		fs2q = magic_process(fs2q);
-		fdq = magic_process(fdq);
+		fs2q = magic_process(lines(1));
+		fdq = magic_process(lines(2));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_FS2Q, DIS_FDQ);
 	}
 	if (lines(0) == 'RETURN' ) {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc, name, DIS_ADDR);
 		result.rtl = new RTL(pc, stmts);
@@ -682,12 +682,12 @@ DecodeResult& SparcDecoder::decodeInstruction(ADDRESS pc,int delta)
 		result.type = DD;
 	}
 	if (lines(0) == 'TN' || lines(0) == 'TE' || lines(0) == 'TLE' || lines(0) == 'TL' || lines(0) == 'TLEU' || lines(0) == 'TCS' || lines(0) == 'TNEG' || lines(0) == 'TVS' || lines(0) == 'TA' || lines(0) == 'TNE' || lines(0) == 'TG' || lines(0) == 'TGE' || lines(0) == 'TGU' || lines(0) == 'TCC' || lines(0) == 'TPOS' || lines(0) == 'TVC') {
-		addr = magic_process(addr);
+		addr = magic_process(lines(1));
 		name = lines(0);
 		stmts = instantiate(pc,	 name, DIS_ADDR);
 	}
 	if (lines(0) == 'UNIMP' ) {
-		n = magic_process(n);
+		n = magic_process(lines(1));
 		unused(n);
 		stmts = NULL;
 		result.valid = false;
@@ -772,9 +772,9 @@ bool SparcDecoder::isRestore(ADDRESS hostPC)
 {
 	dword MATCH_p = hostPC;
 	if (lines(0) == 'RESTORE' ) {
-		a = magic_process(a);
-		b = magic_process(b);
-		c = magic_process(c);
+		a = magic_process(lines(1));
+		b = magic_process(lines(2));
+		c = magic_process(lines(3));
 		unused(a);
 		unused(b);
 		unused(c);
