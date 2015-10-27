@@ -227,11 +227,11 @@ class DecoderParser
 								if v.key?(:field_name)
 									is_matching = handle_opcode(v[:field_name],index)
 									if v.key?(:name) and is_matching 
-										@output_content +=  "\t"*(index+1) + "#{v[:name]} = lines(0);\n"
+										@output_content +=  "\t"*(index+1) + "char *#{v[:name]} = lines(0);\n"
 									end
 								end
 								if v.key?(:argument) and is_matching 
-									@output_content +=  "\t"*(index+1) + "#{v[:argument][:lhs]} = magic_process(lines(1));\n"
+									@output_content +=  "\t"*(index+1) + "unsigned #{v[:argument][:lhs]} = magic_process(lines(1));\n"
 								end
 							else
 								count = 0
@@ -244,7 +244,7 @@ class DecoderParser
 										when :argument
 											count = count + 1
 											if is_matching
-												@output_content +=  "\t"*(index+1) + "#{vv[:lhs]} = magic_process(lines(#{count}));\n"
+												@output_content +=  "\t"*(index+1) + "unsigned #{vv[:lhs]} = magic_process(lines(#{count}));\n"
 											end
 										end
 									end
@@ -253,7 +253,7 @@ class DecoderParser
 							end
 						when :name 
 							if is_matching
-								@output_content +=  "\t"*(index+1) + "#{v} = lines(0);\n"
+								@output_content +=  "\t"*(index+1) + "char *#{v} = lines(0);\n"
 							end
 						end	
 					end
