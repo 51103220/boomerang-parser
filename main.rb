@@ -336,7 +336,35 @@ class DecoderParser
 		end
 	end
 
+	def magic_process  # Write to ouput function: unsigned magic_process(char *name)
+		@output_content += "unsigned magic_process(char *name) {\n"
+		@spec_result.each do |element|
+			element.each_pair do |key,value|
+				case key
+				when :fields
+					value[:fieldinfo_spec].each do |e|
+						e.each_pair do |k,v|
+							case k
+							when :field_item
+								if v.is_a?(Array)
+									v = v.map {|v_e| v_e[:item]}
+									v.each_with_index  do |name,index|
+										@output_content += "\tif (strcmp(name,#{name.inspect}) == 0) return #{index};\n"
+									end
+								else
+									@output_content += "\tif (strcmp(name,#{v[:item].inspect}) == 0) return 0;\n"
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		@output_content += "}\n"
+	end
+
 	def write_to_cpp
+		magic_process
 		@m_result.each do |element|
 			element.each_pair do |key,value|
 				case key
