@@ -336,8 +336,29 @@ class DecoderParser
 		end
 	end
 
+	def is_number # Write to ouput function: is_number(char *name)
+		#Write includes
+		includes = ["#include <algorithm>",
+			"#include <iostream>",
+			"#include <sstream>",
+			"#include <iterator>",
+			"#include <vector>",
+			"#include <sstream>",
+			"#include <string>"
+			]
+		includes.each {|i| @output_content += i + "\n"} 
+		#Write is_Number function
+		@output_content += "inline bool isInteger(const std::string & s) {\n"
+		@output_content += "\tif(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;\n"
+		@output_content += "\tchar * p ;\n"
+		@output_content += "\tstrtol(s.c_str(), &p, 10) ;\n\treturn (*p == 0) ;\n}\n"
+	end
+
 	def magic_process  # Write to ouput function: unsigned magic_process(char *name)
+		is_number
 		@output_content += "unsigned magic_process(char *name) {\n"
+		@output_content += "\tstd::string str = name;\n"
+		count = 0
 		@spec_result.each do |element|
 			element.each_pair do |key,value|
 				case key
@@ -349,10 +370,16 @@ class DecoderParser
 								if v.is_a?(Array)
 									v = v.map {|v_e| v_e[:item]}
 									v.each_with_index  do |name,index|
-										@output_content += "\tif (strcmp(name,#{name.inspect}) == 0) return #{index};\n"
+										if count == 0
+											@output_content += "\tif (strcmp(name,#{name.inspect}) == 0) return #{index};\n"
+										else
+											@output_content += "\telse if (strcmp(name,#{name.inspect}) == 0) return #{index};\n"
+										end
+										count = count +1
 									end
 								else
 									@output_content += "\tif (strcmp(name,#{v[:item].inspect}) == 0) return 0;\n"
+									count = count +1
 								end
 							end
 						end
@@ -360,6 +387,10 @@ class DecoderParser
 				end
 			end
 		end
+		@output_content += "\telse if (isInteger(str)) {\n"
+		@output_content += "\t\tint i = std::atoi((str).c_str());\n"
+		@output_content += "\t\tif (i < 0) return i;\n\t\telse return 100 + i;\n"
+		@output_content += "\t}\n"
 		@output_content += "}\n"
 	end
 

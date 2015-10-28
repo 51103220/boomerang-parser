@@ -1,166 +1,185 @@
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <vector>
+#include <sstream>
+#include <string>
+inline bool isInteger(const std::string & s) {
+	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;
+	char * p ;
+	strtol(s.c_str(), &p, 10) ;
+	return (*p == 0) ;
+}
 unsigned magic_process(char *name) {
+	std::string str = name;
 	if (strcmp(name,"%g0") == 0) return 0;
-	if (strcmp(name,"%g1") == 0) return 1;
-	if (strcmp(name,"%g2") == 0) return 2;
-	if (strcmp(name,"%g3") == 0) return 3;
-	if (strcmp(name,"%g4") == 0) return 4;
-	if (strcmp(name,"%g5") == 0) return 5;
-	if (strcmp(name,"%g6") == 0) return 6;
-	if (strcmp(name,"%g7") == 0) return 7;
-	if (strcmp(name,"%o0") == 0) return 8;
-	if (strcmp(name,"%o1") == 0) return 9;
-	if (strcmp(name,"%o2") == 0) return 10;
-	if (strcmp(name,"%o3") == 0) return 11;
-	if (strcmp(name,"%o4") == 0) return 12;
-	if (strcmp(name,"%o5") == 0) return 13;
-	if (strcmp(name,"%sp") == 0) return 14;
-	if (strcmp(name,"%o7") == 0) return 15;
-	if (strcmp(name,"%l0") == 0) return 16;
-	if (strcmp(name,"%l1") == 0) return 17;
-	if (strcmp(name,"%l2") == 0) return 18;
-	if (strcmp(name,"%l3") == 0) return 19;
-	if (strcmp(name,"%l4") == 0) return 20;
-	if (strcmp(name,"%l5") == 0) return 21;
-	if (strcmp(name,"%l6") == 0) return 22;
-	if (strcmp(name,"%l7") == 0) return 23;
-	if (strcmp(name,"%i0") == 0) return 24;
-	if (strcmp(name,"%i1") == 0) return 25;
-	if (strcmp(name,"%i2") == 0) return 26;
-	if (strcmp(name,"%i3") == 0) return 27;
-	if (strcmp(name,"%i4") == 0) return 28;
-	if (strcmp(name,"%i5") == 0) return 29;
-	if (strcmp(name,"%fp") == 0) return 30;
-	if (strcmp(name,"%i7") == 0) return 31;
-	if (strcmp(name,"%f0") == 0) return 0;
-	if (strcmp(name,"%f1") == 0) return 1;
-	if (strcmp(name,"%f2") == 0) return 2;
-	if (strcmp(name,"%f3") == 0) return 3;
-	if (strcmp(name,"%f4") == 0) return 4;
-	if (strcmp(name,"%f5") == 0) return 5;
-	if (strcmp(name,"%f6") == 0) return 6;
-	if (strcmp(name,"%f7") == 0) return 7;
-	if (strcmp(name,"%f8") == 0) return 8;
-	if (strcmp(name,"%f9") == 0) return 9;
-	if (strcmp(name,"%f10") == 0) return 10;
-	if (strcmp(name,"%f11") == 0) return 11;
-	if (strcmp(name,"%f12") == 0) return 12;
-	if (strcmp(name,"%f13") == 0) return 13;
-	if (strcmp(name,"%f14") == 0) return 14;
-	if (strcmp(name,"%f15") == 0) return 15;
-	if (strcmp(name,"%f16") == 0) return 16;
-	if (strcmp(name,"%f17") == 0) return 17;
-	if (strcmp(name,"%f18") == 0) return 18;
-	if (strcmp(name,"%f19") == 0) return 19;
-	if (strcmp(name,"%f20") == 0) return 20;
-	if (strcmp(name,"%f21") == 0) return 21;
-	if (strcmp(name,"%f22") == 0) return 22;
-	if (strcmp(name,"%f23") == 0) return 23;
-	if (strcmp(name,"%f24") == 0) return 24;
-	if (strcmp(name,"%f25") == 0) return 25;
-	if (strcmp(name,"%f26") == 0) return 26;
-	if (strcmp(name,"%f27") == 0) return 27;
-	if (strcmp(name,"%f28") == 0) return 28;
-	if (strcmp(name,"%f29") == 0) return 29;
-	if (strcmp(name,"%f30") == 0) return 30;
-	if (strcmp(name,"%f31") == 0) return 31;
-	if (strcmp(name,"%f0to1") == 0) return 0;
-	if (strcmp(name,"a") == 0) return 1;
-	if (strcmp(name,"%f2to3") == 0) return 2;
-	if (strcmp(name,"b") == 0) return 3;
-	if (strcmp(name,"%f4to5") == 0) return 4;
-	if (strcmp(name,"c") == 0) return 5;
-	if (strcmp(name,"%f6to7") == 0) return 6;
-	if (strcmp(name,"d") == 0) return 7;
-	if (strcmp(name,"%f8to9") == 0) return 8;
-	if (strcmp(name,"e") == 0) return 9;
-	if (strcmp(name,"%f10to11") == 0) return 10;
-	if (strcmp(name,"f") == 0) return 11;
-	if (strcmp(name,"%f12to13") == 0) return 12;
-	if (strcmp(name,"g") == 0) return 13;
-	if (strcmp(name,"%f14to15") == 0) return 14;
-	if (strcmp(name,"h") == 0) return 15;
-	if (strcmp(name,"%f16to17") == 0) return 16;
-	if (strcmp(name,"i") == 0) return 17;
-	if (strcmp(name,"%f18to19") == 0) return 18;
-	if (strcmp(name,"j") == 0) return 19;
-	if (strcmp(name,"%f20to21") == 0) return 20;
-	if (strcmp(name,"k") == 0) return 21;
-	if (strcmp(name,"%f22to23") == 0) return 22;
-	if (strcmp(name,"l") == 0) return 23;
-	if (strcmp(name,"%f24to25") == 0) return 24;
-	if (strcmp(name,"m") == 0) return 25;
-	if (strcmp(name,"%f26to27") == 0) return 26;
-	if (strcmp(name,"n") == 0) return 27;
-	if (strcmp(name,"%f28to29") == 0) return 28;
-	if (strcmp(name,"o") == 0) return 29;
-	if (strcmp(name,"%f30to31") == 0) return 30;
-	if (strcmp(name,"p") == 0) return 31;
-	if (strcmp(name,"%f0to3") == 0) return 0;
-	if (strcmp(name,"q") == 0) return 1;
-	if (strcmp(name,"r") == 0) return 2;
-	if (strcmp(name,"s") == 0) return 3;
-	if (strcmp(name,"%f4to7") == 0) return 4;
-	if (strcmp(name,"t") == 0) return 5;
-	if (strcmp(name,"u") == 0) return 6;
-	if (strcmp(name,"v") == 0) return 7;
-	if (strcmp(name,"%f8to11") == 0) return 8;
-	if (strcmp(name,"w") == 0) return 9;
-	if (strcmp(name,"x") == 0) return 10;
-	if (strcmp(name,"y") == 0) return 11;
-	if (strcmp(name,"%f12to15") == 0) return 12;
-	if (strcmp(name,"z") == 0) return 13;
-	if (strcmp(name,"A") == 0) return 14;
-	if (strcmp(name,"B") == 0) return 15;
-	if (strcmp(name,"%f16to19") == 0) return 16;
-	if (strcmp(name,"C") == 0) return 17;
-	if (strcmp(name,"D") == 0) return 18;
-	if (strcmp(name,"E") == 0) return 19;
-	if (strcmp(name,"%f20to23") == 0) return 20;
-	if (strcmp(name,"F") == 0) return 21;
-	if (strcmp(name,"G") == 0) return 22;
-	if (strcmp(name,"H") == 0) return 23;
-	if (strcmp(name,"%f24to27") == 0) return 24;
-	if (strcmp(name,"I") == 0) return 25;
-	if (strcmp(name,"J") == 0) return 26;
-	if (strcmp(name,"K") == 0) return 27;
-	if (strcmp(name,"%f28to31") == 0) return 28;
-	if (strcmp(name,"L") == 0) return 29;
-	if (strcmp(name,"M") == 0) return 30;
-	if (strcmp(name,"N") == 0) return 31;
-	if (strcmp(name,"%c0") == 0) return 0;
-	if (strcmp(name,"%c1") == 0) return 1;
-	if (strcmp(name,"%c2") == 0) return 2;
-	if (strcmp(name,"%c3") == 0) return 3;
-	if (strcmp(name,"%c4") == 0) return 4;
-	if (strcmp(name,"%c5") == 0) return 5;
-	if (strcmp(name,"%c6") == 0) return 6;
-	if (strcmp(name,"%c7") == 0) return 7;
-	if (strcmp(name,"%c8") == 0) return 8;
-	if (strcmp(name,"%c9") == 0) return 9;
-	if (strcmp(name,"%c10") == 0) return 10;
-	if (strcmp(name,"%c11") == 0) return 11;
-	if (strcmp(name,"%c12") == 0) return 12;
-	if (strcmp(name,"%c13") == 0) return 13;
-	if (strcmp(name,"%c14") == 0) return 14;
-	if (strcmp(name,"%c15") == 0) return 15;
-	if (strcmp(name,"%c16") == 0) return 16;
-	if (strcmp(name,"%c17") == 0) return 17;
-	if (strcmp(name,"%c18") == 0) return 18;
-	if (strcmp(name,"%c19") == 0) return 19;
-	if (strcmp(name,"%c20") == 0) return 20;
-	if (strcmp(name,"%c21") == 0) return 21;
-	if (strcmp(name,"%c22") == 0) return 22;
-	if (strcmp(name,"%c23") == 0) return 23;
-	if (strcmp(name,"%c24") == 0) return 24;
-	if (strcmp(name,"%c25") == 0) return 25;
-	if (strcmp(name,"%c26") == 0) return 26;
-	if (strcmp(name,"%c27") == 0) return 27;
-	if (strcmp(name,"%c28") == 0) return 28;
-	if (strcmp(name,"%c29") == 0) return 29;
-	if (strcmp(name,"%c30") == 0) return 30;
-	if (strcmp(name,"%c31") == 0) return 31;
-	if (strcmp(name,"") == 0) return 0;
-	if (strcmp(name,",a") == 0) return 1;
+	else if (strcmp(name,"%g1") == 0) return 1;
+	else if (strcmp(name,"%g2") == 0) return 2;
+	else if (strcmp(name,"%g3") == 0) return 3;
+	else if (strcmp(name,"%g4") == 0) return 4;
+	else if (strcmp(name,"%g5") == 0) return 5;
+	else if (strcmp(name,"%g6") == 0) return 6;
+	else if (strcmp(name,"%g7") == 0) return 7;
+	else if (strcmp(name,"%o0") == 0) return 8;
+	else if (strcmp(name,"%o1") == 0) return 9;
+	else if (strcmp(name,"%o2") == 0) return 10;
+	else if (strcmp(name,"%o3") == 0) return 11;
+	else if (strcmp(name,"%o4") == 0) return 12;
+	else if (strcmp(name,"%o5") == 0) return 13;
+	else if (strcmp(name,"%sp") == 0) return 14;
+	else if (strcmp(name,"%o7") == 0) return 15;
+	else if (strcmp(name,"%l0") == 0) return 16;
+	else if (strcmp(name,"%l1") == 0) return 17;
+	else if (strcmp(name,"%l2") == 0) return 18;
+	else if (strcmp(name,"%l3") == 0) return 19;
+	else if (strcmp(name,"%l4") == 0) return 20;
+	else if (strcmp(name,"%l5") == 0) return 21;
+	else if (strcmp(name,"%l6") == 0) return 22;
+	else if (strcmp(name,"%l7") == 0) return 23;
+	else if (strcmp(name,"%i0") == 0) return 24;
+	else if (strcmp(name,"%i1") == 0) return 25;
+	else if (strcmp(name,"%i2") == 0) return 26;
+	else if (strcmp(name,"%i3") == 0) return 27;
+	else if (strcmp(name,"%i4") == 0) return 28;
+	else if (strcmp(name,"%i5") == 0) return 29;
+	else if (strcmp(name,"%fp") == 0) return 30;
+	else if (strcmp(name,"%i7") == 0) return 31;
+	else if (strcmp(name,"%f0") == 0) return 0;
+	else if (strcmp(name,"%f1") == 0) return 1;
+	else if (strcmp(name,"%f2") == 0) return 2;
+	else if (strcmp(name,"%f3") == 0) return 3;
+	else if (strcmp(name,"%f4") == 0) return 4;
+	else if (strcmp(name,"%f5") == 0) return 5;
+	else if (strcmp(name,"%f6") == 0) return 6;
+	else if (strcmp(name,"%f7") == 0) return 7;
+	else if (strcmp(name,"%f8") == 0) return 8;
+	else if (strcmp(name,"%f9") == 0) return 9;
+	else if (strcmp(name,"%f10") == 0) return 10;
+	else if (strcmp(name,"%f11") == 0) return 11;
+	else if (strcmp(name,"%f12") == 0) return 12;
+	else if (strcmp(name,"%f13") == 0) return 13;
+	else if (strcmp(name,"%f14") == 0) return 14;
+	else if (strcmp(name,"%f15") == 0) return 15;
+	else if (strcmp(name,"%f16") == 0) return 16;
+	else if (strcmp(name,"%f17") == 0) return 17;
+	else if (strcmp(name,"%f18") == 0) return 18;
+	else if (strcmp(name,"%f19") == 0) return 19;
+	else if (strcmp(name,"%f20") == 0) return 20;
+	else if (strcmp(name,"%f21") == 0) return 21;
+	else if (strcmp(name,"%f22") == 0) return 22;
+	else if (strcmp(name,"%f23") == 0) return 23;
+	else if (strcmp(name,"%f24") == 0) return 24;
+	else if (strcmp(name,"%f25") == 0) return 25;
+	else if (strcmp(name,"%f26") == 0) return 26;
+	else if (strcmp(name,"%f27") == 0) return 27;
+	else if (strcmp(name,"%f28") == 0) return 28;
+	else if (strcmp(name,"%f29") == 0) return 29;
+	else if (strcmp(name,"%f30") == 0) return 30;
+	else if (strcmp(name,"%f31") == 0) return 31;
+	else if (strcmp(name,"%f0to1") == 0) return 0;
+	else if (strcmp(name,"a") == 0) return 1;
+	else if (strcmp(name,"%f2to3") == 0) return 2;
+	else if (strcmp(name,"b") == 0) return 3;
+	else if (strcmp(name,"%f4to5") == 0) return 4;
+	else if (strcmp(name,"c") == 0) return 5;
+	else if (strcmp(name,"%f6to7") == 0) return 6;
+	else if (strcmp(name,"d") == 0) return 7;
+	else if (strcmp(name,"%f8to9") == 0) return 8;
+	else if (strcmp(name,"e") == 0) return 9;
+	else if (strcmp(name,"%f10to11") == 0) return 10;
+	else if (strcmp(name,"f") == 0) return 11;
+	else if (strcmp(name,"%f12to13") == 0) return 12;
+	else if (strcmp(name,"g") == 0) return 13;
+	else if (strcmp(name,"%f14to15") == 0) return 14;
+	else if (strcmp(name,"h") == 0) return 15;
+	else if (strcmp(name,"%f16to17") == 0) return 16;
+	else if (strcmp(name,"i") == 0) return 17;
+	else if (strcmp(name,"%f18to19") == 0) return 18;
+	else if (strcmp(name,"j") == 0) return 19;
+	else if (strcmp(name,"%f20to21") == 0) return 20;
+	else if (strcmp(name,"k") == 0) return 21;
+	else if (strcmp(name,"%f22to23") == 0) return 22;
+	else if (strcmp(name,"l") == 0) return 23;
+	else if (strcmp(name,"%f24to25") == 0) return 24;
+	else if (strcmp(name,"m") == 0) return 25;
+	else if (strcmp(name,"%f26to27") == 0) return 26;
+	else if (strcmp(name,"n") == 0) return 27;
+	else if (strcmp(name,"%f28to29") == 0) return 28;
+	else if (strcmp(name,"o") == 0) return 29;
+	else if (strcmp(name,"%f30to31") == 0) return 30;
+	else if (strcmp(name,"p") == 0) return 31;
+	else if (strcmp(name,"%f0to3") == 0) return 0;
+	else if (strcmp(name,"q") == 0) return 1;
+	else if (strcmp(name,"r") == 0) return 2;
+	else if (strcmp(name,"s") == 0) return 3;
+	else if (strcmp(name,"%f4to7") == 0) return 4;
+	else if (strcmp(name,"t") == 0) return 5;
+	else if (strcmp(name,"u") == 0) return 6;
+	else if (strcmp(name,"v") == 0) return 7;
+	else if (strcmp(name,"%f8to11") == 0) return 8;
+	else if (strcmp(name,"w") == 0) return 9;
+	else if (strcmp(name,"x") == 0) return 10;
+	else if (strcmp(name,"y") == 0) return 11;
+	else if (strcmp(name,"%f12to15") == 0) return 12;
+	else if (strcmp(name,"z") == 0) return 13;
+	else if (strcmp(name,"A") == 0) return 14;
+	else if (strcmp(name,"B") == 0) return 15;
+	else if (strcmp(name,"%f16to19") == 0) return 16;
+	else if (strcmp(name,"C") == 0) return 17;
+	else if (strcmp(name,"D") == 0) return 18;
+	else if (strcmp(name,"E") == 0) return 19;
+	else if (strcmp(name,"%f20to23") == 0) return 20;
+	else if (strcmp(name,"F") == 0) return 21;
+	else if (strcmp(name,"G") == 0) return 22;
+	else if (strcmp(name,"H") == 0) return 23;
+	else if (strcmp(name,"%f24to27") == 0) return 24;
+	else if (strcmp(name,"I") == 0) return 25;
+	else if (strcmp(name,"J") == 0) return 26;
+	else if (strcmp(name,"K") == 0) return 27;
+	else if (strcmp(name,"%f28to31") == 0) return 28;
+	else if (strcmp(name,"L") == 0) return 29;
+	else if (strcmp(name,"M") == 0) return 30;
+	else if (strcmp(name,"N") == 0) return 31;
+	else if (strcmp(name,"%c0") == 0) return 0;
+	else if (strcmp(name,"%c1") == 0) return 1;
+	else if (strcmp(name,"%c2") == 0) return 2;
+	else if (strcmp(name,"%c3") == 0) return 3;
+	else if (strcmp(name,"%c4") == 0) return 4;
+	else if (strcmp(name,"%c5") == 0) return 5;
+	else if (strcmp(name,"%c6") == 0) return 6;
+	else if (strcmp(name,"%c7") == 0) return 7;
+	else if (strcmp(name,"%c8") == 0) return 8;
+	else if (strcmp(name,"%c9") == 0) return 9;
+	else if (strcmp(name,"%c10") == 0) return 10;
+	else if (strcmp(name,"%c11") == 0) return 11;
+	else if (strcmp(name,"%c12") == 0) return 12;
+	else if (strcmp(name,"%c13") == 0) return 13;
+	else if (strcmp(name,"%c14") == 0) return 14;
+	else if (strcmp(name,"%c15") == 0) return 15;
+	else if (strcmp(name,"%c16") == 0) return 16;
+	else if (strcmp(name,"%c17") == 0) return 17;
+	else if (strcmp(name,"%c18") == 0) return 18;
+	else if (strcmp(name,"%c19") == 0) return 19;
+	else if (strcmp(name,"%c20") == 0) return 20;
+	else if (strcmp(name,"%c21") == 0) return 21;
+	else if (strcmp(name,"%c22") == 0) return 22;
+	else if (strcmp(name,"%c23") == 0) return 23;
+	else if (strcmp(name,"%c24") == 0) return 24;
+	else if (strcmp(name,"%c25") == 0) return 25;
+	else if (strcmp(name,"%c26") == 0) return 26;
+	else if (strcmp(name,"%c27") == 0) return 27;
+	else if (strcmp(name,"%c28") == 0) return 28;
+	else if (strcmp(name,"%c29") == 0) return 29;
+	else if (strcmp(name,"%c30") == 0) return 30;
+	else if (strcmp(name,"%c31") == 0) return 31;
+	else if (strcmp(name,"") == 0) return 0;
+	else if (strcmp(name,",a") == 0) return 1;
+	else if (isInteger(str)) {
+		int i = std::atoi((str).c_str());
+		if (i < 0) return i;
+		else return 100 + i;
+	}
 }
 /*
  * Copyright (C) 1996-2001, The University of Queensland
@@ -899,7 +918,15 @@ Exp* SparcDecoder::dis_RegRhs(unsigned r)
  *============================================================================*/
 Exp* SparcDecoder::dis_RegImm(unsigned pc)
 {
-	dword MATCH_p = pc;
+	if(pc >=100)
+	{
+		int i = 100 - pc;
+		if(pc >= 4196)
+		i = pc - 4294967296;
+		Exp* expr = new Const(i);
+		return expr;
+	}
+	else return dis_RegRhs(pc);
 }
 /*==============================================================================
  * FUNCTION:		SparcDecoder::dis_Eaddr
@@ -912,7 +939,6 @@ Exp* SparcDecoder::dis_RegImm(unsigned pc)
 Exp* SparcDecoder::dis_Eaddr(ADDRESS pc,int ignore)
 {
 	Exp* expr;
-	dword MATCH_p = pc;
 	return expr;
 }
 /*==============================================================================
@@ -934,18 +960,6 @@ bool SparcDecoder::isFuncPrologue(ADDRESS hostPC)
  *============================================================================*/
 bool SparcDecoder::isRestore(ADDRESS hostPC)
 {
-	dword MATCH_p = hostPC;
-	if (lines(0) == 'RESTORE' ) {
-		unsigned a = magic_process(lines(1));
-		unsigned b = magic_process(lines(2));
-		unsigned c = magic_process(lines(3));
-		unused(a);
-		unused(b);
-		unused(c);
-		return true;
-		else
-		return false;
-	}
 }
 /**********************************
  * These are the fetch routines.

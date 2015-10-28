@@ -1012,16 +1012,15 @@
     :parameters=>{:variables_decl=>unsigned pc},
     :function_body=>
      {:block=>
-       [{:match_sentences=>
-          [{:code=>pc},
-           {:arm=>
-             {:header=>{:pattern=>{:opcode=>imode, :argument=>{:lhs=>i}}},
-              :codes=>
-               [{:statements=>Exp* expr = new Const(i);},
-                {:statements=>return expr;}]}},
-           {:arm=>
-             {:header=>{:pattern=>{:opcode=>rmode, :argument=>{:lhs=>rs2}}},
-              :codes=>{:statements=>return dis_RegRhs(rs2);}}}]}]}}},
+       [{:if_statements=>
+          {:expression=>(pc >=100),
+           :block=>
+            [{:statements=>int i = 100 - pc;},
+             {:if_statements=>{:expression=>(pc >= 4196)}},
+             {:statements=>i = pc - 4294967296;},
+             {:statements=>Exp* expr = new Const(i);},
+             {:statements=>return expr;}]}},
+        {:statements=>else return dis_RegRhs(pc);}]}}},
  {:comments=>
    /*==============================================================================
  * FUNCTION:		SparcDecoder::dis_Eaddr
@@ -1038,36 +1037,7 @@
     :parameters=>
      [{:variables_decl=>ADDRESS pc}, {:variables_decl=>int ignore}],
     :function_body=>
-     {:block=>
-       [{:statements=>Exp* expr;},
-        {:match_sentences=>
-          [{:code=>pc},
-           {:arm=>
-             {:header=>
-               {:pattern=>{:opcode=>indirectA, :argument=>{:lhs=>rs1}}},
-              :codes=>{:statements=>expr = Location::regOf(rs1);}}},
-           {:arm=>
-             {:header=>
-               {:pattern=>
-                 [{:opcode=>indexA},
-                  {:argument=>{:lhs=>rs1}},
-                  {:argument=>{:lhs=>rs2}}]},
-              :codes=>
-               {:statements=>
-                 expr = new Binary(opPlus,Location::regOf(rs1),Location::regOf(rs2));}}},
-           {:arm=>
-             {:header=>{:pattern=>{:opcode=>absoluteA, :argument=>{:lhs=>i}}},
-              :codes=>{:statements=>expr = new Const((int)i);}}},
-           {:arm=>
-             {:header=>
-               {:pattern=>
-                 [{:opcode=>dispA},
-                  {:argument=>{:lhs=>rs1}},
-                  {:argument=>{:lhs=>i}}]},
-              :codes=>
-               {:statements=>
-                 expr = new Binary(opPlus,Location::regOf(rs1), new Const((int)i));}}}]},
-        {:statements=>return expr;}]}}},
+     {:block=>[{:statements=>Exp* expr;}, {:statements=>return expr;}]}}},
  {:comments=>
    /*==============================================================================
  * FUNCTION:	  isFuncPrologue()
@@ -1096,22 +1066,17 @@
     :parameters=>{:variables_decl=>ADDRESS hostPC},
     :function_body=>
      {:block=>
-       [{:match_sentences=>
-          {:code=>hostPC,
-           :arm=>
-            {:header=>
-              {:pattern=>
-                [{:opcode=>RESTORE},
-                 {:argument=>{:lhs=>a}},
-                 {:argument=>{:lhs=>b}},
-                 {:argument=>{:lhs=>c}}]},
-             :codes=>
-              [{:statements=>unused(a);},
-               {:statements=>unused(b);},
-               {:statements=>unused(c);},
-               {:statements=>return true;},
-               {:else_statements=>else},
-               {:statements=>return false;}]}}}]}}},
+       {
+		/*match hostPC to
+		| RESTORE(a, b, c) =>
+			unused(a);		
+			unused(b);
+			unused(c);
+			return true;
+		else
+			return false;
+		endmatch*/
+}}}},
  {:comments=>
    /**********************************
  * These are the fetch routines.

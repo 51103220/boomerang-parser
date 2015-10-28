@@ -695,13 +695,23 @@ Exp* SparcDecoder::dis_RegRhs(unsigned r)
 Exp* SparcDecoder::dis_RegImm(unsigned pc)
 {
 
-	match pc to
+	/*match pc to
 	| imode(i) =>
 		Exp* expr = new Const(i);
 		return expr;
 	| rmode(rs2) =>
 		return dis_RegRhs(rs2);
-	endmatch
+	endmatch*/
+	if (pc >=100){
+		int i = 100 - pc;
+		if (pc >= 4196)
+			i = pc - 4294967296; 
+		Exp* expr = new Const(i);
+		return expr;
+	}
+	else return dis_RegRhs(pc);
+	
+		
 }
 
 /*==============================================================================
@@ -716,7 +726,7 @@ Exp* SparcDecoder::dis_Eaddr(ADDRESS pc, int ignore /* = 0 */)
 {
 	Exp* expr;
 
-	match pc to
+	/*match pc to
 	| indirectA(rs1) =>
 		expr = Location::regOf(rs1);
 	| indexA(rs1, rs2) =>
@@ -725,7 +735,7 @@ Exp* SparcDecoder::dis_Eaddr(ADDRESS pc, int ignore /* = 0 */)
 		expr = new Const((int)i);
 	| dispA(rs1,i) =>
 		expr = new Binary(opPlus,Location::regOf(rs1), new Const((int)i));
-	endmatch
+	endmatch*/
 
 	return expr;
 }
@@ -764,7 +774,7 @@ bool SparcDecoder::isFuncPrologue(ADDRESS hostPC)
  * RETURNS:		  True if a match found
  *============================================================================*/
 bool SparcDecoder::isRestore(ADDRESS hostPC) {
-		match hostPC to
+		/*match hostPC to
 		| RESTORE(a, b, c) =>
 			unused(a);		// Suppress warning messages
 			unused(b);
@@ -772,7 +782,7 @@ bool SparcDecoder::isRestore(ADDRESS hostPC) {
 			return true;
 		else
 			return false;
-		endmatch
+		endmatch*/
 }
 
  /**********************************
