@@ -1111,7 +1111,8 @@
  {:functions=>
    {:function_name=>SparcDecoder::SparcDecoder,
     :parameters=>{:variables_decl=>Prog* prog},
-    :variables_decl=>prog,
+    :second_name=>NJMCDecoder,
+    :second_parameters=>{:variables_decl=>prog},
     :function_body=>
      {:block=>
        [{:statements=>

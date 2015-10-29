@@ -193,14 +193,14 @@ class DecoderParser
 						@output_content += "\t"*index + "if ("
 						names.each do |name|
 							if name == names.first
-								@output_content += "lines(0) == \'#{name}#{opname}\'"
+								@output_content += "tokens.at(0) == \"#{name}#{opname}\""
 							else
-								@output_content += " || lines(0) == \'#{name}#{opname}\'"
+								@output_content += " || tokens.at(0) == \"#{name}#{opname}\""
 							end
 						end
 						@output_content += ") {\n"
 					else
-						@output_content += "\t"*index + "if (lines(0) == \'#{names[0]}#{opname}\' ) {\n"
+						@output_content += "\t"*index + "if (tokens.at(0) == \"#{names[0]}#{opname}\" ) {\n"
 					end
 					return true
 				else 
@@ -227,11 +227,12 @@ class DecoderParser
 								if v.key?(:field_name)
 									is_matching = handle_opcode(v[:field_name],index)
 									if v.key?(:name) and is_matching 
-										@output_content +=  "\t"*(index+1) + "char *#{v[:name]} = lines(0);\n"
+										@output_content +=  "\t"*(index+1) + "char *#{v[:name]} =  new char[tokens.at(0).length() + 1];\n"
+										@output_content +=  "\t"*(index+1) + "strcpy(#{v[:name]}, tokens.at(0).c_str());\n"
 									end
 								end
 								if v.key?(:argument) and is_matching 
-									@output_content +=  "\t"*(index+1) + "unsigned #{v[:argument][:lhs]} = magic_process(lines(1));\n"
+									@output_content +=  "\t"*(index+1) + "unsigned #{v[:argument][:lhs]} = magic_process(tokens.at(1));\n"
 								end
 							else
 								count = 0
@@ -244,7 +245,7 @@ class DecoderParser
 										when :argument
 											count = count + 1
 											if is_matching
-												@output_content +=  "\t"*(index+1) + "unsigned #{vv[:lhs]} = magic_process(lines(#{count}));\n"
+												@output_content +=  "\t"*(index+1) + "unsigned #{vv[:lhs]} = magic_process(tokens.at(#{count}));\n"
 											end
 										end
 									end
@@ -253,7 +254,8 @@ class DecoderParser
 							end
 						when :name 
 							if is_matching
-								@output_content +=  "\t"*(index+1) + "char *#{v} = lines(0);\n"
+								@output_content +=  "\t"*(index+1) + "char *#{v} =  new char[tokens.at(0).length() + 1];\n"
+								@output_content +=  "\t"*(index+1) + "strcpy(#{v}, tokens.at(0).c_str());\n"
 							end
 						end	
 					end
@@ -344,7 +346,10 @@ class DecoderParser
 			"#include <iterator>",
 			"#include <vector>",
 			"#include <sstream>",
-			"#include <string>"
+			"#include <string>",
+			"#include <assert.h>",
+			"#include <cstring>",
+			"using namespace std;"
 			]
 		includes.each {|i| @output_content += i + "\n"} 
 		#Write is_Number function
@@ -356,7 +361,7 @@ class DecoderParser
 
 	def magic_process  # Write to ouput function: unsigned magic_process(char *name)
 		is_number
-		@output_content += "unsigned magic_process(char *name) {\n"
+		@output_content += "unsigned magic_process(std::string name) {\n"
 		@output_content += "\tstd::string str = name;\n"
 		count = 0
 		@spec_result.each do |element|
@@ -371,14 +376,14 @@ class DecoderParser
 									v = v.map {|v_e| v_e[:item]}
 									v.each_with_index  do |name,index|
 										if count == 0
-											@output_content += "\tif (strcmp(name,#{name.inspect}) == 0) return #{index};\n"
+											@output_content += "\tif (name == #{name.inspect.upcase}) return #{index};\n"
 										else
-											@output_content += "\telse if (strcmp(name,#{name.inspect}) == 0) return #{index};\n"
+											@output_content += "\telse if (name == #{name.inspect.upcase}) return #{index};\n"
 										end
 										count = count +1
 									end
 								else
-									@output_content += "\tif (strcmp(name,#{v[:item].inspect}) == 0) return 0;\n"
+									@output_content += "\tif (name == #{v[:item].inspect.upcase}) return 0;\n"
 									count = count +1
 								end
 							end
@@ -427,7 +432,27 @@ class DecoderParser
 							else
 								@output_content += v[:variables_decl]	 
 							end
-							@output_content += ")\n"
+							if value.has_key?(:second_name)
+								@output_content += ") : #{value[:second_name]}"
+								@output_content += "("
+								second_parameters = value[:second_parameters]
+								if !second_parameters.is_a?(Hash)
+									v = second_parameters.map(&:values).flatten
+									
+									v.each do |vv|
+										if (vv == v.last)
+											@output_content += vv
+										else
+											@output_content += vv +"," 
+										end
+									end
+								else
+									@output_content += second_parameters[:variables_decl]	 
+								end
+								@output_content += ")\n"
+							else
+								@output_content += ")\n"
+							end
 						when :function_body
 							magic(v,0)
 						end

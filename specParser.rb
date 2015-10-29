@@ -283,8 +283,8 @@ class MParser < Parslet::Parser
 	rule(:function_decl) do
 		space? >> (
 			(type.as(:function_type) >> space).maybe  >> function_name.as(:function_name) >> space? >>
-			str("(") >> space? >> parameters.as(:parameters).maybe >> space? >> str(")") >> space? >> (str(":") >> space? >> function_name >> space? >>
-			str("(") >> space? >> parameters >> space? >> str(")") >> space?).maybe >>
+			str("(") >> space? >> parameters.as(:parameters).maybe >> space? >> str(")") >> space? >> (str(":") >> space? >> function_name.as(:second_name) >> space? >>
+			str("(") >> space? >> parameters.as(:second_parameters) >> space? >> str(")") >> space?).maybe >>
 			block.as(:function_body)  
 			) >>
 		space?
