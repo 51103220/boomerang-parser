@@ -26,7 +26,7 @@ class DecoderParser
 					puts error.cause.ascii_tree
 				end
 				File.open("#{@output}/m_result", 'w') { |file| PP.pp(@m_result,file) }
-				p "Done! Check out result in ouput/m_result"
+				p "Done! Check out result in #{@output}/m_result"
 			end			
 		end
 	end
@@ -51,7 +51,7 @@ class DecoderParser
 				end			
 			end
 			File.open("#{@output}/spec_result", 'w') { |file| PP.pp(@spec_result,file) }
-			p "Done! Check out result in ouput/spec_result"
+			p "Done! Check out result in #{@output}/spec_result"
 		end
 	end 
 
@@ -166,7 +166,7 @@ class DecoderParser
 			end
 		end
 		File.open("#{@output}/possible_names", 'w') { |file| PP.pp(@constructors,file) }
-		p "Done! Check Possible Assembly Names in ouput/possible_names"
+		p "Done! Check Possible Assembly Names in #{@output}/possible_names"
 	end
 
 	def handle_opcode (opcode,index)
@@ -461,10 +461,19 @@ class DecoderParser
 			end
 		end
 		File.open("#{@output}/decoder.cpp", 'w') { |file| file.write(@output_content) }
-		p "Done! Check out decoder.cpp in ouput folder"
+		p "Done! Check out decoder.cpp in #{@output} folder"
 	end
 
-	def process_parse 
+	def process_parse input
+		if !File.directory?(input)
+			abort("Directory #{input} doesnt exist! Program terminated!")
+		end
+		@input = input
+		name = /\.\/input\/(?<name>[a-zA-Z0-9_]+)/.match(input)[:name]
+		@output = "#{@output}/#{name}"
+		if !File.directory?(@output)
+			Dir.mkdir @output
+		end
 		p "----Parsing .m file-------"
 		parse_m_file
 		p "----Parsing .spec files---"
@@ -479,4 +488,4 @@ class DecoderParser
 	private :parse_m_file, :parse_spec_files, :write_to_cpp
 end
 parser = DecoderParser.new
-parser.process_parse
+parser.process_parse ARGV[0]
