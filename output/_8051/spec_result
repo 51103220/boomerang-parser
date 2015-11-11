@@ -21,6 +21,64 @@
          {:item=>"p3"}]}]}},
  {:patterns=>
    [{:pattern_binding=>
+      {:pattern_specifier=>
+        [{:pattern_name=>MOV},
+         {:pattern_name=>MOVC},
+         {:pattern_name=>MOVX},
+         {:pattern_name=>ADD},
+         {:pattern_name=>ADDC},
+         {:pattern_name=>SUBB},
+         {:pattern_name=>RET},
+         {:pattern_name=>RETI},
+         {:pattern_name=>DEC},
+         {:pattern_name=>INC},
+         {:pattern_name=>PUSH},
+         {:pattern_name=>POP},
+         {:pattern_name=>RR},
+         {:pattern_name=>RRC},
+         {:pattern_name=>RLC},
+         {:pattern_name=>ORL},
+         {:pattern_name=>ANL},
+         {:pattern_name=>XRL},
+         {:pattern_name=>ORL},
+         {:pattern_name=>ANL},
+         {:pattern_name=>XRL},
+         {:pattern_name=>DIV},
+         {:pattern_name=>MUL},
+         {:pattern_name=>CLR},
+         {:pattern_name=>SETB},
+         {:pattern_name=>LJMP},
+         {:pattern_name=>AJMP},
+         {:pattern_name=>SJMP},
+         {:pattern_name=>JMP},
+         {:pattern_name=>JNB},
+         {:pattern_name=>JB},
+         {:pattern_name=>JBC},
+         {:pattern_name=>ACALL},
+         {:pattern_name=>LCALL},
+         {:pattern_name=>JZ},
+         {:pattern_name=>JNZ},
+         {:pattern_name=>JNC},
+         {:pattern_name=>JC},
+         {:pattern_name=>XCH},
+         {:pattern_name=>XCHD},
+         {:pattern_name=>SWAP},
+         {:pattern_name=>CJNE},
+         {:pattern_name=>DA},
+         {:pattern_name=>CPL},
+         {:pattern_name=>RL}],
+       :list_pattern=>
+        {:pattern=>{:field_name=>TABLE_OPCODE},
+         :conjunction=>
+          [{:pattern=>
+             {:constraint=>
+               {:field_name=>op,
+                :operator=>=,
+                :generating_expression=>{:lo=>0, :high=>43}}}}],
+         :sequence=>[],
+         :disjunction=>[]}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
       {:pattern_specifier=>{:pattern_name=>mov_},
        :list_pattern=>
         {:pattern=>{:field_name=>MOV},
@@ -123,6 +181,13 @@
          :sequence=>[],
          :disjunction=>[]}}},
     {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>RL},
+       :list_pattern=>
+        {:pattern=>{:field_name=>RL},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
       {:pattern_specifier=>{:pattern_name=>jb_},
        :list_pattern=>
         {:pattern=>{:field_name=>JNB},
@@ -175,6 +240,13 @@
          :sequence=>[],
          :disjunction=>[]}}},
     {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>CPL},
+       :list_pattern=>
+        {:pattern=>{:field_name=>CPL},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
       {:pattern_specifier=>{:pattern_name=>SWAP},
        :list_pattern=>
         {:pattern=>{:field_name=>SWAP},
@@ -191,7 +263,7 @@
     {:pattern_binding=>
       {:pattern_specifier=>{:pattern_name=>DA},
        :list_pattern=>
-        {:pattern=>{:field_name=>A},
+        {:pattern=>{:field_name=>DA},
          :conjunction=>[],
          :sequence=>[],
          :disjunction=>[]}}}]},
@@ -207,32 +279,24 @@
     {:constructor=>{:opcode=>NOP, :operands=>{:op=>""}, :branches=>""}},
     {:constructor=>{:opcode=>ret, :operands=>{:op=>""}, :branches=>""}}]},
  {:constructors=>
-   [{:constructor=>{:opcode=>_JMP, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>address_, :operands=>{:op=>""}, :branches=>""}},
+   [{:constructor=>{:opcode=>_JMP, :operands=>{:op=>address_}, :branches=>""}},
     {:constructor=>{:opcode=>JMP, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>jb_, :operands=>{:op=>""}, :branches=>""}},
     {:constructor=>
-      {:opcode=>op1, :operands=>[{:op=>""}, {:op=>op2}], :branches=>""}},
-    {:constructor=>{:opcode=>JC, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>JNC, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
+      {:opcode=>jb_, :operands=>[{:op=>op1}, {:op=>op2}], :branches=>""}},
+    {:constructor=>{:opcode=>JC, :operands=>{:op=>op1}, :branches=>""}},
+    {:constructor=>{:opcode=>JNC, :operands=>{:op=>op1}, :branches=>""}},
     {:constructor=>{:opcode=>rr, :operands=>{:op=>A}, :branches=>""}}]},
  {:constructors=>
    [{:constructor=>{:opcode=>inst_1, :operands=>{:op=>op1}, :branches=>""}},
     {:constructor=>
       {:opcode=>logical, :operands=>[{:op=>op1}, {:op=>op2}], :branches=>""}},
-    {:constructor=>{:opcode=>div_mul, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>sp_1, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>CLR, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>SETB, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}}]},
+    {:constructor=>{:opcode=>div_mul, :operands=>{:op=>op1}, :branches=>""}},
+    {:constructor=>{:opcode=>sp_1, :operands=>{:op=>op1}, :branches=>""}},
+    {:constructor=>{:opcode=>CLR, :operands=>{:op=>op1}, :branches=>""}},
+    {:constructor=>{:opcode=>SETB, :operands=>{:op=>op1}, :branches=>""}}]},
  {:constructors=>
-   [{:constructor=>{:opcode=>jz_, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>address_, :operands=>{:op=>""}, :branches=>""}}]},
+   [{:constructor=>
+      {:opcode=>jz_, :operands=>{:op=>address_}, :branches=>""}}]},
  {:constructors=>
    [{:constructor=>{:opcode=>CPL, :operands=>{:op=>op1}, :branches=>""}}]},
  {:constructors=>
@@ -243,7 +307,5 @@
     {:constructor=>{:opcode=>SWAP, :operands=>{:op=>op1}, :branches=>""}},
     {:constructor=>
       {:opcode=>xch_, :operands=>[{:op=>A}, {:op=>op2}], :branches=>""}},
-    {:constructor=>{:opcode=>DA, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>A, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>RL, :operands=>{:op=>""}, :branches=>""}},
-    {:constructor=>{:opcode=>A, :operands=>{:op=>""}, :branches=>""}}]}]
+    {:constructor=>{:opcode=>DA, :operands=>{:op=>A}, :branches=>""}},
+    {:constructor=>{:opcode=>RL, :operands=>{:op=>A}, :branches=>""}}]}]

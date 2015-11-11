@@ -66,6 +66,12 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string line) {
 
 	// The actual list of instantiated statements
 	std::list<Statement*>* stmts = NULL;
+	std::string sentence = line;
+    std::transform(sentence.begin(), sentence.end(),sentence.begin(), ::toupper);
+    sentence.erase(std::remove(sentence.begin(), sentence.end(), ','), sentence.end());
+    std::istringstream iss(sentence);
+    std::vector <std::string> tokens;
+    copy(istream_iterator<std::string>(iss),istream_iterator<std::string>(),back_inserter(tokens));
 
 	ADDRESS nextPC = NO_ADDRESS;
 

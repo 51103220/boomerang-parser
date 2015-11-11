@@ -8,6 +8,19 @@ names [ "r0"  "r1"  "r2"  "r3"  "r4"  "r5"  "r6"  "r7"
        "a" "b" "c" "dptr" "ab" "p0" "p1" "p2" "p3"]
        ]
 
+patterns
+ [ MOV  MOVC  MOVX  ADD  
+   ADDC  SUBB  RET  RETI
+   DEC  INC  PUSH  POP
+   RR   RRC  RLC  ORL 
+   ANL  XRL  ORL  ANL  XRL
+   DIV  MUL  CLR  SETB
+   LJMP  AJMP  SJMP  JMP
+   JNB  JB  JBC  ACALL
+   LCALL  JZ  JNZ  JNC
+   JC  XCH  XCHD  SWAP  
+   CJNE  DA  CPL  RL ] is TABLE_OPCODE  & op = {0 to 43}
+
 patterns    
  mov_   is MOV | MOVC | MOVX
  add_ 	is ADD | ADDC | SUBB
@@ -24,22 +37,24 @@ patterns
  SETB is SETB
 
 patterns
- _JMP   is LJMP | AJMP | SJMP
- JMP    is JMP
- jb_ 	is JNB | JB | JBC
+ _JMP  is LJMP | AJMP | SJMP
+ JMP  is JMP
+ RL   is RL
+ jb_  is JNB | JB | JBC
  ACALL  is ACALL
  LCALL  is LCALL
- jz_  	is JZ | JNZ
+ jz_  is JZ | JNZ
 
 patterns
- JC is JC
- JNC is JNC
+ JC  is JC
+ JNC  is JNC
 
 patterns
- CJNE is CJNE
- SWAP is SWAP
- xch_   is XCH | XCHD
- DA 	is A 
+ CJNE  is CJNE
+ CPL    is CPL
+ SWAP  is SWAP
+ xch_  is XCH | XCHD
+ DA  is DA 
 
 constructors
  mov_ op1, op2
@@ -50,30 +65,30 @@ constructors
  ret 
 
 constructors 
- _JMP 	address_
+ _JMP address_
  JMP
- jb_ 	op1, op2
- JC 	op1
- JNC	op1
- rr A
+ jb_  op1, op2
+ JC  op1
+ JNC  op1
+ rr  A
 
 constructors
- inst_1        op1
- logical       op1, op2
- div_mul	op1
- sp_1 		op1
- CLR 		op1
- SETB		op1
+ inst_1  op1
+ logical  op1, op2
+ div_mul  op1
+ sp_1  op1
+ CLR  op1
+ SETB  op1
  
 constructors
- jz_ 	address_
+ jz_  address_
 
 constructors
- CPL op1
+ CPL  op1
 
 constructors 
- CJNE op1, op2, op3
- SWAP op1
- xch_   A, op2
- DA 	A
- RL 	A
+ CJNE  op1, op2, op3
+ SWAP  op1
+ xch_  A, op2
+ DA  A
+ RL  A

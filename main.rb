@@ -479,9 +479,9 @@ class DecoderParser
 		p "----Parsing .spec files---"
 		parse_spec_files
 		p "----Handle constructors---"
-		#handle_constructors
+		handle_constructors
 		p "----write_to_cpp----------"
-		#write_to_cpp
+		write_to_cpp
 		
 	end
 

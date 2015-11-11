@@ -105,6 +105,15 @@
         {:statements=>int delta = 0;},
         {:statements=>result.reset();},
         {:statements=>std::list<Statement*>* stmts = NULL;},
+        {:statements=>std::string sentence = line;},
+        {:statements=>
+          std::transform(sentence.begin(), sentence.end(),sentence.begin(), ::toupper);},
+        {:statements=>
+          sentence.erase(std::remove(sentence.begin(), sentence.end(), ','), sentence.end());},
+        {:statements=>std::istringstream iss(sentence);},
+        {:statements=>std::vector <std::string> tokens;},
+        {:statements=>
+          copy(istream_iterator<std::string>(iss),istream_iterator<std::string>(),back_inserter(tokens));},
         {:statements=>ADDRESS nextPC = NO_ADDRESS;},
         {:match_sentences=>
           [{:var_name=>nextPC, :code=>hostPC},
