@@ -1,0 +1,1132 @@
+[{:comments=>
+   /*
+	Intel 8051 decoder
+	Created in 09/11/2015 at HCMUT by Dedo
+
+ *============================================================================*/
+
+},
+ {:head=>#include <assert.h>
+},
+ {:head=>#include <cstring>
+},
+ {:head=>
+   #if defined(_MSC_VER) && _MSC_VER <= 1100
+#include "signature.h"
+#endif
+
+},
+ {:head=>#include "decoder.h"
+},
+ {:head=>#include "exp.h"
+},
+ {:head=>#include "prog.h"
+},
+ {:head=>#include "proc.h"
+},
+ {:head=>#include "_8051Decoder.h"
+},
+ {:head=>#include "rtl.h"
+},
+ {:head=>#include "BinaryFile.h"		
+},
+ {:head=>#include "boomerang.h"
+
+},
+ {:head=>#define DIS_ROI		(dis_RegImm(roi))
+},
+ {:head=>#define DIS_ADDR	(dis_Eaddr(addr))
+},
+ {:head=>#define DIS_RD		(dis_RegLhs(rd))
+},
+ {:head=>#define DIS_RDR		(dis_RegRhs(rd))
+},
+ {:head=>#define DIS_RS1		(dis_RegRhs(rs1))
+},
+ {:head=>#define DIS_FS1S	(dis_RegRhs(fs1s+32))
+},
+ {:head=>#define DIS_FS2S	(dis_RegRhs(fs2s+32))
+},
+ {:head=>#define DIS_FDS		(dis_RegLhs(fds+32))
+},
+ {:head=>#define DIS_FS1D	(dis_RegRhs((fs1d>>1)+64))
+},
+ {:head=>#define DIS_FS2D	(dis_RegRhs((fs2d>>1)+64))
+},
+ {:head=>#define DIS_FDD		(dis_RegLhs((fdd>>1)+64))
+},
+ {:head=>#define DIS_FDQ		(dis_RegLhs((fdq>>2)+80))
+},
+ {:head=>#define DIS_FS1Q	(dis_RegRhs((fs1q>>2)+80))
+},
+ {:head=>#define DIS_FS2Q	(dis_RegRhs((fs2q>>2)+80))
+
+},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	   unused
+ * OVERVIEW:	   A dummy function to suppress "unused local variable" messages
+ * PARAMETERS:	   x: integer variable to be "used"
+ * RETURNS:		   Nothing
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>void,
+    :function_name=>_8051Decoder::unused,
+    :parameters=>{:variables_decl=>int x},
+    :function_body=>{:block=>{}}}},
+ {:statements=>static DecodeResult result;},
+ {:comments=>
+   
+
+/*==============================================================================
+ * FUNCTION:	   _8051Decoder::decodeInstruction
+ * OVERVIEW:	   Attempt to decode the high level instruction at a given address and return the corresponding HL type
+ *					(e.g. CallStatement, GotoStatement etc). If no high level instruction exists at the given address,
+ *					then simply return the RTL for the low level instruction at this address. There is an option to also
+ *				   include the low level statements for a HL instruction.
+ * PARAMETERS:	   pc - the native address of the pc
+ *				   delta - the difference between the above address and the host address of the pc (i.e. the address
+ *					that the pc is at in the loaded object file)
+ *				   proc - the enclosing procedure. This can be NULL for those of us who are using this method in an
+ *					interpreter
+ * RETURNS:		   a DecodeResult structure containing all the information gathered during decoding
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>DecodeResult&,
+    :function_name=>_8051Decoder::decodeInstruction,
+    :parameters=>
+     [{:variables_decl=>ADDRESS pc}, {:variables_decl=>std::string line}],
+    :function_body=>
+     {:block=>
+       [{:statements=>static DecodeResult result;},
+        {:statements=>ADDRESS hostPC = pc+delta;},
+        {:statements=>int delta = 0;},
+        {:statements=>result.reset();},
+        {:statements=>std::list<Statement*>* stmts = NULL;},
+        {:statements=>ADDRESS nextPC = NO_ADDRESS;},
+        {:match_sentences=>
+          [{:var_name=>nextPC, :code=>hostPC},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>mov_},
+                  {:argument=>{:lhs=>op1}},
+                  {:argument=>{:lhs=>op2}}]},
+              :codes=>
+               [{:if_statements=>
+                  {:expression=>(tokens.at(0) == "MOV"),
+                   :block=>
+                    [{:if_statements=>
+                       {:expression=>(tokens.at(1) == "@R0"),
+                        :block=>
+                         [{:if_statements=>
+                            {:expression=>(op2 < 8),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOV_RI0_DIR", Location::regOf(op2));}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 == 8),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOV_RI0_A");}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 >= 100 ),
+                             :block=>
+                              [{:if_statements=>
+                                 {:expression=>(op2 < 4000000000)}},
+                               {:statements=>
+                                 stmts = instantiate(pc, "MOV_RI0_IMM" , new Const(op2-100));},
+                               {:else_statements=>else},
+                               {:statements=>
+                                 stmts = instantiate(pc,  "MOV_RI0_IMM", new Const(op2-4294967296));}]}}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(tokens.at(1) == "@R1"),
+                        :block=>
+                         [{:if_statements=>
+                            {:expression=>(op2 < 8),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOV_RI1_DIR", Location::regOf(op2));}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 == 8),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOV_RI1_A");}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 >= 100 ),
+                             :block=>
+                              [{:if_statements=>
+                                 {:expression=>(op2 < 4000000000)}},
+                               {:statements=>
+                                 stmts = instantiate(pc, "MOV_RI1_IMM" , new Const(op2-100));},
+                               {:else_statements=>else},
+                               {:statements=>
+                                 stmts = instantiate(pc,  "MOV_RI1_IMM", new Const(op2-4294967296));}]}}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op1 < 8),
+                        :block=>
+                         [{:statements=>std::string name = "MOV_R";},
+                          {:statements=>std::stringstream sstm;},
+                          {:statements=>sstm << name << op1;},
+                          {:if_statements=>
+                            {:expression=>(op2 < 8 ),
+                             :block=>
+                              [{:statements=>sstm << "_DIR";},
+                               {:statements=>name = sstm.str();},
+                               {:statements=>
+                                 char *name_ =  new char[name.length() + 1];},
+                               {:statements=>strcpy(name_, name.c_str());},
+                               {:statements=>
+                                 stmts = instantiate(pc, name_, Location::regOf(op2));}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 == 8 ),
+                             :block=>
+                              [{:statements=>sstm << "_A";},
+                               {:statements=>name = sstm.str();},
+                               {:statements=>
+                                 char *name_ =  new char[name.length() + 1];},
+                               {:statements=>strcpy(name_, name.c_str());},
+                               {:statements=>
+                                 stmts = instantiate(pc, name_);}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 >= 100 ),
+                             :block=>
+                              [{:statements=>sstm << "_IMM";},
+                               {:statements=>name = sstm.str();},
+                               {:statements=>
+                                 char *name_ =  new char[name.length() + 1];},
+                               {:statements=>strcpy(name_, name.c_str());},
+                               {:if_statements=>
+                                 {:expression=>(op2 < 4000000000)}},
+                               {:statements=>
+                                 stmts = instantiate(pc, name_ , new Const(op2-100));},
+                               {:else_statements=>else},
+                               {:statements=>
+                                 stmts = instantiate(pc, name_, new Const(op2-4294967296));}]}}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op1 == 8),
+                        :block=>
+                         [{:if_statements=>
+                            {:expression=>(tokens.at(2) == "@R0"),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOV_A_RI0");}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(tokens.at(2) == "@R1"),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOV_A_RI1");}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 < 8),
+                             :block=>
+                              [{:statements=>std::string name = "MOV_A_R";},
+                               {:statements=>std::stringstream sstm;},
+                               {:statements=>sstm << name << op2;},
+                               {:statements=>name = sstm.str();},
+                               {:statements=>
+                                 stmts = instantiate(pc, name);}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 >= 100),
+                             :block=>
+                              [{:if_statements=>
+                                 {:expression=>(op2 < 4000000000)}},
+                               {:statements=>
+                                 stmts = instantiate(pc, "MOV_A_IMM", new Const(op2-100));},
+                               {:else_statements=>else},
+                               {:statements=>
+                                 stmts = instantiate(pc, "MOV_A_IMM", new Const(op2-4294967296));}]}}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op1 >= 13 && op1 <= 16 ),
+                        :block=>
+                         [{:statements=>std::string name = "MOV_DIR_";},
+                          {:statements=>std::stringstream sstm;},
+                          {:statements=>sstm << name;},
+                          {:if_statements=>
+                            {:expression=>(op2 < 8 ),
+                             :block=>
+                              [{:statements=>sstm << "R" << op2;},
+                               {:statements=>name = sstm.str();},
+                               {:statements=>
+                                 char *name_ =  new char[name.length() + 1];},
+                               {:statements=>strcpy(name_, name.c_str());},
+                               {:statements=>
+                                 stmts = instantiate(pc, name_, Location::regOf(op1));}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 == 8 ),
+                             :block=>
+                              [{:statements=>sstm << "A";},
+                               {:statements=>name = sstm.str();},
+                               {:statements=>
+                                 char *name_ =  new char[name.length() + 1];},
+                               {:statements=>strcpy(name_, name.c_str());},
+                               {:statements=>
+                                 stmts = instantiate(pc, name_, Location::regOf(op1) );}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(op2 >= 100 ),
+                             :block=>
+                              [{:statements=>sstm << "_IMM";},
+                               {:statements=>name = sstm.str();},
+                               {:statements=>
+                                 char *name_ =  new char[name.length() + 1];},
+                               {:statements=>strcpy(name_, name.c_str());},
+                               {:if_statements=>
+                                 {:expression=>(op2 < 4000000000)}},
+                               {:statements=>
+                                 stmts = instantiate(pc, name_ , Location::regOf(op1), new Const(op2-100));},
+                               {:else_statements=>else},
+                               {:statements=>
+                                 stmts = instantiate(pc, name_,  Location::regOf(op1), new Const(op2-4294967296));}]}}]}}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(tokens.at(0) == "MOVC"),
+                   :block=>
+                    [{:if_statements=>
+                       {:expression=>(tokens.at(4) == "DPTR"),
+                        :block=>
+                         [{:statements=>
+                            stmts = instantiate(pc, "MOVC_A_AADDDPTR");}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(tokens.at(4) == "PC"),
+                        :block=>
+                         [{:statements=>
+                            stmts = instantiate(pc, "MOVC_A_AADDPC");}]}}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(tokens.at(0) == "MOVX"),
+                   :block=>
+                    [{:if_statements=>
+                       {:expression=>(tokens.at(1) == "@R0"),
+                        :block=>
+                         [{:statements=>
+                            stmts = instantiate(pc, "MOVX_RI0_A");}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(tokens.at(1) == "@R1"),
+                        :block=>
+                         [{:statements=>
+                            stmts = instantiate(pc, "MOVX_RI1_A");}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op1 == 8),
+                        :block=>
+                         [{:if_statements=>
+                            {:expression=>(tokens.at(2) == "@R0"),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOVX_A_RI0");}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(tokens.at(2) == "@R1"),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOVX_A_RI1");}]}},
+                          {:else_statements=>else},
+                          {:if_statements=>
+                            {:expression=>(tokens.at(2) == "@DPTR"),
+                             :block=>
+                              [{:statements=>
+                                 stmts = instantiate(pc, "MOVX_A_DPTRA");}]}}]}}]}}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>{:opcode=>ACALL, :argument=>{:lhs=>address}}},
+              :codes=>
+               [{:statements=>bool is_lib = false;},
+                {:if_statements=>
+                  {:expression=>
+                    (tokens.at(1) == "PRINTF" || tokens.at(1) == "PUTS"),
+                   :block=>
+                    [{:statements=>address = 132912;},
+                     {:statements=>is_lib = true;}]}},
+                {:else_statements=>{:block=>[{:statements=>address= 66752;}]}},
+                {:statements=>CallStatement* newCall = new CallStatement;},
+                {:statements=>ADDRESS nativeDest = addr - delta;},
+                {:statements=>newCall->setDest(nativeDest);},
+                {:statements=>Proc* destProc;},
+                {:statements=>
+                  std::transform(tokens.at(1).begin(), tokens.at(1).end(),tokens.at(1).begin(), ::tolower);},
+                {:statements=>
+                  char *name =  new char[tokens.at(1).length() + 1];},
+                {:statements=>strcpy(name, tokens.at(1).c_str());},
+                {:statements=>
+                  destProc = prog->newProc(name, nativeDest, is_lib);},
+                {:statements=>newCall->setDestProc(destProc);},
+                {:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(newCall);},
+                {:statements=>result.type = SD;}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>add_},
+                  {:argument=>{:lhs=>op1}},
+                  {:argument=>{:lhs=>op2}}]},
+              :codes=>
+               [{:statements=>std::stringstream sstm;},
+                {:statements=>sstm << tokens.at(0) << "_A_";},
+                {:statements=>std::string name;},
+                {:if_statements=>
+                  {:expression=>(tokens.at(2) == "@R0"),
+                   :block=>
+                    [{:statements=>sstm << "RI0";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>stmts = instantiate(pc,name_);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(tokens.at(2) == "@R1"),
+                   :block=>
+                    [{:statements=>sstm << "RI1";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>stmts = instantiate(pc,name_);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op2 < 8),
+                   :block=>
+                    [{:statements=>sstm << "R" << op2;},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>stmts = instantiate(pc, name_);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op2 >= 13 && op2 <= 16),
+                   :block=>
+                    [{:statements=>sstm << "DIR";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>
+                       stmts = instantiate(pc, name_, Location::regOf(op2));}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op2 >= 100),
+                   :block=>
+                    [{:statements=>sstm << "IMM";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                     {:statements=>
+                       stmts = instantiate(pc, name_, new Const(op2-100));},
+                     {:else_statements=>else},
+                     {:statements=>
+                       stmts = instantiate(pc, name_, new Const(op2-4294967296));}]}}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:field_name=>NOP}},
+              :codes=>
+               [{:statements=>result.type = NOP;},
+                {:statements=>stmts = instantiate(pc,	 "NOP");}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>_JMP, :argument=>{:lhs=>address}}},
+              :codes=>
+               [{:statements=>CaseStatement* jump = new CaseStatement;},
+                {:statements=>jump->setIsComputed();},
+                {:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(jump);},
+                {:statements=>result.type = DD;},
+                {:statements=>jump->setDest(address);}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:field_name=>JMP}},
+              :codes=>
+               {:statements=>stmts = instantiate(pc,	 "JMP_AADDDPTR");}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>rr, :argument=>{:lhs=>op1}}},
+              :codes=>
+               {:if_statements=>
+                 {:expression=>(op1 == 8),
+                  :block=>
+                   [{:statements=>std::stringstream sstm;},
+                    {:statements=>sstm << tokens.at(0) << "_A";},
+                    {:statements=>std::string name;},
+                    {:statements=>name = sstm.str();},
+                    {:statements=>char *name_ =  new char[name.length() + 1];},
+                    {:statements=>strcpy(name_, name.c_str());},
+                    {:statements=>stmts = instantiate(pc,	 name_);}]}}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>inst_1, :argument=>{:lhs=>o1}}},
+              :codes=>
+               [{:statements=>std::stringstream sstm;},
+                {:statements=>sstm << tokens.at(0) << "_";},
+                {:statements=>std::string name;},
+                {:if_statements=>
+                  {:expression=>(tokens.at(1) == "@R0"),
+                   :block=>
+                    [{:statements=>sstm << "RI0";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>stmts = instantiate(pc,name_);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(tokens.at(1) == "@R1"),
+                   :block=>
+                    [{:statements=>sstm << "RI1";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>stmts = instantiate(pc,name_);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(tokens.at(1) == "DPTR"),
+                   :block=>
+                    [{:statements=>sstm << "DPTR";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>stmts = instantiate(pc, name_);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 < 8),
+                   :block=>
+                    [{:statements=>sstm << "R" << op1;},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>stmts = instantiate(pc, name_);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 == 8),
+                   :block=>
+                    [{:statements=>sstm << "A";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>stmts = instantiate(pc, name_);}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 >= 100),
+                   :block=>
+                    [{:statements=>sstm << "DIR";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                     {:statements=>
+                       stmts = instantiate(pc, name_, new Const(op2-100));},
+                     {:else_statements=>else},
+                     {:statements=>
+                       stmts = instantiate(pc, name_, new Const(op2-4294967296));}]}}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>jb_},
+                  {:argument=>{:lhs=>op1}},
+                  {:argument=>{:lhs=>op2}}]},
+              :codes=>
+               [{:statements=>std::stringstream sstm;},
+                {:statements=>sstm << tokens.at(0) << "_DIR_IMM";},
+                {:statements=>std::string name;},
+                {:statements=>name = sstm.str();},
+                {:statements=>char *name_ =  new char[name.length() + 1];},
+                {:statements=>strcpy(name_, name.c_str());},
+                {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                {:statements=>
+                  stmts = instantiate(pc, name_, Location::regOf(op1), new Const(op2-100));},
+                {:else_statements=>else},
+                {:statements=>
+                  stmts = instantiate(pc, name_,  Location::regOf(op1),new Const(op2-4294967296));}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>{:opcode=>LCALL, :argument=>{:lhs=>address}}},
+              :codes=>
+               [{:statements=>bool is_lib = false;},
+                {:if_statements=>
+                  {:expression=>
+                    (tokens.at(1) == "PRINTF" || tokens.at(1) == "PUTS"),
+                   :block=>
+                    [{:statements=>address = 132912;},
+                     {:statements=>is_lib = true;}]}},
+                {:else_statements=>{:block=>[{:statements=>address= 66752;}]}},
+                {:statements=>CallStatement* newCall = new CallStatement;},
+                {:statements=>ADDRESS nativeDest = addr - delta;},
+                {:statements=>newCall->setDest(nativeDest);},
+                {:statements=>Proc* destProc;},
+                {:statements=>
+                  std::transform(tokens.at(1).begin(), tokens.at(1).end(),tokens.at(1).begin(), ::tolower);},
+                {:statements=>
+                  char *name =  new char[tokens.at(1).length() + 1];},
+                {:statements=>strcpy(name, tokens.at(1).c_str());},
+                {:statements=>
+                  destProc = prog->newProc(name, nativeDest, is_lib);},
+                {:statements=>newCall->setDestProc(destProc);},
+                {:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(newCall);},
+                {:statements=>result.type = SD;}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:field_name=>ret}},
+              :codes=>
+               [{:statements=>result.rtl = new RTL(pc, stmts);},
+                {:statements=>result.rtl->appendStmt(new ReturnStatement);},
+                {:statements=>result.type = DD;}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>JC, :argument=>{:lhs=>op1}}},
+              :codes=>
+               [{:if_statements=>{:expression=>(op1 < 4000000000)}},
+                {:statements=>
+                  stmts = instantiate(pc, "JC_IMM", new Const(op1-100));},
+                {:else_statements=>else},
+                {:statements=>
+                  stmts = instantiate(pc, "JC_IMM", new Const(op1-4294967296));}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>JNC, :argument=>{:lhs=>op1}}},
+              :codes=>
+               [{:if_statements=>{:expression=>(op1 < 4000000000)}},
+                {:statements=>
+                  stmts = instantiate(pc, "JC_IMM", new Const(op1-100));},
+                {:else_statements=>else},
+                {:statements=>
+                  stmts = instantiate(pc, "JC_IMM", new Const(op1-4294967296));}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>logical},
+                  {:argument=>{:lhs=>op1}},
+                  {:argument=>{:lhs=>op2}}]},
+              :codes=>
+               [{:statements=>std::stringstream sstm;},
+                {:statements=>sstm << tokens.at(0) << "_";},
+                {:statements=>std::string name;},
+                {:if_statements=>
+                  {:expression=>(op1 == 10 ),
+                   :block=>
+                    [{:statements=>sstm << "C_";},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:statements=>
+                       stmts = instantiate(pc,name_, new Const(op2));}]}},
+                {:if_statements=>
+                  {:expression=>(op1 == 8),
+                   :block=>
+                    [{:statements=>sstm << "A_";},
+                     {:if_statements=>
+                       {:expression=>(tokens.at(2) == "@R0"),
+                        :block=>
+                         [{:statements=>sstm << "RI0";},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:statements=>stmts = instantiate(pc,name_);}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(tokens.at(2) == "@R1"),
+                        :block=>
+                         [{:statements=>sstm << "RI1";},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:statements=>stmts = instantiate(pc,name_);}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op2 < 8),
+                        :block=>
+                         [{:statements=>sstm << "R" << op2;},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:statements=>stmts = instantiate(pc, name_);}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op2 >= 100),
+                        :block=>
+                         [{:statements=>sstm << "IMM";},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                          {:statements=>
+                            stmts = instantiate(pc, name_, new Const(op2-100));},
+                          {:else_statements=>else},
+                          {:statements=>
+                            stmts = instantiate(pc, name_, new Const(op2-4294967296));}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op2 >= 13 && op2 <= 16),
+                        :block=>
+                         [{:statements=>sstm << "DIR";},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:statements=>
+                            stmts = instantiate(pc, name_, Location::regOf(op2));}]}}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 >= 13 && op1 <= 16 ),
+                   :block=>
+                    [{:statements=>sstm << "DIR_";},
+                     {:if_statements=>
+                       {:expression=>(op2 == 8),
+                        :block=>
+                         [{:statements=>sstm << "A";},
+                          {:statements=>
+                            stmts = instantiate(pc, name_, Location::regOf(op1));}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op2 >= 100),
+                        :block=>
+                         [{:statements=>sstm << "IMM";},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                          {:statements=>
+                            stmts = instantiate(pc, name_,Location::regOf(op1), new Const(op2-100));},
+                          {:else_statements=>else},
+                          {:statements=>
+                            stmts = instantiate(pc, name_,Location::regOf(op1), new Const(op2-4294967296));}]}}]}}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>jz_, :argument=>{:lhs=>address}}},
+              :codes=>
+               [{:statements=>std::stringstream sstm;},
+                {:statements=>sstm << tokens.at(0) << "_IMM";},
+                {:statements=>std::string name;},
+                {:statements=>name = sstm.str();},
+                {:statements=>char *name_ =  new char[name.length() + 1];},
+                {:statements=>strcpy(name_, name.c_str());},
+                {:statements=>
+                  stmts = instantiate(pc,name_, new Const(address));}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>div_mul, :argument=>{:lhs=>op1}}},
+              :codes=>
+               {:if_statements=>
+                 {:expression=>(op1 == 12),
+                  :block=>
+                   [{:statements=>std::stringstream sstm;},
+                    {:statements=>sstm << tokens.at(0) << "_AB";},
+                    {:statements=>std::string name;},
+                    {:statements=>name = sstm.str();},
+                    {:statements=>char *name_ =  new char[name.length() + 1];},
+                    {:statements=>strcpy(name_, name.c_str());},
+                    {:statements=>stmts = instantiate(pc,name_);}]}}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>CPL, :argument=>{:lhs=>op1}}},
+              :codes=>
+               [{:if_statements=>
+                  {:expression=>(op1 == 8),
+                   :block=>[{:statements=>stmts = instantiate(pc,"CPL_A");}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 == 10),
+                   :block=>[{:statements=>stmts = instantiate(pc,"CPL_C");}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 >= 100),
+                   :block=>
+                    [{:if_statements=>{:expression=>(op1 < 4000000000)}},
+                     {:statements=>
+                       stmts = instantiate(pc, "CPL_DIR", new Const(op2-100));},
+                     {:else_statements=>else},
+                     {:statements=>
+                       stmts = instantiate(pc, "CPL_DIR", new Const(op2-4294967296));}]}}]}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>CJNE},
+                  {:argument=>{:lhs=>op1}},
+                  {:argument=>{:lhs=>op2}},
+                  {:argument=>{:lhs=>op3}}]},
+              :codes=>
+               [{:if_statements=>
+                  {:expression=>(tokens.at(0) == "@R0"),
+                   :block=>
+                    [{:if_statements=>
+                       {:expression=>(op2 >= 100 && op3 >= 100),
+                        :block=>
+                         [{:statements=>int operand2 = 0;},
+                          {:statements=>int operand3 = 0;},
+                          {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                          {:statements=>operand2 = op2 -100;},
+                          {:else_statements=>else},
+                          {:statements=>operand2 = op2 - 4294967296;},
+                          {:if_statements=>{:expression=>(op3 < 4000000000)}},
+                          {:statements=>operand3 = op3 -100;},
+                          {:else_statements=>else},
+                          {:statements=>operand3 = op3 - 4294967296;},
+                          {:statements=>
+                            stmts = instantiate(pc, "CJNE_RI0_IMM_IMM", new Const(operand2), new Const(operand3));}]}}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(tokens.at(0) == "@R1"),
+                   :block=>
+                    [{:if_statements=>
+                       {:expression=>(op2 >= 100 && op3 >= 100),
+                        :block=>
+                         [{:statements=>int operand2 = 0;},
+                          {:statements=>int operand3 = 0;},
+                          {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                          {:statements=>operand2 = op2 -100;},
+                          {:else_statements=>else},
+                          {:statements=>operand2 = op2 - 4294967296;},
+                          {:if_statements=>{:expression=>(op3 < 4000000000)}},
+                          {:statements=>operand3 = op3 -100;},
+                          {:else_statements=>else},
+                          {:statements=>operand3 = op3 - 4294967296;},
+                          {:statements=>
+                            stmts = instantiate(pc, "CJNE_RI1_IMM_IMM", new Const(operand2), new Const(operand3));}]}}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 < 8),
+                   :block=>
+                    [{:statements=>std::stringstream sstm;},
+                     {:statements=>
+                       sstm << "CJNE_R" << tokens.at(0) << "_IMM_IMM";},
+                     {:statements=>std::string name;},
+                     {:statements=>name = sstm.str();},
+                     {:statements=>
+                       char *name_ =  new char[name.length() + 1];},
+                     {:statements=>strcpy(name_, name.c_str());},
+                     {:if_statements=>
+                       {:expression=>(op2 >= 100 && op3 >= 100),
+                        :block=>
+                         [{:statements=>int operand2 = 0;},
+                          {:statements=>int operand3 = 0;},
+                          {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                          {:statements=>operand2 = op2 -100;},
+                          {:else_statements=>else},
+                          {:statements=>operand2 = op2 - 4294967296;},
+                          {:if_statements=>{:expression=>(op3 < 4000000000)}},
+                          {:statements=>operand3 = op3 -100;},
+                          {:else_statements=>else},
+                          {:statements=>operand3 = op3 - 4294967296;},
+                          {:statements=>
+                            stmts = instantiate(pc,name_, new Const(operand2), new Const(operand3));}]}}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 == 8),
+                   :block=>
+                    [{:if_statements=>
+                       {:expression=>(op2 >= 100 && op3 >= 100),
+                        :block=>
+                         [{:statements=>int operand2 = 0;},
+                          {:statements=>int operand3 = 0;},
+                          {:if_statements=>{:expression=>(op2 < 4000000000)}},
+                          {:statements=>operand2 = op2 -100;},
+                          {:else_statements=>else},
+                          {:statements=>operand2 = op2 - 4294967296;},
+                          {:if_statements=>{:expression=>(op3 < 4000000000)}},
+                          {:statements=>operand3 = op3 -100;},
+                          {:else_statements=>else},
+                          {:statements=>operand3 = op3 - 4294967296;},
+                          {:statements=>
+                            stmts = instantiate(pc, "CJNE_A_IMM_IMM", new Const(operand2), new Const(operand3));}]}},
+                     {:else_statements=>{:block=>{ 
+
+    		}}}]}}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>sp_1, :argument=>{:lhs=>op1}}},
+              :codes=>
+               [{:statements=>std::stringstream sstm;},
+                {:statements=>sstm << tokens.at(0) << "_DIR";},
+                {:statements=>std::string name;},
+                {:statements=>name = sstm.str();},
+                {:statements=>char *name_ =  new char[name.length() + 1];},
+                {:statements=>strcpy(name_, name.c_str());},
+                {:if_statements=>
+                  {:expression=>(op1 < 8),
+                   :block=>
+                    [{:statements=>
+                       stmts = instantiate(pc, name_, Location::regOf(op1));}]}},
+                {:else_statements=>
+                  {:block=>
+                    [{:statements=>
+                       stmts = instantiate(pc, name_, new Const(op1));}]}}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>CLR, :argument=>{:lhs=>op1}}},
+              :codes=>
+               [{:if_statements=>
+                  {:expression=>(op1 == 8),
+                   :block=>
+                    [{:statements=>stmts = instantiate(pc, "CLR_A");}]}},
+                {:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 == 10),
+                   :block=>
+                    [{:statements=>stmts = instantiate(pc, "CLR_C");}]}},
+                {:else_statements=>
+                  {:block=>
+                    [{:statements=>
+                       stmts = instantiate(pc, "CLR_DIR", new Const(op1-100));}]}}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>SETB, :argument=>{:lhs=>op1}}},
+              :codes=>
+               [{:else_statements=>else},
+                {:if_statements=>
+                  {:expression=>(op1 == 10),
+                   :block=>
+                    [{:statements=>stmts = instantiate(pc, "SETB_C");}]}},
+                {:else_statements=>
+                  {:block=>
+                    [{:statements=>
+                       stmts = instantiate(pc, "SETB_DIR", new Const(op1 - 100));}]}}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>SWAP, :argument=>{:lhs=>op1}}},
+              :codes=>
+               {:if_statements=>
+                 {:expression=>(op1 == 8),
+                  :block=>
+                   [{:statements=>stmts = instantiate(pc,"SWAP_A");}]}}}},
+           {:arm=>
+             {:header=>
+               {:pattern=>
+                 [{:opcode=>xch_},
+                  {:argument=>{:lhs=>op1}},
+                  {:argument=>{:lhs=>op2}}]},
+              :codes=>
+               [{:statements=>std::stringstream sstm;},
+                {:statements=>sstm << tokens.at(0) << "_A_";},
+                {:statements=>std::string name;},
+                {:if_statements=>
+                  {:expression=>(op1 == 8),
+                   :block=>
+                    [{:if_statements=>
+                       {:expression=>(tokens.at(2) == "@R0"),
+                        :block=>
+                         [{:statements=>sstm << "RI0";},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:statements=>stmts = instantiate(pc, name_);}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(tokens.at(2) == "@R1"),
+                        :block=>
+                         [{:statements=>sstm << "RI1";},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:statements=>stmts = instantiate(pc, name_);}]}},
+                     {:else_statements=>else},
+                     {:if_statements=>
+                       {:expression=>(op2 < 8),
+                        :block=>
+                         [{:statements=>sstm << "R" << op2;},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:statements=>stmts = instantiate(pc, name_);}]}},
+                     {:else_statements=>
+                       {:block=>
+                         [{:statements=>sstm << "DIR";},
+                          {:statements=>name = sstm.str();},
+                          {:statements=>
+                            char *name_ =  new char[name.length() + 1];},
+                          {:statements=>strcpy(name_, name.c_str());},
+                          {:statements=>
+                            stmts = instantiate(pc, name_, new Const(op2-100));}]}}]}}]}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>DA, :argument=>{:lhs=>op1}}},
+              :codes=>
+               {:if_statements=>
+                 {:expression=>(op1 == 8),
+                  :block=>[{:statements=>stmts = instantiate(pc, "DA");}]}}}},
+           {:arm=>
+             {:header=>{:pattern=>{:opcode=>RL, :argument=>{:lhs=>op1}}},
+              :codes=>
+               {:if_statements=>
+                 {:expression=>(op1 == 8),
+                  :block=>
+                   [{:statements=>stmts = instantiate(pc, "RL_A");}]}}}}]},
+        {:else_statements=>
+          {:block=>
+            [{:statements=>stmts = NULL;},
+             {:statements=>result.valid = false;},
+             {:statements=>result.numBytes = 4;}]}},
+        {:statements=>result.numBytes = nextPC - hostPC;},
+        {:if_statements=>{:expression=>(result.valid && result.rtl == 0)}},
+        {:statements=>result.rtl = new RTL(pc, stmts);},
+        {:statements=>return result;}]}}},
+ {:comments=>
+   /***********************************************************************
+ * These are functions used to decode instruction operands into
+ * expressions (Exp*s).
+ **********************************************************************/
+
+},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		_8051Decoder::dis_RegLhs
+ * OVERVIEW:		Decode the register on the LHS
+ * PARAMETERS:		r - register (0-31)
+ * RETURNS:			the expression representing the register
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>Exp*,
+    :function_name=>_8051Decoder::dis_RegLhs,
+    :parameters=>{:variables_decl=>unsigned r},
+    :function_body=>{:block=>[{:statements=>return Location::regOf(r);}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		_8051Decoder::dis_RegRhs
+ * OVERVIEW:		Decode the register on the RHS
+ * NOTE:			Replaces r[0] with const 0
+ * NOTE:			Not used by DIS_RD since don't want 0 on LHS
+ * PARAMETERS:		r - register (0-31)
+ * RETURNS:			the expression representing the register
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>Exp*,
+    :function_name=>_8051Decoder::dis_RegRhs,
+    :parameters=>{:variables_decl=>unsigned r},
+    :function_body=>
+     {:block=>
+       [{:if_statements=>{:expression=>(r == 0)}},
+        {:statements=>return new Const(0);},
+        {:statements=>return Location::regOf(r);}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		_8051Decoder::dis_RegImm
+ * OVERVIEW:		Decode the register or immediate at the given address.
+ * NOTE:			Used via macro DIS_ROI
+ * PARAMETERS:		pc - an address in the instruction stream
+ * RETURNS:			the register or immediate at the given address
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>Exp*,
+    :function_name=>_8051Decoder::dis_RegImm,
+    :parameters=>{:variables_decl=>unsigned pc},
+    :function_body=>
+     {:block=>
+       [{:if_statements=>
+          {:expression=>(pc >=100),
+           :block=>
+            [{:statements=>int i = 100 - pc;},
+             {:if_statements=>{:expression=>(pc >= 4196)}},
+             {:statements=>i = pc - 4294967296;},
+             {:statements=>Exp* expr = new Const(i);},
+             {:statements=>return expr;}]}},
+        {:statements=>else return dis_RegRhs(pc);}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		_8051Decoder::dis_Eaddr
+ * OVERVIEW:		Converts a dynamic address to a Exp* expression.
+ *					E.g. %o7 --> r[ 15 ]
+ * PARAMETERS:		pc - the instruction stream address of the dynamic address
+ *					ignore - redundant parameter on 8051
+ * RETURNS:			the Exp* representation of the given address
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>Exp*,
+    :function_name=>_8051Decoder::dis_Eaddr,
+    :parameters=>
+     [{:variables_decl=>ADDRESS pc}, {:variables_decl=>int ignore}],
+    :function_body=>
+     {:block=>[{:statements=>Exp* expr;}, {:statements=>return expr;}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	  isFuncPrologue()
+ * OVERVIEW:	  Check to see if the instructions at the given offset match any callee prologue, i.e. does it look
+ *					like this offset is a pointer to a function?
+ * PARAMETERS:	  hostPC - pointer to the code in question (host address)
+ * RETURNS:		  True if a match found
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>bool,
+    :function_name=>_8051Decoder::isFuncPrologue,
+    :parameters=>{:variables_decl=>ADDRESS hostPC},
+    :function_body=>{:block=>[{:statements=>return false;}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	  isRestore()
+ * OVERVIEW:	  Check to see if the instruction at the given offset is a restore instruction
+ * PARAMETERS:	  hostPC - pointer to the code in question (host address)
+ * RETURNS:		  True if a match found
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>bool,
+    :function_name=>_8051Decoder::isRestore,
+    :parameters=>{:variables_decl=>ADDRESS hostPC},
+    :function_body=>{:block=>{
+}}}},
+ {:comments=>
+   /**********************************
+ * These are the fetch routines.
+ **********************************/
+
+},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:		getDword
+ * OVERVIEW:		Returns the double starting at the given address.
+ * PARAMETERS:		lc - address at which to decode the double
+ * RETURNS:			the decoded double
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_type=>DWord,
+    :function_name=>_8051Decoder::getDword,
+    :parameters=>{:variables_decl=>ADDRESS lc},
+    :function_body=>
+     {:block=>
+       [{:statements=>Byte* p = (Byte*)lc;},
+        {:statements=>
+          return (p[0] << 24) + (p[1] << 16) + (p[2] << 8) + p[3];}]}}},
+ {:comments=>
+   /*==============================================================================
+ * FUNCTION:	   _8051Decoder::_8051Decoder
+ * OVERVIEW:	   
+ * PARAMETERS:	   None
+ * RETURNS:		   N/A
+ *============================================================================*/
+},
+ {:functions=>
+   {:function_name=>_8051Decoder::_8051Decoder,
+    :parameters=>{:variables_decl=>Prog* prog},
+    :second_name=>NJMCDecoder,
+    :second_parameters=>{:variables_decl=>prog},
+    :function_body=>
+     {:block=>
+       [{:statements=>
+          std::string file = Boomerang::get()->getProgPath() + "frontend/machine/8051/_8051.ssl";},
+        {:statements=>RTLDict.readSSLFile(file.c_str());}]}}},
+ {:functions=>
+   {:function_type=>int,
+    :function_name=>_8051Decoder::decodeAssemblyInstruction,
+    :parameters=>[{:variables_decl=>unsigned}, {:variables_decl=>int}],
+    :function_body=>{:block=>[{:statements=>return 0;}]}}}]

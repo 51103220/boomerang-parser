@@ -42,7 +42,6 @@
  *============================================================================*/
 void _8051Decoder::unused(int x)
 {}
-
 static DecodeResult result;
 
 /*==============================================================================
@@ -58,7 +57,7 @@ static DecodeResult result;
  *					interpreter
  * RETURNS:		   a DecodeResult structure containing all the information gathered during decoding
  *============================================================================*/
-DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) { 
+DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string line) { 
 	static DecodeResult result;
 	ADDRESS hostPC = pc+delta;
 	int delta = 0;
@@ -280,11 +279,11 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 				stmts = instantiate(pc, name_, new Const(op2-4294967296)); // Immediate Negative Integer
     	}
 
-    | NOP
+    | NOP =>
 		result.type = NOP;
 		stmts = instantiate(pc,	 "NOP");
 
-	| _JMP (address)
+	| _JMP (address) =>
 		CaseStatement* jump = new CaseStatement;
 		// Record the fact that it is a computed jump
 		jump->setIsComputed();
@@ -293,10 +292,10 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 		result.type = DD;
 		jump->setDest(address);
 
-	| JMP 
+	| JMP =>
 		stmts = instantiate(pc,	 "JMP_AADDDPTR");
 
-	| rr (op1)
+	| rr (op1) =>
 		if (op1 == 8){
 			std::stringstream sstm;
 	    	sstm << tokens.at(0) << "_A";
@@ -307,7 +306,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 			stmts = instantiate(pc,	 name_);
 		}
 
-	| inst_1 (o1)
+	| inst_1 (o1) =>
 	    std::stringstream sstm;
     	sstm << tokens.at(0) << "_";
     	std::string name;
@@ -357,7 +356,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 				stmts = instantiate(pc, name_, new Const(op2-4294967296)); // Immediate Negative Integer
     	}
 
-    | jb_ (op1, op2)
+    | jb_ (op1, op2) =>
         std::stringstream sstm;
     	sstm << tokens.at(0) << "_DIR_IMM";
     	std::string name;
@@ -369,7 +368,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 		else
 			stmts = instantiate(pc, name_,  Location::regOf(op1),new Const(op2-4294967296)); // Immediate Negative Integer
     	
-	| LCALL (address)
+	| LCALL (address) =>
 		bool is_lib = false;
 	    if (tokens.at(1) == "PRINTF" || tokens.at(1) == "PUTS"){
 	      address = 132912;
@@ -391,24 +390,24 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 	    result.rtl->appendStmt(newCall);
 	    result.type = SD;
 
-	| ret
+	| ret =>
 		result.rtl = new RTL(pc, stmts);
 		result.rtl->appendStmt(new ReturnStatement);
 		result.type = DD;
 
-	| JC (op1)
+	| JC (op1) =>
 		if (op1 < 4000000000)
 			stmts = instantiate(pc, "JC_IMM", new Const(op1-100)); // Immediate positive integer
 		else
 			stmts = instantiate(pc, "JC_IMM", new Const(op1-4294967296)); // Immediate Negative Integer
 
-	| JNC (op1)
+	| JNC (op1) =>
 		if (op1 < 4000000000)
 			stmts = instantiate(pc, "JC_IMM", new Const(op1-100)); // Immediate positive integer
 		else
 			stmts = instantiate(pc, "JC_IMM", new Const(op1-4294967296)); // Immediate Negative Integer	
 
-	| logical (op1,op2)
+	| logical (op1,op2) =>
 
 		std::stringstream sstm;
     	sstm << tokens.at(0) << "_";
@@ -479,7 +478,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
     		}
     	}
 
-    | jz_ (address) // NOT SURE
+    | jz_ (address) =>  // NOT SURE
     	std::stringstream sstm;
     	sstm << tokens.at(0) << "_IMM";
     	std::string name;
@@ -488,7 +487,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
     	strcpy(name_, name.c_str());
     	stmts = instantiate(pc,name_, new Const(address));
 
-    | div_mul (op1)
+    | div_mul (op1) =>
     	if (op1 == 12){
 	    	std::stringstream sstm;
 	    	sstm << tokens.at(0) << "_AB";
@@ -498,7 +497,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 	    	strcpy(name_, name.c_str());
 	    	stmts = instantiate(pc,name_);
     	}
-    | CPL (op1)
+    | CPL (op1) =>
 
     	if (op1 == 8){
     		stmts = instantiate(pc,"CPL_A");
@@ -513,7 +512,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 				stmts = instantiate(pc, "CPL_DIR", new Const(op2-4294967296)); // Immediate Negative Integer
     	}
 
-    | CJNE (op1, op2, op3)
+    | CJNE (op1, op2, op3) =>
 
     	if (tokens.at(0) == "@R0"){
 
@@ -601,7 +600,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
     		}
     	}
 
-    | sp_1 (op1) //PUSH AND POP DIRECT
+    | sp_1 (op1) => //PUSH AND POP DIRECT
     	std::stringstream sstm;
     	sstm << tokens.at(0) << "_DIR";
     	std::string name;
@@ -616,7 +615,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
     		stmts = instantiate(pc, name_, new Const(op1)); 
     	}
 
-    | CLR (op1)
+    | CLR (op1) =>
 
     	if (op1 == 8){
     		stmts = instantiate(pc, "CLR_A");
@@ -629,7 +628,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
     	}
 
 
-    | SETB (op1)
+    | SETB (op1) =>
 
     	else if (op1 == 10) {
     		stmts = instantiate(pc, "SETB_C");
@@ -638,13 +637,13 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
     		stmts = instantiate(pc, "SETB_DIR", new Const(op1 - 100));
     	}
 
-    | SWAP (op1)
+    | SWAP (op1) =>
 
     	if (op1 == 8){
     		stmts = instantiate(pc,"SWAP_A");
     	}
 
-    | xch_ (op1, op2)
+    | xch_ (op1, op2) =>
     	std::stringstream sstm;
     	sstm << tokens.at(0) << "_A_";
     	std::string name;
@@ -681,14 +680,14 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 
     	}
 
-    | DA (op1)
-    
+    | DA (op1) =>
+
     	if (op1 == 8){
     		stmts = instantiate(pc, "DA");
     	}
 
-    | RL (op1)
-
+    | RL (op1) =>
+    
     	if (op1 == 8){
     		stmts = instantiate(pc, "RL_A");
     	}	
@@ -706,7 +705,7 @@ DecodeResult& _8051Decoder::decodeInstruction (ADDRESS pc, std::string) {
 		result.rtl = new RTL(pc, stmts);
 
 	return result;
-    	}
+    	
 }
 
 

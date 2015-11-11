@@ -4,8 +4,9 @@
 
 fieldinfo
 [ Rn ] is [ 
-names [ "r0"  "r1"  "r2"  "r3"  "r4"  "r5"  "r6"  "r7"]
+names [ "r0"  "r1"  "r2"  "r3"  "r4"  "r5"  "r6"  "r7"
        "a" "b" "c" "dptr" "ab" "p0" "p1" "p2" "p3"]
+       ]
 
 patterns    
  mov_   is MOV | MOVC | MOVX
@@ -41,38 +42,38 @@ patterns
  DA 	is A 
 
 constructors
- mov_ operand1, operand2
- ACALL address
- LCALL address
- add_ operand1, operand2
+ mov_ op1, op2
+ ACALL address_
+ LCALL address_
+ add_ op1, op2
  NOP
  ret 
 
 constructors 
- _JMP 	address
+ _JMP 	address_
  JMP
- jb_ 	operand1, operand2
- JC 	operand1
- JNC	operand1
+ jb_ 	op1, op2
+ JC 	op1
+ JNC	op1
  rr A
 
 constructors
- inst_1        operand1
- logical       operand1, operand2
- div_mul	operand1
- sp_1 		operand1
- CLR 		operand1
- SETB		operand1
+ inst_1        op1
+ logical       op1, op2
+ div_mul	op1
+ sp_1 		op1
+ CLR 		op1
+ SETB		op1
  
 constructors
- jz_ 	address
+ jz_ 	address_
 
 constructors
- CPL operand1
+ CPL op1
 
 constructors 
- CJNE operand1, operand2, operand3
- SWAP operand1
- xch_   A, operand2
+ CJNE op1, op2, op3
+ SWAP op1
+ xch_   A, op2
  DA 	A
  RL 	A

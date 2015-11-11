@@ -1,0 +1,249 @@
+[{:fields=>
+   {:fieldinfo_spec=>
+     [{:field_specifier=>{:field_name=>Rn},
+       :field_item=>
+        [{:item=>"r0"},
+         {:item=>"r1"},
+         {:item=>"r2"},
+         {:item=>"r3"},
+         {:item=>"r4"},
+         {:item=>"r5"},
+         {:item=>"r6"},
+         {:item=>"r7"},
+         {:item=>"a"},
+         {:item=>"b"},
+         {:item=>"c"},
+         {:item=>"dptr"},
+         {:item=>"ab"},
+         {:item=>"p0"},
+         {:item=>"p1"},
+         {:item=>"p2"},
+         {:item=>"p3"}]}]}},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>mov_},
+       :list_pattern=>
+        {:pattern=>{:field_name=>MOV},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>
+          [{:pattern=>{:field_name=>MOVC}},
+           {:pattern=>{:field_name=>MOVX}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>add_},
+       :list_pattern=>
+        {:pattern=>{:field_name=>ADD},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>
+          [{:pattern=>{:field_name=>ADDC}},
+           {:pattern=>{:field_name=>SUBB}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>NOP},
+       :list_pattern=>
+        {:pattern=>{:field_name=>NOP},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>ret},
+       :list_pattern=>
+        {:pattern=>{:field_name=>RET},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[{:pattern=>{:field_name=>RETI}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>inst_1},
+       :list_pattern=>
+        {:pattern=>{:field_name=>DEC},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[{:pattern=>{:field_name=>INC}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>sp_1},
+       :list_pattern=>
+        {:pattern=>{:field_name=>PUSH},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[{:pattern=>{:field_name=>POP}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>rr},
+       :list_pattern=>
+        {:pattern=>{:field_name=>RR},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>
+          [{:pattern=>{:field_name=>RRC}},
+           {:pattern=>{:field_name=>RLC}}]}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>logical},
+       :list_pattern=>
+        {:pattern=>{:field_name=>ORL},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>
+          [{:pattern=>{:field_name=>ANL}}, {:pattern=>{:field_name=>XRL}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>div_mul},
+       :list_pattern=>
+        {:pattern=>{:field_name=>DIV},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[{:pattern=>{:field_name=>MUL}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>CLR},
+       :list_pattern=>
+        {:pattern=>{:field_name=>CLR},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>SETB},
+       :list_pattern=>
+        {:pattern=>{:field_name=>SETB},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>_JMP},
+       :list_pattern=>
+        {:pattern=>{:field_name=>LJMP},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>
+          [{:pattern=>{:field_name=>AJMP}},
+           {:pattern=>{:field_name=>SJMP}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>JMP},
+       :list_pattern=>
+        {:pattern=>{:field_name=>JMP},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>jb_},
+       :list_pattern=>
+        {:pattern=>{:field_name=>JNB},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>
+          [{:pattern=>{:field_name=>JB}}, {:pattern=>{:field_name=>JBC}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>ACALL},
+       :list_pattern=>
+        {:pattern=>{:field_name=>ACALL},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>LCALL},
+       :list_pattern=>
+        {:pattern=>{:field_name=>LCALL},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>jz_},
+       :list_pattern=>
+        {:pattern=>{:field_name=>JZ},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[{:pattern=>{:field_name=>JNZ}}]}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>JC},
+       :list_pattern=>
+        {:pattern=>{:field_name=>JC},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>JNC},
+       :list_pattern=>
+        {:pattern=>{:field_name=>JNC},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}}]},
+ {:patterns=>
+   [{:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>CJNE},
+       :list_pattern=>
+        {:pattern=>{:field_name=>CJNE},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>SWAP},
+       :list_pattern=>
+        {:pattern=>{:field_name=>SWAP},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>xch_},
+       :list_pattern=>
+        {:pattern=>{:field_name=>XCH},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[{:pattern=>{:field_name=>XCHD}}]}}},
+    {:pattern_binding=>
+      {:pattern_specifier=>{:pattern_name=>DA},
+       :list_pattern=>
+        {:pattern=>{:field_name=>A},
+         :conjunction=>[],
+         :sequence=>[],
+         :disjunction=>[]}}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>mov_, :operands=>[{:op=>op1}, {:op=>op2}], :branches=>""}},
+    {:constructor=>
+      {:opcode=>ACALL, :operands=>{:op=>address_}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>LCALL, :operands=>{:op=>address_}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>add_, :operands=>[{:op=>op1}, {:op=>op2}], :branches=>""}},
+    {:constructor=>{:opcode=>NOP, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>ret, :operands=>{:op=>""}, :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>{:opcode=>_JMP, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>address_, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>JMP, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>jb_, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>op1, :operands=>[{:op=>""}, {:op=>op2}], :branches=>""}},
+    {:constructor=>{:opcode=>JC, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>JNC, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>rr, :operands=>{:op=>A}, :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>{:opcode=>inst_1, :operands=>{:op=>op1}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>logical, :operands=>[{:op=>op1}, {:op=>op2}], :branches=>""}},
+    {:constructor=>{:opcode=>div_mul, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>sp_1, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>CLR, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>SETB, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>op1, :operands=>{:op=>""}, :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>{:opcode=>jz_, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>address_, :operands=>{:op=>""}, :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>{:opcode=>CPL, :operands=>{:op=>op1}, :branches=>""}}]},
+ {:constructors=>
+   [{:constructor=>
+      {:opcode=>CJNE,
+       :operands=>[{:op=>op1}, {:op=>op2}, {:op=>op3}],
+       :branches=>""}},
+    {:constructor=>{:opcode=>SWAP, :operands=>{:op=>op1}, :branches=>""}},
+    {:constructor=>
+      {:opcode=>xch_, :operands=>[{:op=>A}, {:op=>op2}], :branches=>""}},
+    {:constructor=>{:opcode=>DA, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>A, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>RL, :operands=>{:op=>""}, :branches=>""}},
+    {:constructor=>{:opcode=>A, :operands=>{:op=>""}, :branches=>""}}]}]
